@@ -8,6 +8,7 @@ public class AppHelper
     Process proc;
     public bool isRunning { get { return !proc.HasExited; } }
     public bool hasExited { get { return proc.HasExited; } }
+    public int getExitCode { get { return proc.ExitCode; } }
 
     public AppHelper(string path)
     {
