@@ -66,4 +66,11 @@ public static class FileManager
 
         CloseFile(writer, stream);
     }
+
+    public static GameData ReadGameData(string path)
+    {
+        GameData data = new GameData();
+
+        return new GameData();
+    }
 }
