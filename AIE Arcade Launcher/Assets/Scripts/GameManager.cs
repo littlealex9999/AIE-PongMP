@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
     public Color normalColor = Color.white;
     public Color runningColor = Color.green;
 
-    readonly string gameLocationsFilePath = Application.persistentDataPath + "/gamePaths";
+    string gameLocationsFilePath;
     List<string> gameLocations;
 
     private void Awake()
@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
         if (instance == null) instance = this;
         else Destroy(this);
 
+        gameLocationsFilePath = Application.persistentDataPath + "/gamePaths";
         gameLocations = FileManager.ReadStringArray(gameLocationsFilePath);
         if (gameLocations == null) gameLocations = new List<string>();
     }
