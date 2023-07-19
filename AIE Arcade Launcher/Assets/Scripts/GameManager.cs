@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour
     List<AppHelper> runningApps = new List<AppHelper>();
 
     public TextMeshProUGUI text;
+    public int targetGame = 0;
+    public int displayedGame = -1;
+    public float switchCooldown = 0.1f;
+    float switchTimer;
     public Color normalColor = Color.white;
     public Color runningColor = Color.green;
 
@@ -56,19 +60,45 @@ public class GameManager : MonoBehaviour
                 if (runningApps[i].hasExited) {
                     runningApps.RemoveAt(i);
                     --i;
-                    text.color = normalColor;
+
+                    // in case the game being played was currently selected
+                    UpdateSelectionText();
                 }
             }
         }
 
+        float verticalInput = Input.GetAxis("Vertical");
+
+        switchTimer -= Time.deltaTime;
+        if (switchTimer <= 0) {
+            if (verticalInput > 0.5f) {
+                ++targetGame;
+                switchTimer = switchCooldown;
+            } else if (verticalInput < -0.5f) {
+                --targetGame;
+                switchTimer = switchCooldown;
+            }
+        }
+
+        if (targetGame != displayedGame) {
+            if (targetGame < 0) targetGame = gameData.Count - 1;
+            else if (targetGame >= gameData.Count) targetGame = 0;
+
+            displayedGame = targetGame;
+            UpdateSelectionText();
+        }
+
         // start running a game
         if (Input.GetButtonDown("Select")) {
-            if (runningApps.Count > 0) {
-                runningApps[0].KillApp();
+            AppHelper targetApp = GetAppIfRunning(gameData[displayedGame]);
+
+            if (targetApp != null) {
+                targetApp.KillApp();
             } else {
-                runningApps.Add(new AppHelper(gameData[0].exePath));
-                text.color = runningColor;
+                runningApps.Add(new AppHelper(gameData[displayedGame]));
             }
+
+            UpdateSelectionText();
         }
     }
 
@@ -100,5 +130,34 @@ public class GameManager : MonoBehaviour
 
         gameData.Add(data);
         dataManager.WriteGameData(data);
+    }
+
+    void UpdateSelectionText()
+    {
+        text.text = gameData[displayedGame].gameTitle;
+
+        if (CheckAppRunning(gameData[displayedGame])) {
+            text.color = runningColor;
+        } else {
+            text.color = normalColor;
+        }
+    }
+
+    bool CheckAppRunning(GameData data)
+    {
+        for (int i = 0; i < runningApps.Count; ++i) {
+            if (runningApps[i].getData == data) return true;
+        }
+
+        return false;
+    }
+
+    AppHelper GetAppIfRunning(GameData data)
+    {
+        for (int i = 0; i < runningApps.Count; ++i) {
+            if (runningApps[i].getData == data) return runningApps[i];
+        }
+
+        return null;
     }
 }

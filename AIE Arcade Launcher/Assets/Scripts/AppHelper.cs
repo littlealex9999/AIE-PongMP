@@ -10,9 +10,13 @@ public class AppHelper
     public bool hasExited { get { return proc.HasExited; } }
     public int getExitCode { get { return proc.ExitCode; } }
 
-    public AppHelper(string path)
+    GameData data;
+    public GameData getData { get { return data; } }
+
+    public AppHelper(GameData gameData)
     {
-        proc = Process.Start(path);
+        data = gameData;
+        proc = Process.Start(data.exePath);
     }
 
     /// <summary>
