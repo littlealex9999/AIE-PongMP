@@ -10,13 +10,15 @@ public class Map : MonoBehaviour
 
     public int lineStepCount;
 
-    public float angleOffset;
+    [Range(0, 360)] public float angleOffset;
 
     public LineRenderer lr;
 
     private void OnValidate()
     {
         if (!lr || lineStepCount < 1) return;
+
+        // for some reason, line count borks everything
 
         lr.positionCount = lineStepCount;
         Vector3 startPos = GetTargetPointInCircleLocal(angleOffset);
