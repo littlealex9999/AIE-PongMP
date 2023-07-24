@@ -5,44 +5,21 @@ using Input = UnityEngine.Input;
 public class Paddle : MonoBehaviour
 {
     public float startingRotation;
-    public float moveSpeed = 90;
+    float distance;
+
+    [Tooltip("In degrees per second")] public float moveSpeed = 90;
     public int playerID;
     public Ball ball;
 
     public float pushStrength;
 
     Vector3 facingDirection = Vector3.right;
-    float angleDeviance;
 
-    private void Awake()
-    {
-        
-    }
+    // the max amount you can move from your starting rotation
+    float angleDeviance;
 
     void Update()
     {
-       
-        //if (playerID == 0)
-        //{
-        //    transform.RotateAround(Vector3.zero, Vector3.back, rotationalDegreesPerSecond * -xInput * Time.deltaTime);
-
-        //    if (Input.GetKeyDown(KeyCode.Space))
-        //    {
-        //        if (Vector3.Distance(ball.transform.position, transform.position) < 1)
-        //        {
-        //            ball.AddVelocity(Vector2.one * pushStrength);
-        //        }
-        //    }
-        //}
-            
-        //if (playerID == 1)
-        //{
-        //    float xInput = 0;
-        //    if (Input.GetKey(KeyCode.RightArrow)) xInput = 1;
-        //    if (Input.GetKey(KeyCode.LeftArrow)) xInput = -1;
-        //    transform.RotateAround(Vector3.zero, Vector3.back, rotationalDegreesPerSecond * -xInput * Time.deltaTime);
-        //};
-
         Vector3 input = Vector3.zero;
 
         // we could potentially concatenate a string to search for "HorizontalPlayer" + playerID
@@ -73,11 +50,11 @@ public class Paddle : MonoBehaviour
         this.playerID = playerID;
         startingRotation = startingAngle;
         angleDeviance = maxAngleDeviance;
+        distance = startingDistance;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, startingAngle) * -transform.up;
-        transform.position = -facingDirection * startingDistance;
-        transform.rotation = Quaternion.Euler(0, 0, startingAngle + 90);
+        SetPosition(startingAngle);
     }
 
     /// <summary>
@@ -92,5 +69,11 @@ public class Paddle : MonoBehaviour
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+    }
+
+    public void SetPosition(float angle)
+    {
+        transform.position = -facingDirection * distance;
+        transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 }
