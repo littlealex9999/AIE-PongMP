@@ -8,7 +8,7 @@ public class Map : MonoBehaviour
 {
     public float mapRadius;
 
-    public int lineStepCount;
+    [Min(3)] public int lineStepCount;
 
     [Range(0, 360)] public float angleOffset;
 
@@ -18,18 +18,15 @@ public class Map : MonoBehaviour
     {
         if (!lr || lineStepCount < 1) return;
 
-        // for some reason, line count borks everything
-
         lr.positionCount = lineStepCount;
-        Vector3 startPos = GetTargetPointInCircleLocal(angleOffset);
-        lr.SetPosition(0, startPos + transform.position);
+        Vector3 targetPos = GetTargetPointInCircleLocal(angleOffset);
+        lr.SetPosition(0, targetPos + transform.position);
 
-        Quaternion targetRotation = Quaternion.identity;
-        Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360 / lineStepCount);
+        Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
 
         for (int i = 1; i < lineStepCount; i++) {
-            targetRotation *= rotationPerSegment;
-            lr.SetPosition(i, targetRotation * startPos + transform.position);
+            targetPos = rotationPerSegment * targetPos;
+            lr.SetPosition(i, targetPos + transform.position);
         }
     }
 

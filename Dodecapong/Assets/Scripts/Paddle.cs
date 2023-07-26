@@ -9,14 +9,21 @@ public class Paddle : MonoBehaviour
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
     public int playerID;
-    public Ball ball;
 
-    public float pushStrength;
+    public float pushDistance = 0.1f;
+    public float pushStrength = 3.0f;
 
     Vector3 facingDirection = Vector3.right;
 
     // the max amount you can move from your starting rotation
     float angleDeviance;
+
+    Collider2D collider;
+
+    private void Awake()
+    {
+        collider = GetComponent<Collider2D>();
+    }
 
     void Update()
     {
