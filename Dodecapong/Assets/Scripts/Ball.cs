@@ -35,6 +35,10 @@ public class Ball : MonoBehaviour
 
     private void BounceOnBounds()
     {
+        if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) {
+            transform.position = (transform.position - map.transform.position).normalized * map.mapRadius;
+        }
+
         Vector3 forward = rb.velocity.normalized;
         Vector3 normal = (Vector3.zero - transform.position).normalized;
         rb.velocity = Vector3.Reflect(forward, normal) * constantVel;
