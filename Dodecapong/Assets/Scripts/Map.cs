@@ -1,40 +1,89 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.ExceptionServices;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-[RequireComponent(typeof(LineRenderer))]
+//[RequireComponent(typeof(LineRenderer))]
 public class Map : MonoBehaviour
 {
     public float mapRadius;
 
     [Min(3)] public int lineStepCount;
 
-    [Range(0, 360)] public float angleOffset;
-
-    public LineRenderer lr;
-
     public List<int> shieldLevels = new List<int>();
 
-    private void OnValidate()
+    public Material lrDefault;
+
+    public float lineWidth;
+
+    public void GenerateMap()
     {
-        CalculateCircle();
+        if (lineStepCount < 1) return;
+
+        int alivePlayerCount = GameManager.instance.alivePlayerCount;
+
+        for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
+        {
+            GameObject obj = new GameObject();
+            obj.transform.parent = transform;
+            obj.name = "Line " + currentPlayer;
+            LineRenderer lr = obj.AddComponent<LineRenderer>();
+            lineRenderers.Add(obj);
+
+            // setup values
+            int pointCount = lineStepCount / alivePlayerCount;
+            Color playerColor = GameManager.instance.GetPlayerColor(currentPlayer);
+
+            lr.material = lrDefault;
+            lr.material.SetColor("_EmissiveColor", playerColor);
+            lr.positionCount = pointCount + 1;
+            lr.startWidth = lr.endWidth = lineWidth;
+
+            Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
+
+            // first point
+            Vector3 targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer);
+            lr.SetPosition(0, targetPos + transform.position);
+
+            // middle points
+            for (int currentPoint = 1; currentPoint < pointCount; currentPoint++)
+            {
+                targetPos = rotationPerSegment * targetPos;
+                lr.SetPosition(currentPoint, targetPos + transform.position);
+            }
+
+            // last connecting point
+            targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * (currentPlayer + 1));
+            lr.SetPosition(pointCount, targetPos + transform.position);
+        }
     }
 
-    public void CalculateCircle()
+    List<GameObject> lineRenderers;
+    void RegenerateLineRenderers()
     {
-        if (!lr || lineStepCount < 1) return;
-
-        lr.positionCount = lineStepCount;
-        Vector3 targetPos = GetTargetPointInCircleLocal(angleOffset);
-        lr.SetPosition(0, targetPos + transform.position);
-
-        Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
-
-        for (int i = 1; i < lineStepCount; i++) {
-            targetPos = rotationPerSegment * targetPos;
-            lr.SetPosition(i, targetPos + transform.position);
+        if (lineRenderers.Count == 0)
+        {
+            for (int i = 0; i < GameManager.instance.alivePlayerCount; i++)
+            {
+                GameObject obj = new GameObject();
+                obj.transform.parent = transform;
+                obj.name = "Line " + i;
+                LineRenderer lr = obj.AddComponent<LineRenderer>();
+                lineRenderers.Add(obj);
+            }
         }
+        else
+        {
+            for (int i = 0; i < lineRenderers.Count; i++)
+            {
+                Destroy(lineRenderers[i]);
+                lineRenderers.RemoveAt(i);
+            }
+        }
+       
     }
 
     public Vector3 GetTargetPointInCircle(float angle)
@@ -45,5 +94,14 @@ public class Map : MonoBehaviour
     public Vector3 GetTargetPointInCircleLocal(float angle)
     {
         return Quaternion.Euler(0, 0, angle) * transform.up * mapRadius;
+    }
+
+    public void ShieldHit(int playerID)
+    {
+        if (shieldLevels[playerID] == 0)
+        {
+            GameManager.instance.alivePlayerCount--;
+        }
+        shieldLevels[playerID]--;
     }
 }
