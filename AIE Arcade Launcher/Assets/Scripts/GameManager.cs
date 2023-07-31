@@ -158,7 +158,11 @@ public class GameManager : MonoBehaviour
 
     GameData SafeGetGameData(int index)
     {
-
+        if (index >= gameData.Count) {
+            index %= gameData.Count;
+        } else if (index < 0) {
+            index = (gameData.Count - index * -1 % gameData.Count) % gameData.Count;
+        }
 
         return gameData[index];
     }
