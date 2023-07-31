@@ -46,6 +46,9 @@ public class GameManager : MonoBehaviour
             // the "starting position" is as follows, with 2 players as an example:
             // 360 / player count to get the base angle (360 / 2 = 180)
             // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
+            // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
+            // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
+            // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
             players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 360.0f / playerCount);
 
             if (i < playerEmissives.Count) {
