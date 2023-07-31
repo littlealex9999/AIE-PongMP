@@ -14,9 +14,12 @@ public class GameManager : MonoBehaviour
     public int playerCount;
     List<Paddle> players = new List<Paddle>();
 
+    [Range(0, 360)] public float mapRotationOffset = 0.0f;
+
     [ColorUsage(true, true)] public List<Color> playerEmissives = new List<Color>();
 
     public float playerDistance = 4.0f;
+    [Min(0)] public int shieldHits = 1;
 
     void Awake()
     {
@@ -33,13 +36,23 @@ public class GameManager : MonoBehaviour
 
     void BuildGameBoard()
     {
+        map.angleOffset = mapRotationOffset;
+
+        map.shieldLevels.Clear();
+
         for (int i = 0; i < playerCount; i++) {
             players.Add(Instantiate(paddleObject, map.transform).GetComponent<Paddle>());
-            players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) - 360.0f / (playerCount * 2), 360.0f / playerCount);
+
+            // the "starting position" is as follows, with 2 players as an example:
+            // 360 / player count to get the base angle (360 / 2 = 180)
+            // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
+            players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 360.0f / playerCount);
 
             if (i < playerEmissives.Count) {
                 players[i].GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GetPlayerColor(i));
             }
+
+            map.shieldLevels.Add(shieldHits);
         }
 
         // Set the colors of the linerenderer to match the player's colors
@@ -59,6 +72,8 @@ public class GameManager : MonoBehaviour
         gradient.SetKeys(colorKeys, alphaKeys);
 
         mapRenderer.colorGradient = gradient;
+
+        map.CalculateCircle();
     }
 
     Color GetPlayerColor(int index)

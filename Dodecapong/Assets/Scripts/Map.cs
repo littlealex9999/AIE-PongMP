@@ -14,7 +14,14 @@ public class Map : MonoBehaviour
 
     public LineRenderer lr;
 
+    public List<int> shieldLevels = new List<int>();
+
     private void OnValidate()
+    {
+        CalculateCircle();
+    }
+
+    public void CalculateCircle()
     {
         if (!lr || lineStepCount < 1) return;
 

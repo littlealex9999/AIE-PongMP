@@ -35,7 +35,8 @@ public class Ball : MonoBehaviour
 
     private void BounceOnBounds()
     {
-        if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) {
+        if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) 
+        {
             transform.position = (transform.position - map.transform.position).normalized * map.mapRadius;
         }
 

@@ -251,14 +251,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   map: {fileID: 1755136403}
+  ball: {fileID: 1398215481}
   paddleObject: {fileID: 3534200737216339463, guid: da3f0ffbcdfbe8943b4ee3481d1380d5, type: 3}
   playerCount: 3
+  mapRotationOffset: 50
   playerEmissives:
   - {r: 0, g: 0.16753925, b: 3.9999995, a: 1}
   - {r: 3.9999995, g: 0, b: 0.12565443, a: 1}
   - {r: 0.25130886, g: 3.9999995, b: 0, a: 1}
   - {r: 3.9999995, g: 3.8952875, b: 0, a: 1}
   playerDistance: 4
+  shieldHits: 1
 --- !u!4 &545393407
 Transform:
   m_ObjectHideFlags: 0
@@ -874,6 +877,7 @@ MonoBehaviour:
   lineStepCount: 50
   angleOffset: 0
   lr: {fileID: 1755136405}
+  shieldLevels: 
 --- !u!4 &1755136404
 Transform:
   m_ObjectHideFlags: 0
