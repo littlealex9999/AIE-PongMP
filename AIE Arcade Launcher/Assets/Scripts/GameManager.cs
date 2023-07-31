@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
     List<AppHelper> runningApps = new List<AppHelper>();
 
     public TextMeshProUGUI text;
+    public GamesList gamesList;
+    public List<GameObject> gamesListingObjects = new List<GameObject>();
+
     public int targetGame = 0;
     public int displayedGame = -1;
     public float switchCooldown = 0.1f;
@@ -62,7 +65,7 @@ public class GameManager : MonoBehaviour
                     --i;
 
                     // in case the game being played was currently selected
-                    UpdateSelectionText();
+                    UpdateAllSelectionText();
                 }
             }
         }
@@ -85,7 +88,7 @@ public class GameManager : MonoBehaviour
             else if (targetGame >= gameData.Count) targetGame = 0;
 
             displayedGame = targetGame;
-            UpdateSelectionText();
+            UpdateAllSelectionText();
         }
 
         // start running a game
@@ -98,7 +101,7 @@ public class GameManager : MonoBehaviour
                 runningApps.Add(new AppHelper(gameData[displayedGame]));
             }
 
-            UpdateSelectionText();
+            UpdateAllSelectionText();
         }
     }
 
@@ -132,15 +135,32 @@ public class GameManager : MonoBehaviour
         dataManager.WriteGameData(data);
     }
 
-    void UpdateSelectionText()
+    void UpdateSelectionText(int index)
     {
-        text.text = gameData[displayedGame].gameTitle;
-
-        if (CheckAppRunning(gameData[displayedGame])) {
-            text.color = runningColor;
+        TextMeshProUGUI targetText = gamesList.GetListObject(index).GetComponentInChildren<TextMeshProUGUI>();
+        targetText.text = SafeGetGameData(displayedGame + index).gameTitle;
+        if (CheckAppRunning(SafeGetGameData(displayedGame + index))) {
+            targetText.color = runningColor;
         } else {
-            text.color = normalColor;
+            targetText.color = normalColor;
         }
+    }
+
+    void UpdateAllSelectionText()
+    {
+        UpdateSelectionText(0);
+
+        for (int i = 1; i < gamesList.layers; i++) {
+            UpdateSelectionText(i);
+            UpdateSelectionText(-i);
+        }
+    }
+
+    GameData SafeGetGameData(int index)
+    {
+
+
+        return gameData[index];
     }
 
     bool CheckAppRunning(GameData data)
