@@ -12,7 +12,6 @@ public class GameManager : MonoBehaviour
     public GameObject paddleObject;
 
     public int playerCount;
-    [HideInInspector] public int alivePlayerCount;
 
     List<Paddle> players = new List<Paddle>();
 
@@ -33,7 +32,6 @@ public class GameManager : MonoBehaviour
 
     void Initialise()
     {
-        alivePlayerCount = playerCount;
         BuildGameBoard();
     }
     void BuildGameBoard()

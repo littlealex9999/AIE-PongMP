@@ -48,17 +48,11 @@ public class Ball : MonoBehaviour
     {
         Vector2 targetVec = transform.position.normalized;
         float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
-        int alivePlayerCount = GameManager.instance.alivePlayerCount;
+        int alivePlayerCount = map.GetLivingPlayerCount();
 
         float playerSector = 360.0f / alivePlayerCount;
 
-        for (int i = 0; i < alivePlayerCount; i++)
-        {
-            if (angle > playerSector * i && angle < playerSector * i + playerSector)
-            {
-                map.ShieldHit(i);
-            }
-        }
+        map.ShieldHit(map.GetTargetLivingPlayerID((int)(angle / 360.0f * alivePlayerCount)));
 
         rb.position = Vector2.zero;
         rb.velocity = Random.insideUnitCircle.normalized * constantVel;

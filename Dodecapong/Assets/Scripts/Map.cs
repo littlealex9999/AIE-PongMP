@@ -32,7 +32,7 @@ public class Map : MonoBehaviour
     {
         if (lineRenderers.Count == 0)
         {
-            int alivePlayerCount = GameManager.instance.alivePlayerCount;
+            int alivePlayerCount = GetLivingPlayerCount();
 
             for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
@@ -44,7 +44,7 @@ public class Map : MonoBehaviour
 
                 // setup values
                 int pointCount = lineStepCount / alivePlayerCount;
-                Color playerColor = GameManager.instance.GetPlayerColor(currentPlayer);
+                Color playerColor = GameManager.instance.GetPlayerColor(GetTargetLivingPlayerID(currentPlayer));
 
                 lr.material = lrDefault;
                 lr.material.SetColor("_EmissiveColor", playerColor);
@@ -92,11 +92,31 @@ public class Map : MonoBehaviour
 
     public void ShieldHit(int playerID)
     {
+        if (playerID < 0 || playerID >= shieldLevels.Count) return;
+
+        --shieldLevels[playerID];
         if (shieldLevels[playerID] == 0)
         {
-            GameManager.instance.alivePlayerCount--;
             RegenerateLineRenderers();
         }
-        shieldLevels[playerID]--;
+    }
+
+    public int GetLivingPlayerCount()
+    {
+        int ret = 0;
+        for (int i = 0; i < shieldLevels.Count; i++) {
+            if (shieldLevels[i] > 0) ++ret;
+        }
+        return ret;
+    }
+
+    public int GetTargetLivingPlayerID(int index)
+    {
+        int hits = 0;
+        for (int i = 0; i < shieldLevels.Count; i++) {
+            if (shieldLevels[i] > 0) ++hits;
+            if (hits == index + 1) return i;
+        }
+        return -1;
     }
 }
