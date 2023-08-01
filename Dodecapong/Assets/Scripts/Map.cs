@@ -1,10 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.ExceptionServices;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 //[RequireComponent(typeof(LineRenderer))]
 public class Map : MonoBehaviour
@@ -16,10 +12,6 @@ public class Map : MonoBehaviour
     public List<int> shieldLevels = new List<int>();
     public List<Paddle> players = new List<Paddle>();
 
-    public Material lrDefault;
-
-    public float lineWidth;
-
     public GameObject ringMesh;
     public void GenerateMap()
     {
@@ -28,55 +20,39 @@ public class Map : MonoBehaviour
         RegenerateLineRenderers();
     }
 
-    public List<GameObject> lineRenderers;
+    public List<GameObject> ringMeshes;
     void RegenerateLineRenderers()
     {
-        if (lineRenderers.Count == 0)
+        if (ringMeshes.Count == 0)
         {
             int alivePlayerCount = GetLivingPlayerCount();
 
             for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
-                GameObject obj = new GameObject();
-                obj.transform.parent = transform;
-                obj.name = "Line " + currentPlayer;
-                LineRenderer lr = obj.AddComponent<LineRenderer>();
-                lineRenderers.Add(obj);
-
                 // setup values
                 int pointCount = lineStepCount / alivePlayerCount;
                 Color playerColor = GameManager.instance.GetPlayerColor(GetTargetLivingPlayerID(currentPlayer));
 
-                lr.material = lrDefault;
-                lr.material.SetColor("_EmissiveColor", playerColor);
-                lr.positionCount = pointCount + 1;
-                lr.startWidth = lr.endWidth = lineWidth;
-
                 Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
+                float angle = GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer;
+                Vector3 targetPos = GetTargetPointInCircleLocal(angle);
 
-                // first point
-                Vector3 targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer);
-                lr.SetPosition(0, targetPos + transform.position);
-
-                // middle points
-                for (int currentPoint = 1; currentPoint < pointCount; currentPoint++)
+                for (int currentPoint = 0; currentPoint < pointCount; currentPoint++)
                 {
                     targetPos = rotationPerSegment * targetPos;
-                    lr.SetPosition(currentPoint, targetPos + transform.position);
+                    GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
+                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GameManager.instance.GetPlayerColor(currentPlayer));
+                    ringMeshes.Add(obj);
                 }
-
-                // last connecting point
-                targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * (currentPlayer + 1));
-                lr.SetPosition(pointCount, targetPos + transform.position);
             }
         }
         else
         {
-            foreach (GameObject line in lineRenderers)
+            foreach (GameObject obj in ringMeshes)
             {
-                Destroy(line);
+                Destroy(obj);
             }
-            lineRenderers.Clear();
+            ringMeshes.Clear();
             RegenerateLineRenderers();
         }
     }
@@ -91,9 +67,9 @@ public class Map : MonoBehaviour
         return Quaternion.Euler(0, 0, angle) * transform.up * mapRadius;
     }
 
-    public void ShieldHit(int playerID)
+    public bool ShieldHit(int playerID)
     {
-        if (playerID < 0 || playerID >= shieldLevels.Count) return;
+        if (playerID < 0 || playerID >= shieldLevels.Count) return false;
 
         --shieldLevels[playerID];
         if (shieldLevels[playerID] == 0)
@@ -101,6 +77,8 @@ public class Map : MonoBehaviour
             RegenerateLineRenderers();
             RemovePlayer(playerID);
         }
+
+        return true;
     }
 
     public void RemovePlayer(int playerID)
