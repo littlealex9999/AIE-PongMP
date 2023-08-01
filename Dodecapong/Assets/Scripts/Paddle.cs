@@ -74,34 +74,26 @@ public class Paddle : MonoBehaviour
     {
         float maxDev = startingRotation + angleDeviance;
         float minDev = startingRotation - angleDeviance;
-
         float angle = Angle(transform.position);
 
-        float moveTarget = Vector3.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
-        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
-
-        if (angle > minDev && moveTarget < 0 )
+        if (angle > maxDev || angle < minDev)
         {
-            transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+            float lowComparison = Mathf.Abs(360 - angle);
+            float lowExtraComparison = Mathf.Abs(minDev - angle);
+            if (lowExtraComparison < lowComparison) lowComparison = lowExtraComparison;
+
+            if (maxDev >= 360) maxDev -= 360;
+            float highComparison = Mathf.Abs(maxDev - angle);
+
+            if (lowComparison < highComparison)
+            {
+                SetPosition(minDev);
+            }
+            else
+            {
+                SetPosition(maxDev);
+            }
         }
-
-
-        //if (angle > maxDev || angle < minDev)
-        //{
-        //    float lowComparison = 360 - angle;
-        //    if (angle < lowComparison) lowComparison = angle;
-
-        //    float highComparison = angle - maxDev;
-
-        //    if (lowComparison < highComparison)
-        //    {
-        //        SetPosition(minDev);
-        //    }
-        //    else
-        //    {
-        //        SetPosition(maxDev);
-        //    }
-        //}
     }
 
     public void SetPosition(float angle)

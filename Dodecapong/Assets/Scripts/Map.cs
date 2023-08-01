@@ -37,11 +37,11 @@ public class Map : MonoBehaviour
             for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
                 // setup values
+                int pointCount = lineStepCount / alivePlayerCount;
                 Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
                 float angle = GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer;
                 Vector3 targetPos = GetTargetPointInCircleLocal(angle);
 
-                int pointCount = lineStepCount / alivePlayerCount;
                 for (int currentPoint = 0; currentPoint < pointCount; currentPoint++)
                 {
                     targetPos = rotationPerSegment * targetPos;
@@ -85,6 +85,7 @@ public class Map : MonoBehaviour
     public bool ShieldHit(int playerID)
     {
         if (playerID < 0 || playerID >= shieldLevels.Count) return false;
+
         if (shieldLevels[playerID] == 0)
         {
             RegenerateLineRenderers();
