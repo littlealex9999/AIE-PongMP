@@ -14,6 +14,7 @@ public class Map : MonoBehaviour
     [Min(3)] public int lineStepCount;
 
     public List<int> shieldLevels = new List<int>();
+    public List<Paddle> players = new List<Paddle>();
 
     public Material lrDefault;
 
@@ -71,7 +72,7 @@ public class Map : MonoBehaviour
         }
         else
         {
-            foreach (var line in lineRenderers)
+            foreach (GameObject line in lineRenderers)
             {
                 Destroy(line);
             }
@@ -98,7 +99,13 @@ public class Map : MonoBehaviour
         if (shieldLevels[playerID] == 0)
         {
             RegenerateLineRenderers();
+            RemovePlayer(playerID);
         }
+    }
+
+    public void RemovePlayer(int playerID)
+    {
+        players[playerID].gameObject.SetActive(false);
     }
 
     public int GetLivingPlayerCount()
