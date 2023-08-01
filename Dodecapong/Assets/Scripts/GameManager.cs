@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
             // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
             // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
             // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
-            map.players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 360.0f / playerCount);
+            map.players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 180.0f / playerCount);
             map.players[i].GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GetPlayerColor(i));
             map.players[i].name = "Player " + i;
         }

@@ -83,15 +83,14 @@ public class Paddle : MonoBehaviour
         float maxDev = startingRotation + angleDeviance;
         float minDev = startingRotation - angleDeviance;
 
-        //if (angle < minDev) SetPosition(minDev);
-        //if (angle > maxDev) SetPosition(maxDev);
-
         if (angle > maxDev || angle < minDev)
         {
-            float lowComparison = 360 - angle;
-            if (angle < lowComparison) lowComparison = angle;
+            float lowComparison = Mathf.Abs(360 - angle);
+            float lowExtraComparison = Mathf.Abs(minDev - angle);
+            if (lowExtraComparison < lowComparison) lowComparison = lowExtraComparison;
 
-            float highComparison = angle - maxDev;
+            if (maxDev >= 360) maxDev -= 360;
+            float highComparison = Mathf.Abs(maxDev - angle);
 
             if (lowComparison < highComparison)
             {

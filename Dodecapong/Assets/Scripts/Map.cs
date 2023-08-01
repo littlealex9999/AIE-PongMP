@@ -72,11 +72,11 @@ public class Map : MonoBehaviour
         if (playerID < 0 || playerID >= shieldLevels.Count) return false;
 
         --shieldLevels[playerID];
-        if (shieldLevels[playerID] == 0)
-        {
-            RegenerateLineRenderers();
-            RemovePlayer(playerID);
-        }
+        //if (shieldLevels[playerID] == 0)
+        //{
+        //    RegenerateLineRenderers();
+        //    RemovePlayer(playerID);
+        //}
 
         return true;
     }
