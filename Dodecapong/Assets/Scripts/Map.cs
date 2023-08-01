@@ -11,6 +11,7 @@ public class Map : MonoBehaviour
     [Min(3)] public int lineStepCount;
 
     public List<int> shieldLevels = new List<int>();
+    public List<Paddle> players = new List<Paddle>();
 
     public GameObject ringMesh;
     public void GenerateMap()
@@ -26,7 +27,7 @@ public class Map : MonoBehaviour
     {
         if (ringMeshes.Count == 0)
         {
-            int alivePlayerCount = GameManager.instance.alivePlayerCount;
+            int alivePlayerCount = GetLivingPlayerCount();
 
             for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
@@ -47,7 +48,7 @@ public class Map : MonoBehaviour
         }
         else
         {
-            foreach (var obj in ringMeshes)
+            foreach (GameObject line in lineRenderers)
             {
                 Destroy(obj);
             }
@@ -78,14 +79,36 @@ public class Map : MonoBehaviour
 
     public bool ShieldHit(int playerID)
     {
+        if (playerID < 0 || playerID >= shieldLevels.Count) return;
+        --shieldLevels[playerID];
         if (shieldLevels[playerID] == 0)
         {
-            GameManager.instance.alivePlayerCount--;
             RegenerateLineRenderers();
-            return false;
+            RemovePlayer(playerID);
         }
-        shieldLevels[playerID]--;
-        UpdateScore();
-        return true;
+    }
+
+    public void RemovePlayer(int playerID)
+    {
+        players[playerID].gameObject.SetActive(false);
+    }
+
+    public int GetLivingPlayerCount()
+    {
+        int ret = 0;
+        for (int i = 0; i < shieldLevels.Count; i++) {
+            if (shieldLevels[i] > 0) ++ret;
+        }
+        return ret;
+    }
+
+    public int GetTargetLivingPlayerID(int index)
+    {
+        int hits = 0;
+        for (int i = 0; i < shieldLevels.Count; i++) {
+            if (shieldLevels[i] > 0) ++hits;
+            if (hits == index + 1) return i;
+        }
+        return -1;
     }
 }
