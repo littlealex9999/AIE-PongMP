@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Ball : MonoBehaviour
 {
@@ -35,25 +36,18 @@ public class Ball : MonoBehaviour
 
     private void BounceOnBounds()
     {
-        if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) 
-        {
-            transform.position = (transform.position - map.transform.position).normalized * map.mapRadius;
-        }
+        //if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) 
+        //{
+        //    transform.position = (transform.position - map.transform.position).normalized * map.mapRadius;
+        //}
 
         Vector3 forward = rb.velocity.normalized;
         Vector3 normal = (Vector3.zero - transform.position).normalized;
         rb.velocity = Vector3.Reflect(forward, normal) * constantVel;
+        rb.transform.position += normal;
     }
     private void ResetBall()
     {
-        Vector2 targetVec = transform.position.normalized;
-        float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
-        int alivePlayerCount = map.GetLivingPlayerCount();
-
-        float playerSector = 360.0f / alivePlayerCount;
-
-        map.ShieldHit(map.GetTargetLivingPlayerID((int)(angle / 360.0f * alivePlayerCount)));
-
         rb.position = Vector2.zero;
         rb.velocity = Random.insideUnitCircle.normalized * constantVel;
     }
@@ -75,7 +69,20 @@ public class Ball : MonoBehaviour
         }
         if (distFromCenter + ballRadius > map.mapRadius)
         {
-            ResetBall();
+            Vector2 targetVec = transform.position.normalized;
+            float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
+            int alivePlayerCount = map.GetLivingPlayerCount();
+
+            int playerID = map.GetTargetLivingPlayerID((int)(angle / 360.0f * alivePlayerCount));
+            if (map.shieldLevels[playerID] <= 0)
+            {
+                ResetBall();
+            }
+            else
+            {
+                BounceOnBounds();
+            }
+            map.ShieldHit(playerID);
         }
     }
     public static float Angle(Vector2 vector2)

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -20,6 +21,10 @@ public class Map : MonoBehaviour
 
         RegenerateLineRenderers();
         UpdateScore();
+        for (int i = 0; i < shieldLevels.Count; i++)
+        {
+            list[i].gameObject.name = "Player " + i + " Shield Lives";
+        }
     }
 
     public List<GameObject> ringMeshes;
@@ -41,14 +46,14 @@ public class Map : MonoBehaviour
                 {
                     targetPos = rotationPerSegment * targetPos;
                     GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
-                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GameManager.instance.GetPlayerColor(currentPlayer));
+                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GameManager.instance.GetPlayerColor(GetTargetLivingPlayerID(currentPlayer)));
                     ringMeshes.Add(obj);
                 }
             }
         }
         else
         {
-            foreach (GameObject line in lineRenderers)
+            foreach (GameObject obj in ringMeshes)
             {
                 Destroy(obj);
             }
@@ -79,13 +84,15 @@ public class Map : MonoBehaviour
 
     public bool ShieldHit(int playerID)
     {
-        if (playerID < 0 || playerID >= shieldLevels.Count) return;
-        --shieldLevels[playerID];
+        if (playerID < 0 || playerID >= shieldLevels.Count) return false;
         if (shieldLevels[playerID] == 0)
         {
             RegenerateLineRenderers();
             RemovePlayer(playerID);
         }
+        --shieldLevels[playerID];
+        UpdateScore();
+        return true;
     }
 
     public void RemovePlayer(int playerID)
