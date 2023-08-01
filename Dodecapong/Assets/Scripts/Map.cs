@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using static UnityEditor.PlayerSettings;
 
@@ -17,6 +18,7 @@ public class Map : MonoBehaviour
         if (lineStepCount < 1) return;
 
         RegenerateLineRenderers();
+        UpdateScore();
     }
 
     public List<GameObject> ringMeshes;
@@ -64,6 +66,16 @@ public class Map : MonoBehaviour
         return Quaternion.Euler(0, 0, angle) * transform.up * mapRadius;
     }
 
+    public List<TextMeshProUGUI> list = new List<TextMeshProUGUI>();
+
+    public void UpdateScore()
+    {
+        for (int i = 0; i < shieldLevels.Count; i++)
+        {
+            list[i].text = "P" + i + " Lives " + shieldLevels[i];
+        }
+    }
+
     public bool ShieldHit(int playerID)
     {
         if (shieldLevels[playerID] == 0)
@@ -73,6 +85,7 @@ public class Map : MonoBehaviour
             return false;
         }
         shieldLevels[playerID]--;
+        UpdateScore();
         return true;
     }
 }

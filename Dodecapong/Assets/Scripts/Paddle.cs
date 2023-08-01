@@ -72,36 +72,36 @@ public class Paddle : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector3 input, bool clampSpeed = true)
     {
-        float moveTarget = Vector3.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
-        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
-
-        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
-
-        float angle = Angle(transform.position);
-        float otherAngle = 180 + angle;
-
         float maxDev = startingRotation + angleDeviance;
         float minDev = startingRotation - angleDeviance;
 
-        //if (angle < minDev) SetPosition(minDev);
-        //if (angle > maxDev) SetPosition(maxDev);
+        float angle = Angle(transform.position);
 
-        if (angle > maxDev || angle < minDev)
+        float moveTarget = Vector3.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
+
+        if (angle > minDev && moveTarget < 0 )
         {
-            float lowComparison = 360 - angle;
-            if (angle < lowComparison) lowComparison = angle;
-
-            float highComparison = angle - maxDev;
-
-            if (lowComparison < highComparison)
-            {
-                SetPosition(minDev);
-            }
-            else
-            {
-                SetPosition(maxDev);
-            }
+            transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
         }
+
+
+        //if (angle > maxDev || angle < minDev)
+        //{
+        //    float lowComparison = 360 - angle;
+        //    if (angle < lowComparison) lowComparison = angle;
+
+        //    float highComparison = angle - maxDev;
+
+        //    if (lowComparison < highComparison)
+        //    {
+        //        SetPosition(minDev);
+        //    }
+        //    else
+        //    {
+        //        SetPosition(maxDev);
+        //    }
+        //}
     }
 
     public void SetPosition(float angle)
