@@ -12,11 +12,13 @@ public class GameManager : MonoBehaviour
     public GameObject paddleObject;
 
     public int playerCount;
+    [HideInInspector] public int alivePlayerCount;
+
     List<Paddle> players = new List<Paddle>();
 
     [Range(0, 360)] public float mapRotationOffset = 0.0f;
 
-    [ColorUsage(true, true)] public List<Color> playerEmissives = new List<Color>();
+    [ColorUsage(true, true), SerializeField] List<Color> playerEmissives = new List<Color>();
 
     public float playerDistance = 4.0f;
     [Min(0)] public int shieldHits = 1;
@@ -26,18 +28,16 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
         else Destroy(this);
 
+        Initialise();
+    }
+
+    void Initialise()
+    {
+        alivePlayerCount = playerCount;
         BuildGameBoard();
     }
-
-    void Update()
-    {
-        
-    }
-
     void BuildGameBoard()
     {
-        map.angleOffset = mapRotationOffset;
-
         map.shieldLevels.Clear();
 
         for (int i = 0; i < playerCount; i++) {
@@ -50,36 +50,16 @@ public class GameManager : MonoBehaviour
             // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
             // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
             players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 360.0f / playerCount);
-
-            if (i < playerEmissives.Count) {
-                players[i].GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GetPlayerColor(i));
-            }
+            players[i].GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GetPlayerColor(i));
+            players[i].name = "Player " + i;
 
             map.shieldLevels.Add(shieldHits);
         }
 
-        // Set the colors of the linerenderer to match the player's colors
-        LineRenderer mapRenderer = map.GetComponent<LineRenderer>();
-
-        GradientColorKey[] colorKeys = new GradientColorKey[playerCount];
-        GradientAlphaKey[] alphaKeys = new GradientAlphaKey[playerCount];
-        for (int i = 0; i < playerCount; i++) {
-            Color targetColor = GetPlayerColor(i);
-            float time = 1.0f / playerCount * (i + 1);
-            colorKeys[i] = new GradientColorKey(targetColor, time);
-            alphaKeys[i] = new GradientAlphaKey(targetColor.a, time);
-        }
-
-        Gradient gradient = new Gradient();
-        gradient.mode = GradientMode.Fixed;
-        gradient.SetKeys(colorKeys, alphaKeys);
-
-        mapRenderer.colorGradient = gradient;
-
-        map.CalculateCircle();
+        map.GenerateMap();
     }
 
-    Color GetPlayerColor(int index)
+    public Color GetPlayerColor(int index)
     {
         if (index < playerEmissives.Count) return playerEmissives[index];
         else return playerEmissives[playerEmissives.Count - 1];
