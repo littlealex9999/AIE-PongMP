@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
             // the "starting position" is as follows, with 2 players as an example:
             // 360 / player count to get the base angle (360 / 2 = 180)
             // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
-            players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 360.0f / playerCount);
+            players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 360.0f / playerCount / 2);
             players[i].GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GetPlayerColor(i));
             players[i].name = "Player " + i;
 
