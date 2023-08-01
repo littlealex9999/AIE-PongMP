@@ -19,71 +19,65 @@ public class Map : MonoBehaviour
 
     public float lineWidth;
 
+    public GameObject ringMesh;
     public void GenerateMap()
     {
         if (lineStepCount < 1) return;
 
-        int alivePlayerCount = GameManager.instance.alivePlayerCount;
-
-        for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
-        {
-            GameObject obj = new GameObject();
-            obj.transform.parent = transform;
-            obj.name = "Line " + currentPlayer;
-            LineRenderer lr = obj.AddComponent<LineRenderer>();
-            lineRenderers.Add(obj);
-
-            // setup values
-            int pointCount = lineStepCount / alivePlayerCount;
-            Color playerColor = GameManager.instance.GetPlayerColor(currentPlayer);
-
-            lr.material = lrDefault;
-            lr.material.SetColor("_EmissiveColor", playerColor);
-            lr.positionCount = pointCount + 1;
-            lr.startWidth = lr.endWidth = lineWidth;
-
-            Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
-
-            // first point
-            Vector3 targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer);
-            lr.SetPosition(0, targetPos + transform.position);
-
-            // middle points
-            for (int currentPoint = 1; currentPoint < pointCount; currentPoint++)
-            {
-                targetPos = rotationPerSegment * targetPos;
-                lr.SetPosition(currentPoint, targetPos + transform.position);
-            }
-
-            // last connecting point
-            targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * (currentPlayer + 1));
-            lr.SetPosition(pointCount, targetPos + transform.position);
-        }
+        RegenerateLineRenderers();
     }
 
-    List<GameObject> lineRenderers;
+    public List<GameObject> lineRenderers;
     void RegenerateLineRenderers()
     {
         if (lineRenderers.Count == 0)
         {
-            for (int i = 0; i < GameManager.instance.alivePlayerCount; i++)
+            int alivePlayerCount = GameManager.instance.alivePlayerCount;
+
+            for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
                 GameObject obj = new GameObject();
                 obj.transform.parent = transform;
-                obj.name = "Line " + i;
+                obj.name = "Line " + currentPlayer;
                 LineRenderer lr = obj.AddComponent<LineRenderer>();
                 lineRenderers.Add(obj);
+
+                // setup values
+                int pointCount = lineStepCount / alivePlayerCount;
+                Color playerColor = GameManager.instance.GetPlayerColor(currentPlayer);
+
+                lr.material = lrDefault;
+                lr.material.SetColor("_EmissiveColor", playerColor);
+                lr.positionCount = pointCount + 1;
+                lr.startWidth = lr.endWidth = lineWidth;
+
+                Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
+
+                // first point
+                Vector3 targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer);
+                lr.SetPosition(0, targetPos + transform.position);
+
+                // middle points
+                for (int currentPoint = 1; currentPoint < pointCount; currentPoint++)
+                {
+                    targetPos = rotationPerSegment * targetPos;
+                    lr.SetPosition(currentPoint, targetPos + transform.position);
+                }
+
+                // last connecting point
+                targetPos = GetTargetPointInCircleLocal(GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * (currentPlayer + 1));
+                lr.SetPosition(pointCount, targetPos + transform.position);
             }
         }
         else
         {
-            for (int i = 0; i < lineRenderers.Count; i++)
+            foreach (var line in lineRenderers)
             {
-                Destroy(lineRenderers[i]);
-                lineRenderers.RemoveAt(i);
+                Destroy(line);
             }
+            lineRenderers.Clear();
+            RegenerateLineRenderers();
         }
-       
     }
 
     public Vector3 GetTargetPointInCircle(float angle)
@@ -101,6 +95,7 @@ public class Map : MonoBehaviour
         if (shieldLevels[playerID] == 0)
         {
             GameManager.instance.alivePlayerCount--;
+            RegenerateLineRenderers();
         }
         shieldLevels[playerID]--;
     }

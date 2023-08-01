@@ -48,11 +48,11 @@ public class Ball : MonoBehaviour
     {
         Vector2 targetVec = transform.position.normalized;
         float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
-        int playerCount = GameManager.instance.playerCount;
+        int alivePlayerCount = GameManager.instance.alivePlayerCount;
 
-        float playerSector = 360.0f / playerCount;
+        float playerSector = 360.0f / alivePlayerCount;
 
-        for (int i = 0; i < playerCount; i++)
+        for (int i = 0; i < alivePlayerCount; i++)
         {
             if (angle > playerSector * i && angle < playerSector * i + playerSector)
             {
