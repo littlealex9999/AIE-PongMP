@@ -31,16 +31,19 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = Random.insideUnitCircle.normalized * constantVel;
+        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
+    }
+
+    private void OnGameStateChanged()
+    {
+        if (GameManager.instance.gameState == GameManager.GameState.MAINMENU)
+        {
+            rb.velocity = rb.transform.forward * constantVel;
+        }
     }
 
     private void BounceOnBounds()
     {
-        //if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) 
-        //{
-        //    transform.position = (transform.position - map.transform.position).normalized * map.mapRadius;
-        //}
-
         Vector3 forward = rb.velocity.normalized;
         Vector3 normal = (Vector3.zero - transform.position).normalized;
         rb.velocity = Vector3.Reflect(forward, normal) * constantVel;
@@ -59,6 +62,8 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY) return;
+
         if (rb.velocity.magnitude > constantVel)
         {
             rb.velocity -= Vector2.one * dampStrength * Time.fixedDeltaTime;
@@ -69,20 +74,13 @@ public class Ball : MonoBehaviour
         }
         if (distFromCenter + ballRadius > map.mapRadius)
         {
-            Vector2 targetVec = transform.position.normalized;
-            float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
-            int alivePlayerCount = map.GetLivingPlayerCount();
+            float angle = Angle(transform.position.normalized);
+            int alivePlayerCount = GameManager.instance.players.Count;
 
-            int playerID = map.GetTargetLivingPlayerID((int)(angle / 360.0f * alivePlayerCount));
-            if (map.shieldLevels[playerID] <= 0)
-            {
-                ResetBall();
-            }
-            else
-            {
-                BounceOnBounds();
-            }
-            map.ShieldHit(playerID);
+            int alivePlayerID = (int)(angle / 360.0f * alivePlayerCount);
+            
+            if (GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
+            else BounceOnBounds();
         }
     }
     public static float Angle(Vector2 vector2)

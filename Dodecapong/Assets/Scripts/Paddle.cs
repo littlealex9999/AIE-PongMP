@@ -1,6 +1,5 @@
 using UnityEngine;
-using UnityEngine.Windows;
-using Input = UnityEngine.Input;
+using static GameManager;
 
 public class Paddle : MonoBehaviour
 {
@@ -17,40 +16,6 @@ public class Paddle : MonoBehaviour
 
     // the max amount you can move from your starting rotation
     float angleDeviance;
-
-    Collider2D collider;
-
-    private void Awake()
-    {
-        collider = GetComponent<Collider2D>();
-    }
-
-    void Update()
-    {
-        Vector3 input = Vector3.zero;
-
-        // we could potentially concatenate a string to search for "HorizontalPlayer" + playerID
-        // and use that to reduce the complexity of this script per player
-        switch (playerID) {
-            default:
-            case 0:
-                if (Input.GetKey(KeyCode.D)) input.x = 1;
-                else if (Input.GetKey(KeyCode.A)) input.x = -1;
-
-                if (Input.GetKey(KeyCode.W)) input.y = 1;
-                else if (Input.GetKey(KeyCode.S)) input.y = -1;
-                break;
-            case 1:
-                if (Input.GetKey(KeyCode.RightArrow)) input.x = 1;
-                else if (Input.GetKey(KeyCode.LeftArrow)) input.x = -1;
-
-                if (Input.GetKey(KeyCode.UpArrow)) input.y = 1;
-                else if (Input.GetKey(KeyCode.DownArrow)) input.y = -1;
-                break;
-        }
-
-        Move(input);
-    }
 
     public void Initialise(int playerID, float startingDistance, float startingAngle, float maxAngleDeviance)
     {
@@ -70,8 +35,13 @@ public class Paddle : MonoBehaviour
     /// </summary>
     /// <param name="input"></param>
     /// <param name="clampSpeed"></param>
-    public void Move(Vector3 input, bool clampSpeed = true)
+    public void Move(Vector2 input, bool clampSpeed = true)
     {
+        float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
+
+        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+
         float maxDev = startingRotation + angleDeviance;
         float minDev = startingRotation - angleDeviance;
         float angle = Angle(transform.position);
@@ -117,5 +87,10 @@ public class Paddle : MonoBehaviour
         }
 
         return 360 - ret;
+    }
+
+    public void SetColor(Color col)
+    {
+        GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", col);
     }
 }
