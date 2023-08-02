@@ -22,6 +22,7 @@ public class ArcTanShaderHelper : MonoBehaviour
         if (!mat) mat = GetComponent<MeshRenderer>().sharedMaterial;
 
         tex = new Texture2D(colors.Length, 1, TextureFormat.ARGB32, false);
+        tex.wrapMode = TextureWrapMode.Clamp;
         tex.filterMode = FilterMode.Point;
 
         for (int i = 0; i < colors.Length; i++) {
