@@ -9,7 +9,7 @@ public class ArcTanShaderHelper : MonoBehaviour
     Texture2DArray texArray;
     Texture2D tex;
 
-    public Color[] colors = new Color[8];
+    [ColorUsage(true, true)] public Color[] colors = new Color[8];
 
     void Update()
     {
