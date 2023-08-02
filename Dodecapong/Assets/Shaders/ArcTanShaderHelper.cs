@@ -9,7 +9,7 @@ public class ArcTanShaderHelper : MonoBehaviour
     Texture2DArray texArray;
     Texture2D tex;
 
-    [ColorUsage(true, true)] public Color[] colors = new Color[8];
+    public Color[] colors = new Color[8];
 
     void Update()
     {
@@ -19,7 +19,10 @@ public class ArcTanShaderHelper : MonoBehaviour
     [ContextMenu("Calculate Tex Array")]
     void CalculateTextureArray()
     {
+        if (!mat) mat = GetComponent<MeshRenderer>().material;
+
         tex = new Texture2D(colors.Length, 1, TextureFormat.ARGB32, false);
+        tex.filterMode = FilterMode.Point;
 
         for (int i = 0; i < colors.Length; i++) {
             tex.SetPixel(i, 1, colors[i]);
@@ -27,5 +30,10 @@ public class ArcTanShaderHelper : MonoBehaviour
         tex.Apply();
         mat.SetTexture("_mainTex", tex);
         mat.SetFloat("_PlayerCount", colors.Length);
+    }
+
+    private void OnValidate()
+    {
+        CalculateTextureArray();
     }
 }
