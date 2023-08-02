@@ -646,10 +646,11 @@ MonoBehaviour:
   gameStateChanged:
     m_PersistentCalls:
       m_Calls: []
+  alivePlayers: []
+  players: []
   map: {fileID: 1755136403}
   ball: {fileID: 1398215481}
   paddleObject: {fileID: 3534200737216339463, guid: da3f0ffbcdfbe8943b4ee3481d1380d5, type: 3}
-  playerCount: 8
   mapRotationOffset: 0
   playerEmissives:
   - {r: 0, g: 0.16753925, b: 3.9999995, a: 1}
@@ -661,7 +662,7 @@ MonoBehaviour:
   - {r: 3.9999995, g: 0.47696885, b: 0, a: 1}
   - {r: 4.085757, g: 0, b: 5.3403134, a: 1}
   playerDistance: 4
-  shieldHits: 1
+  shieldHits: 3
 --- !u!4 &545393407
 Transform:
   m_ObjectHideFlags: 0
@@ -2192,8 +2193,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapRadius: 4.5
   lineStepCount: 360
-  shieldLevels: 
-  players: []
   ringMesh: {fileID: 233501221404875068, guid: 7089394606f00074780ef6b1c562eadc, type: 3}
   ringMeshes: []
   list:
