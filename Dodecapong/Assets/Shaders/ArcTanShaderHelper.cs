@@ -19,7 +19,7 @@ public class ArcTanShaderHelper : MonoBehaviour
     [ContextMenu("Calculate Tex Array")]
     void CalculateTextureArray()
     {
-        if (!mat) mat = GetComponent<MeshRenderer>().material;
+        if (!mat) mat = GetComponent<MeshRenderer>().sharedMaterial;
 
         tex = new Texture2D(colors.Length, 1, TextureFormat.ARGB32, false);
         tex.filterMode = FilterMode.Point;
