@@ -76,11 +76,53 @@ public class Paddle : MonoBehaviour
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+
+        float angle = Angle(transform.position);
+        float otherAngle = 180 + angle;
+
+        float maxDev = startingRotation + angleDeviance;
+        float minDev = startingRotation - angleDeviance;
+
+        if (angle > maxDev || angle < minDev)
+        {
+            float lowComparison = Mathf.Abs(360 - angle);
+            float lowExtraComparison = Mathf.Abs(minDev - angle);
+            if (lowExtraComparison < lowComparison) lowComparison = lowExtraComparison;
+
+            if (maxDev >= 360) maxDev -= 360;
+            float highComparison = Mathf.Abs(maxDev - angle);
+
+            if (lowComparison < highComparison)
+            {
+                SetPosition(minDev);
+            }
+            else
+            {
+                SetPosition(maxDev);
+            }
+        }
     }
 
     public void SetPosition(float angle)
     {
-        transform.position = -facingDirection * distance;
+        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * distance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
+    }
+
+
+    public static float Angle(Vector2 vector2)
+    {
+        float ret;
+
+        if (vector2.x < 0)
+        {
+            ret = 360 - (Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg * -1);
+        }
+        else
+        {
+            ret = Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg;
+        }
+
+        return 360 - ret;
     }
 }

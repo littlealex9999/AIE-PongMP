@@ -253,13 +253,18 @@ MonoBehaviour:
   map: {fileID: 1755136403}
   ball: {fileID: 1398215481}
   paddleObject: {fileID: 3534200737216339463, guid: da3f0ffbcdfbe8943b4ee3481d1380d5, type: 3}
-  playerCount: 3
-  mapRotationOffset: 50
+  playerCount: 8
+  alivePlayerCount: 0
+  mapRotationOffset: 0
   playerEmissives:
   - {r: 0, g: 0.16753925, b: 3.9999995, a: 1}
   - {r: 3.9999995, g: 0, b: 0.12565443, a: 1}
   - {r: 0.25130886, g: 3.9999995, b: 0, a: 1}
   - {r: 3.9999995, g: 3.8952875, b: 0, a: 1}
+  - {r: 0.45988056, g: 0, b: 5.3403144, a: 1}
+  - {r: 0, g: 3.9999995, b: 3.5756507, a: 1}
+  - {r: 3.9999995, g: 0.47696885, b: 0, a: 1}
+  - {r: 4.085757, g: 0, b: 5.3403134, a: 1}
   playerDistance: 4
   shieldHits: 1
 --- !u!4 &545393407
@@ -853,7 +858,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1755136404}
   - component: {fileID: 1755136403}
-  - component: {fileID: 1755136405}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -874,10 +878,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapRadius: 4.5
-  lineStepCount: 50
-  angleOffset: 0
-  lr: {fileID: 1755136405}
+  lineStepCount: 45
   shieldLevels: 
+  lrDefault: {fileID: 2100000, guid: 5321488250a39384ba4079ae7a5d2c24, type: 2}
+  lineWidth: 0.1
+  ringMesh: {fileID: 233501221404875068, guid: 7089394606f00074780ef6b1c562eadc, type: 3}
+  lineRenderers: []
 --- !u!4 &1755136404
 Transform:
   m_ObjectHideFlags: 0
@@ -893,150 +899,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!120 &1755136405
-LineRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1755136402}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 0
-  m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 0
-  m_RayTracingMode: 0
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 257
-  m_RendererPriority: 1
-  m_Materials:
-  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1
-  m_Positions:
-  - {x: 0, y: 4.5, z: 0}
-  - {x: -0.5639995, y: 4.464516, z: 0}
-  - {x: -1.1191044, y: 4.3586245, z: 0}
-  - {x: -1.6565603, y: 4.1839943, z: 0}
-  - {x: -2.1678913, y: 3.94338, z: 0}
-  - {x: -2.6450334, y: 3.6405766, z: 0}
-  - {x: -3.0804617, y: 3.280359, z: 0}
-  - {x: -3.4673092, y: 2.8684082, z: 0}
-  - {x: -3.7994752, y: 2.411221, z: 0}
-  - {x: -4.071721, y: 1.9160074, z: 0}
-  - {x: -4.2797537, y: 1.3905772, z: 0}
-  - {x: -4.420292, y: 0.8432168, z: 0}
-  - {x: -4.49112, y: 0.28255835, z: 0}
-  - {x: -4.49112, y: -0.2825562, z: 0}
-  - {x: -4.4202924, y: -0.8432147, z: 0}
-  - {x: -4.279754, y: -1.3905752, z: 0}
-  - {x: -4.0717216, y: -1.9160055, z: 0}
-  - {x: -3.7994757, y: -2.4112191, z: 0}
-  - {x: -3.4673097, y: -2.8684065, z: 0}
-  - {x: -3.0804622, y: -3.2803574, z: 0}
-  - {x: -2.645034, y: -3.640575, z: 0}
-  - {x: -2.1678922, y: -3.9433784, z: 0}
-  - {x: -1.6565614, y: -4.183993, z: 0}
-  - {x: -1.1191056, y: -4.358623, z: 0}
-  - {x: -0.56400084, y: -4.464515, z: 0}
-  - {x: -0.0000014650153, y: -4.499999, z: 0}
-  - {x: 0.5639979, y: -4.464515, z: 0}
-  - {x: 1.1191027, y: -4.3586235, z: 0}
-  - {x: 1.6565586, y: -4.183994, z: 0}
-  - {x: 2.1678896, y: -3.9433799, z: 0}
-  - {x: 2.6450317, y: -3.6405766, z: 0}
-  - {x: 3.08046, y: -3.2803593, z: 0}
-  - {x: 3.4673078, y: -2.8684087, z: 0}
-  - {x: 3.799474, y: -2.4112215, z: 0}
-  - {x: 4.07172, y: -1.916008, z: 0}
-  - {x: 4.2797527, y: -1.3905779, z: 0}
-  - {x: 4.4202914, y: -0.8432176, z: 0}
-  - {x: 4.4911194, y: -0.28255925, z: 0}
-  - {x: 4.49112, y: 0.28255528, z: 0}
-  - {x: 4.4202924, y: 0.84321374, z: 0}
-  - {x: 4.279754, y: 1.3905742, z: 0}
-  - {x: 4.071722, y: 1.9160045, z: 0}
-  - {x: 3.7994764, y: 2.4112184, z: 0}
-  - {x: 3.4673107, y: 2.8684058, z: 0}
-  - {x: 3.0804634, y: 3.280357, z: 0}
-  - {x: 2.6450353, y: 3.6405747, z: 0}
-  - {x: 2.1678934, y: 3.9433784, z: 0}
-  - {x: 1.6565626, y: 4.183993, z: 0}
-  - {x: 1.1191068, y: 4.358623, z: 0}
-  - {x: 0.56400204, y: 4.464515, z: 0}
-  m_Parameters:
-    serializedVersion: 3
-    widthMultiplier: 1
-    widthCurve:
-      serializedVersion: 2
-      m_Curve:
-      - serializedVersion: 3
-        time: 0
-        value: 0.037729263
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    colorGradient:
-      serializedVersion: 2
-      key0: {r: 1, g: 0.007030964, b: 0, a: 1}
-      key1: {r: 0, g: 0, b: 1, a: 1}
-      key2: {r: 0, g: 0, b: 1, a: 0}
-      key3: {r: 0, g: 0, b: 0, a: 0}
-      key4: {r: 0, g: 0, b: 0, a: 0}
-      key5: {r: 0, g: 0, b: 0, a: 0}
-      key6: {r: 0, g: 0, b: 0, a: 0}
-      key7: {r: 0, g: 0, b: 0, a: 0}
-      ctime0: 32768
-      ctime1: 63993
-      ctime2: 63993
-      ctime3: 0
-      ctime4: 0
-      ctime5: 0
-      ctime6: 0
-      ctime7: 0
-      atime0: 0
-      atime1: 65535
-      atime2: 0
-      atime3: 0
-      atime4: 0
-      atime5: 0
-      atime6: 0
-      atime7: 0
-      m_Mode: 1
-      m_NumColorKeys: 2
-      m_NumAlphaKeys: 2
-    numCornerVertices: 1
-    numCapVertices: 0
-    alignment: 0
-    textureMode: 0
-    shadowBias: 0.5
-    generateLightingData: 0
-  m_UseWorldSpace: 0
-  m_Loop: 1

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public static class FileManager
@@ -78,6 +79,11 @@ public static class FileManager
     public static void DeleteFile(string path)
     {
         File.Delete(path);
+    }
+
+    public static void FileDialog()
+    {
+        
     }
     #endregion
 

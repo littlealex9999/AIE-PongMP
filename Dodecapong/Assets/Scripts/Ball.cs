@@ -46,6 +46,14 @@ public class Ball : MonoBehaviour
     }
     private void ResetBall()
     {
+        Vector2 targetVec = transform.position.normalized;
+        float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
+        int alivePlayerCount = map.GetLivingPlayerCount();
+
+        float playerSector = 360.0f / alivePlayerCount;
+
+        map.ShieldHit(map.GetTargetLivingPlayerID((int)(angle / 360.0f * alivePlayerCount)));
+
         rb.position = Vector2.zero;
         rb.velocity = Random.insideUnitCircle.normalized * constantVel;
     }
@@ -67,7 +75,22 @@ public class Ball : MonoBehaviour
         }
         if (distFromCenter + ballRadius > map.mapRadius)
         {
-            BounceOnBounds();
+            ResetBall();
         }
+    }
+    public static float Angle(Vector2 vector2)
+    {
+        float ret;
+
+        if (vector2.x < 0)
+        {
+            ret = 360 - (Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg * -1 );
+        }
+        else
+        {
+            ret = Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg;
+        }
+
+        return 360 - ret;
     }
 }
