@@ -105,6 +105,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SelectFileDialog(TMP_InputField inputField)
+    {
+        string[] outs = FileManager.FileDialog();
+        if (outs.Length > 0) inputField.text = outs[0];
+    }
+
     /// <summary>
     /// Creates new GameData based on input fields, then adds it to the list of games.
     /// </summary>
