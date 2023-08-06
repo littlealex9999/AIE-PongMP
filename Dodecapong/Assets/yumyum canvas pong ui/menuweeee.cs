@@ -4,8 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
-using Unity.VisualScripting;
-using UnityEngine.EventSystems;
+using static GameManager;
 
 [Serializable]
 public class MenuTextPair
@@ -32,36 +31,27 @@ public class MenuTextPair
     }
 }
 
-public class PresetScrollbar
-{
-    public Button presetButton;
-    public TMP_Text presetLabel;
-    public TMP_Text presetHoverLabel;
-
-
-}
-
 public class menuweeee : MonoBehaviour
 {
-
-
     public GameObject fieldSettings;
     public GameObject playerSettings;
     public GameObject scoreSettings;
     public GameObject ballSettings;
 
 
-
+    public GameObject settingsScreen;
+    public GameObject startScreen;
+    public GameObject mainMenu;
+    public GameObject gameScreen;
+    public GameObject endScreen;
 
     public List<MenuTextPair> menuTextPairs;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        ballSettings.SetActive(false);
-        fieldSettings.SetActive(false);
-        playerSettings.SetActive(false);
-        scoreSettings.SetActive(false);
+        DisableAll();
+        instance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     public void Update()
@@ -74,39 +64,104 @@ public class menuweeee : MonoBehaviour
         
     }
 
-    // Buttons at top, enabling/disabling panels
-    public void BallSettingsEnable()
+    public void DisableAll()
     {
-        ballSettings.SetActive(true);
+        settingsScreen.SetActive(false);
+        startScreen.SetActive(false);
+        mainMenu.SetActive(false);
+        gameScreen.SetActive(false);
+        endScreen.SetActive(false);
+
+        ballSettings.SetActive(false);
         fieldSettings.SetActive(false);
         playerSettings.SetActive(false);
         scoreSettings.SetActive(false);
+    }
+
+    void OnGameStateChanged()
+    {
+        switch (instance.gameState)
+        {
+            case GameState.MAINMENU:
+                MainMenu();
+                break;
+            case GameState.JOINMENU:
+                PressStart();
+                break;
+            case GameState.SETTINGSMENU:
+                CustomGame();
+                break;
+            case GameState.GAMEPLAY:
+                PlayGame();
+                break;
+            case GameState.GAMEPAUSED:
+
+                break;
+            case GameState.SCOREBOARD:
+                EndGame();
+                break;
+        }
+    }
+
+    // Buttons at top, enabling/disabling panels
+    public void BallSettingsEnable()
+    {
+        DisableAll();
+        settingsScreen.SetActive(true);
+        ballSettings.SetActive(true);
     }
 
     public void FieldSettingsEnable()
     {
-        ballSettings.SetActive(false);
+        DisableAll();
+        settingsScreen.SetActive(true);
         fieldSettings.SetActive(true);
-        playerSettings.SetActive(false);
-        scoreSettings.SetActive(false);
     }
 
     public void PlayerSettingsEnable()
     {
-        ballSettings.SetActive(false);
-        fieldSettings.SetActive(false);
+        DisableAll();
+        settingsScreen.SetActive(true);
         playerSettings.SetActive(true);
-        scoreSettings.SetActive(false);
     }
 
     public void ScoreSettingsEnable()
     {
-        ballSettings.SetActive(false);
-        fieldSettings.SetActive(false);
-        playerSettings.SetActive(false);
+        DisableAll();
+        settingsScreen.SetActive(true);
         scoreSettings.SetActive(true);
     }
 
-    // Pushing slider values to text 
+    // buttons ohohoho
 
+    public void PressStart()
+    {
+        DisableAll();
+        startScreen.SetActive(true);
+    }
+
+    public void CustomGame()
+    {
+        DisableAll();
+        settingsScreen.SetActive(true);
+        ballSettings.SetActive(true);
+    }
+
+    public void PlayGame()
+    {
+        DisableAll();
+        gameScreen.SetActive(true);
+    }
+
+    public void EndGame()
+    {
+        DisableAll();
+        endScreen.SetActive(true);
+    }
+
+    public void MainMenu()
+    {
+        DisableAll();
+        mainMenu.SetActive(true);
+    }
 }

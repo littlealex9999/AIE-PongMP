@@ -117,7 +117,7 @@ public class PlayerInputHandler : MonoBehaviour
         }
         else if (callbackContext.canceled)
         {
-            gameManager.UpdateGameState(GameManager.GameState.GAMEPLAY);
+            //gameManager.UpdateGameState(GameManager.GameState.GAMEPLAY);
         }
     }
 }
