@@ -5,6 +5,8 @@ using System.Data;
 using System.Net.Http.Headers;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
+using UnityEngine.UI;
 using static GameManager;
 using static UnityEngine.Rendering.DebugUI;
 
@@ -61,6 +63,8 @@ public class GameManager : MonoBehaviour
     public float playerDistance = 4.0f;
     [Min(0)] public int shieldHits = 1;
 
+    public List<Image> playerImages;
+
     void Awake()
     {
         if (!instance) instance = this;
@@ -81,7 +85,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.JOINMENU:
-
+                
                 break;
             case GameState.SETTINGSMENU:
 
@@ -108,6 +112,7 @@ public class GameManager : MonoBehaviour
         player.color = playerEmissives[players.Count];
         players.Add(player);
         alivePlayers.Add(player);
+        UpdatePlayerImages();
         return player;
     }
 
@@ -115,6 +120,16 @@ public class GameManager : MonoBehaviour
     {
         players.Remove(playerToRemove);
         alivePlayers.Remove(playerToRemove);
+        UpdatePlayerImages();
+    }
+
+    void UpdatePlayerImages()
+    {
+        foreach (Image image in playerImages) image.color = Color.white;
+        for (int i = 0; i < players.Count; i++)
+        {
+            playerImages[i].color = players[i].color;
+        }
     }
 
     void GeneratePaddles()

@@ -8,8 +8,6 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerInputHandler : MonoBehaviour
 {
-
-
     PlayerInput playerInput;
 
     GameManager.Player mainPlayer;

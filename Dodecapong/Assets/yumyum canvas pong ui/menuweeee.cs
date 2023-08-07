@@ -41,6 +41,7 @@ public class menuweeee : MonoBehaviour
     public GameObject startScreen;
     public GameObject settingsScreen;
     public GameObject gameScreen;
+    public GameObject pauseScreen;
     public GameObject endScreen;
 
     [Header("Settings Screens")]
@@ -53,6 +54,7 @@ public class menuweeee : MonoBehaviour
     public GameObject mainMenuDefault;
     public GameObject startDefault;
     public GameObject settingsDefault;
+    public GameObject pauseDefault;
     public GameObject endDefault;
 
     [Space]
@@ -72,8 +74,6 @@ public class menuweeee : MonoBehaviour
         {
             thisPair.UpdateText();
         }
-
-        
     }
 
     public void DisableAll()
@@ -82,6 +82,7 @@ public class menuweeee : MonoBehaviour
         startScreen.SetActive(false);
         mainMenu.SetActive(false);
         gameScreen.SetActive(false);
+        pauseScreen.SetActive(false);
         endScreen.SetActive(false);
 
         ballSettings.SetActive(false);
@@ -188,7 +189,9 @@ public class menuweeee : MonoBehaviour
 
     public void PauseMenu()
     {
-        pauseMenu.SetActive(true);
+        DisableAll();
+        pauseScreen.SetActive(true);
+        eventSystem.SetSelectedGameObject(pauseDefault);
         //time scale 0 or whatever 
     }
 }
