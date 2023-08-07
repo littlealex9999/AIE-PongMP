@@ -11,6 +11,9 @@ public class GameManager : MonoBehaviour
 
     public GameObject paddleObject;
 
+    public GameVariables defaultGameVariables;
+    GameVariables gameVariables;
+
     public int playerCount;
 
     [Range(0, 360)] public float mapRotationOffset = 0.0f;
@@ -18,27 +21,38 @@ public class GameManager : MonoBehaviour
     [ColorUsage(true, true), SerializeField] List<Color> playerEmissives = new List<Color>();
 
     public float playerDistance = 4.0f;
-    [Min(0)] public int shieldHits = 1;
 
     void Awake()
     {
         if (!instance) instance = this;
         else Destroy(this);
 
+        if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
+        else gameVariables = new GameVariables();
+
         Initialise();
     }
 
     void Initialise()
     {
+        ball.constantVel = gameVariables.ballSpeed;
+        ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+
         BuildGameBoard();
     }
+
     void BuildGameBoard()
     {
         map.shieldLevels.Clear();
 
         for (int i = 0; i < playerCount; i++) {
-            map.shieldLevels.Add(shieldHits);
+            map.shieldLevels.Add(gameVariables.shieldLives);
             map.players.Add(Instantiate(paddleObject, map.transform).GetComponent<Paddle>());
+
+            // changing the order of player size variables for easier readability in the inspector.
+            // x correlates to what the camera sees as horizontal length, while y correlates to vertical width
+            // though the actual scaling is different
+            map.players[i].transform.localScale = new Vector3(gameVariables.playerSize.y, gameVariables.playerSize.x, gameVariables.playerSize.y);
 
             // the "starting position" is as follows, with 2 players as an example:
             // 360 / player count to get the base angle (360 / 2 = 180)
