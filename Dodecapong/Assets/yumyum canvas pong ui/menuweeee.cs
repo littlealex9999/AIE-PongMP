@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using static GameManager;
+using UnityEngine.EventSystems;
 
 [Serializable]
 public class MenuTextPair
@@ -33,24 +34,35 @@ public class MenuTextPair
 
 public class menuweeee : MonoBehaviour
 {
+    public EventSystem eventSystem;
+
+    [Header("Screens")]
+    public GameObject mainMenu;
+    public GameObject startScreen;
+    public GameObject settingsScreen;
+    public GameObject gameScreen;
+    public GameObject endScreen;
+
+    [Header("Settings Screens")]
     public GameObject fieldSettings;
     public GameObject playerSettings;
     public GameObject scoreSettings;
     public GameObject ballSettings;
 
+    [Header("Default Buttons")]
+    public GameObject mainMenuDefault;
+    public GameObject startDefault;
+    public GameObject settingsDefault;
+    public GameObject endDefault;
 
-    public GameObject settingsScreen;
-    public GameObject startScreen;
-    public GameObject mainMenu;
-    public GameObject gameScreen;
-    public GameObject endScreen;
-
+    [Space]
     public List<MenuTextPair> menuTextPairs;
 
     // Start is called before the first frame update
-    void Awake()
+    void Start()
     {
         DisableAll();
+        MainMenu();
         instance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
@@ -91,13 +103,13 @@ public class menuweeee : MonoBehaviour
                 MainMenu();
                 break;
             case GameState.JOINMENU:
-                PressStart();
+                StartScreen();
                 break;
             case GameState.SETTINGSMENU:
-                CustomGame();
+                SettingsScreen();
                 break;
             case GameState.GAMEPLAY:
-                PlayGame();
+                GameScreen();
                 break;
             case GameState.GAMEPAUSED:
 
@@ -139,20 +151,22 @@ public class menuweeee : MonoBehaviour
 
     // buttons ohohoho
 
-    public void PressStart()
+    public void StartScreen()
     {
         DisableAll();
         startScreen.SetActive(true);
+        eventSystem.SetSelectedGameObject(startDefault);
     }
 
-    public void CustomGame()
+    public void SettingsScreen()
     {
         DisableAll();
         settingsScreen.SetActive(true);
         ballSettings.SetActive(true);
+        eventSystem.SetSelectedGameObject(settingsDefault);
     }
 
-    public void PlayGame()
+    public void GameScreen()
     {
         DisableAll();
         gameScreen.SetActive(true);
@@ -162,11 +176,13 @@ public class menuweeee : MonoBehaviour
     {
         DisableAll();
         endScreen.SetActive(true);
+        eventSystem.SetSelectedGameObject(endDefault);
     }
 
     public void MainMenu()
     {
         DisableAll();
         mainMenu.SetActive(true);
+        eventSystem.SetSelectedGameObject(mainMenuDefault);
     }
 }

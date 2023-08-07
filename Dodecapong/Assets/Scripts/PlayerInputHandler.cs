@@ -31,8 +31,15 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void Update()
     {
-        if (mainPlayer.paddle) mainPlayer.paddle.Move(mainPlayerMoveInput);
-        if (secondaryPlayer.paddle) secondaryPlayer.paddle.Move(secondaryPlayerMoveInput);
+        if (mainPlayer != null)
+        {
+            if (mainPlayer.paddle) mainPlayer.paddle.Move(mainPlayerMoveInput);
+        }
+
+        if (secondaryPlayer != null)
+        {
+            if (secondaryPlayer.paddle) secondaryPlayer.paddle.Move(secondaryPlayerMoveInput);
+        }
     }
 
     public void SwapActionMap(InputAction.CallbackContext callbackContext)
