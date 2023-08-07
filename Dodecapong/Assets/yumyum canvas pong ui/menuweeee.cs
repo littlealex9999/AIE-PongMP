@@ -44,6 +44,7 @@ public class menuweeee : MonoBehaviour
     public GameObject mainMenu;
     public GameObject gameScreen;
     public GameObject endScreen;
+    public GameObject pauseMenu;
 
     public List<MenuTextPair> menuTextPairs;
 
@@ -100,7 +101,7 @@ public class menuweeee : MonoBehaviour
                 PlayGame();
                 break;
             case GameState.GAMEPAUSED:
-
+                PauseMenu();
                 break;
             case GameState.SCOREBOARD:
                 EndGame();
@@ -168,5 +169,11 @@ public class menuweeee : MonoBehaviour
     {
         DisableAll();
         mainMenu.SetActive(true);
+    }
+
+    public void PauseMenu()
+    {
+        pauseMenu.SetActive(true);
+        //time scale 0 or whatever 
     }
 }
