@@ -33,12 +33,12 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
+        GameManager.gameManagerInstance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     private void OnGameStateChanged()
     {
-        if (GameManager.instance.gameState == GameManager.GameState.MAINMENU)
+        if (GameManager.gameManagerInstance.gameState == GameManager.GameState.MAINMENU)
         {
             rb.velocity = rb.transform.forward * constantVel;
         }
@@ -66,7 +66,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY) return;
+        if (GameManager.gameManagerInstance.gameState != GameManager.GameState.GAMEPLAY) return;
 
         if (rb.velocity.magnitude > constantVel)
         {
@@ -80,9 +80,9 @@ public class Ball : MonoBehaviour
         {
             float angle = Angle(transform.position.normalized);
 
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayerCount);
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.gameManagerInstance.alivePlayerCount);
             
-            if (GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
+            if (GameManager.gameManagerInstance.OnSheildHit(alivePlayerID)) ResetBall();
             else BounceOnBounds();
         }
     }
