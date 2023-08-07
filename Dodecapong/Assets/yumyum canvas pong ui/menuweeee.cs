@@ -112,7 +112,7 @@ public class menuweeee : MonoBehaviour
                 GameScreen();
                 break;
             case GameState.GAMEPAUSED:
-
+                PauseMenu();
                 break;
             case GameState.SCOREBOARD:
                 EndGame();
@@ -184,5 +184,11 @@ public class menuweeee : MonoBehaviour
         DisableAll();
         mainMenu.SetActive(true);
         eventSystem.SetSelectedGameObject(mainMenuDefault);
+    }
+
+    public void PauseMenu()
+    {
+        pauseMenu.SetActive(true);
+        //time scale 0 or whatever 
     }
 }
