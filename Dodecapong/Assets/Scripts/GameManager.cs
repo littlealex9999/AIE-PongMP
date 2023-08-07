@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     [ColorUsage(true, true), SerializeField] List<Color> playerEmissives = new List<Color>();
 
     public float playerDistance = 4.0f;
+    float gameEndTimer;
 
     void Awake()
     {
@@ -33,10 +34,19 @@ public class GameManager : MonoBehaviour
         Initialise();
     }
 
+    void Update()
+    {
+        gameEndTimer -= Time.deltaTime;
+        if (gameEndTimer <= 0) {
+            // end game
+        }
+    }
+
     void Initialise()
     {
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+        gameEndTimer = gameVariables.timeInSeconds;
 
         BuildGameBoard();
     }
@@ -61,6 +71,8 @@ public class GameManager : MonoBehaviour
             // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
             // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
             map.players[i].Initialise(i, playerDistance, 360.0f / playerCount * (i + 1) + mapRotationOffset - 360.0f / (playerCount * 2), 180.0f / playerCount);
+            map.players[i].moveSpeed = gameVariables.playerSpeed;
+
             map.players[i].GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GetPlayerColor(i));
             map.players[i].name = "Player " + i;
         }

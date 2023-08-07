@@ -12,16 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2da787fa14fda7144939c590924960bd, type: 3}
   m_Name: TestVars
   m_EditorClassIdentifier: 
-  playerSpeed: 0
-  playerSize: {x: 0, y: 0}
+  playerSpeed: 90
+  playerSize: {x: 2, y: 0.5}
   playerStickiness: 0
-  dashEnabled: 0
-  ballCount: 0
-  ballSpeed: 0
-  ballSize: 0
-  shieldLives: 0
-  obstacleSpawn: 0
+  dashEnabled: 1
+  ballCount: 1
+  ballSpeed: 4
+  ballSpeedPerHit: 0
+  ballSize: 0.5
+  shieldLives: 1
+  obstacleFrequency: 0
+  blackHoleEnabled: 0
   powerupFrequency: 0
+  speedPowerupEnabled: 0
+  sizePowerupEnabled: 0
   winType: 0
-  useTimer: 0
-  timeInSeconds: 0
+  useTimer: 1
+  timeInSeconds: 20
