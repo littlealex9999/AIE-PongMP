@@ -8,6 +8,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerInputHandler : MonoBehaviour
 {
+    public InputActionAsset UIMasterInputActionAsset;
+    public InputActionAsset inputActionAsset;
+
     PlayerInput playerInput;
 
     GameManager.Player mainPlayer;
@@ -23,21 +26,25 @@ public class PlayerInputHandler : MonoBehaviour
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        gameManager = GameManager.instance;
+        gameManager = GameManager.gameManagerInstance;
         mainPlayer = gameManager.AddPlayer();
+        if (mainPlayer.id == 0) playerInput.actions = UIMasterInputActionAsset;
+        else playerInput.actions = inputActionAsset;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-        if (mainPlayer != null)
-        {
-            if (mainPlayer.paddle) mainPlayer.paddle.Move(mainPlayerMoveInput);
-        }
+        if (mainPlayer == null) return;
+        if (mainPlayer.paddle == null) return;
+        if (!mainPlayer.paddle.gameObject.activeSelf) return;
+            
+        mainPlayer.paddle.Move(mainPlayerMoveInput);
 
-        if (secondaryPlayer != null)
-        {
-            if (secondaryPlayer.paddle) secondaryPlayer.paddle.Move(secondaryPlayerMoveInput);
-        }
+        if (secondaryPlayer == null) return;
+        if (secondaryPlayer.paddle == null) return;
+        if (!secondaryPlayer.paddle.gameObject.activeSelf) return;
+
+        secondaryPlayer.paddle.Move(secondaryPlayerMoveInput);
     }
 
     public void SwapActionMap(InputAction.CallbackContext callbackContext)

@@ -13,6 +13,8 @@ public class Ball : MonoBehaviour
     public float constantVel;
     public float ballRadius;
     public float dampStrength;
+    [Range(0f, 1f)]
+    public float bounceTowardsCenterBias;
 
     float distFromCenter
     {
@@ -31,12 +33,12 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
+        GameManager.gameManagerInstance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     private void OnGameStateChanged()
     {
-        if (GameManager.instance.gameState == GameManager.GameState.MAINMENU)
+        if (GameManager.gameManagerInstance.gameState == GameManager.GameState.MAINMENU)
         {
             rb.velocity = rb.transform.forward * constantVel;
         }
@@ -44,10 +46,12 @@ public class Ball : MonoBehaviour
 
     private void BounceOnBounds()
     {
-        Vector3 forward = rb.velocity.normalized;
-        Vector3 normal = (Vector3.zero - transform.position).normalized;
-        rb.velocity = Vector3.Reflect(forward, normal) * constantVel;
-        rb.transform.position += normal;
+        Vector2 forward = rb.velocity.normalized;
+        Vector2 normalToCenter = (Vector3.zero - transform.position).normalized;
+        Vector2 bounceDir = Vector2.Reflect(forward, normalToCenter).normalized;
+        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, normalToCenter, bounceTowardsCenterBias).normalized;
+        rb.velocity = finalBounceDir * constantVel;
+        rb.position += normalToCenter * 0.1f;
     }
     private void ResetBall()
     {
@@ -62,7 +66,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY) return;
+        if (GameManager.gameManagerInstance.gameState != GameManager.GameState.GAMEPLAY) return;
 
         if (rb.velocity.magnitude > constantVel)
         {
@@ -75,11 +79,10 @@ public class Ball : MonoBehaviour
         if (distFromCenter + ballRadius > map.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
-            int alivePlayerCount = GameManager.instance.players.Count;
 
-            int alivePlayerID = (int)(angle / 360.0f * alivePlayerCount);
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.gameManagerInstance.alivePlayerCount);
             
-            if (GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
+            if (GameManager.gameManagerInstance.OnSheildHit(alivePlayerID)) ResetBall();
             else BounceOnBounds();
         }
     }

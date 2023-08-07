@@ -16,17 +16,30 @@ public class Paddle : MonoBehaviour
 
     // the max amount you can move from your starting rotation
     float angleDeviance;
-
-    public void Initialise(int playerID, float startingDistance, float startingAngle, float maxAngleDeviance)
+    
+    public void Initialize(int id, float dist, Color col)
     {
-        this.playerID = playerID;
-        startingRotation = startingAngle;
-        angleDeviance = maxAngleDeviance;
-        distance = startingDistance;
+        playerID = id;
+        distance = dist;
+        SetColor(col);
+        gameObject.name = "Player " + id;
+    }
+
+    public void Recalculate(int alivePlayerId, int alivePlayerCount, float mapRotationOffset)
+    {
+        // the "starting position" is as follows, with 2 players as an example:
+        // 360 / player count to get the base angle (360 / 2 = 180)
+        // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
+        // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
+        // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
+        // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
+
+        startingRotation = 360.0f / alivePlayerCount * (alivePlayerId + 1) + mapRotationOffset - 360.0f / (alivePlayerCount * 2);
+        angleDeviance = 180.0f / alivePlayerCount;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
-        facingDirection = Quaternion.Euler(0, 0, startingAngle) * -transform.up;
-        SetPosition(startingAngle);
+        facingDirection = Quaternion.Euler(0, 0, startingRotation) * -transform.up;
+        SetPosition(startingRotation);
     }
 
     /// <summary>
@@ -40,7 +53,7 @@ public class Paddle : MonoBehaviour
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
-        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
 
         float maxDev = startingRotation + angleDeviance;
         float minDev = startingRotation - angleDeviance;
@@ -68,7 +81,7 @@ public class Paddle : MonoBehaviour
 
     public void SetPosition(float angle)
     {
-        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * distance;
+        transform.position = gameManagerInstance.map.GetTargetPointInCircleLocal(angle).normalized * distance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 

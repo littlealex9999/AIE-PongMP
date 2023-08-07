@@ -65,7 +65,7 @@ public class menuweeee : MonoBehaviour
     {
         DisableAll();
         MainMenu();
-        instance.gameStateChanged.AddListener(OnGameStateChanged);
+        gameManagerInstance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     public void Update()
@@ -93,12 +93,12 @@ public class menuweeee : MonoBehaviour
 
     public void UpdateState(StateToChangeTo stateToChangeTo)
     {
-        instance.UpdateGameState(stateToChangeTo.state);
+        gameManagerInstance.UpdateGameState(stateToChangeTo.state);
     }
 
     void OnGameStateChanged()
     {
-        switch (instance.gameState)
+        switch (gameManagerInstance.gameState)
         {
             case GameState.MAINMENU:
                 MainMenu();
@@ -115,7 +115,7 @@ public class menuweeee : MonoBehaviour
             case GameState.GAMEPAUSED:
                 PauseMenu();
                 break;
-            case GameState.SCOREBOARD:
+            case GameState.GAMEOVER:
                 EndGame();
                 break;
         }

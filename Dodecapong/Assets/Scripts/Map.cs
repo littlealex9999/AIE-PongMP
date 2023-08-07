@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
+using static GameManager;
 
 //[RequireComponent(typeof(LineRenderer))]
 public class Map : MonoBehaviour
@@ -16,21 +14,21 @@ public class Map : MonoBehaviour
     {
         if (lineStepCount < 1) return;
 
-        RegenerateLineRenderers();
+        RegenerateLines();
     }
 
     public List<GameObject> ringMeshes;
-    void RegenerateLineRenderers()
+    void RegenerateLines()
     {
         if (ringMeshes.Count == 0)
         {
-            int alivePlayerCount = GameManager.instance.alivePlayerCount;
+            int alivePlayerCount = gameManagerInstance.alivePlayerCount;
             for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
                 // setup values
                 int pointCount = lineStepCount / alivePlayerCount;
                 Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
-                float angle = GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer;
+                float angle = gameManagerInstance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer;
                 Vector3 targetPos = GetTargetPointInCircleLocal(angle);
 
                 // ring segment of players colour
@@ -38,7 +36,7 @@ public class Map : MonoBehaviour
                 {
                     targetPos = rotationPerSegment * targetPos;
                     GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
-                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GameManager.instance.players[currentPlayer].color);
+                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", gameManagerInstance.alivePlayers[currentPlayer].color);
                     ringMeshes.Add(obj);
                 }
             }
@@ -50,7 +48,7 @@ public class Map : MonoBehaviour
                 Destroy(obj);
             }
             ringMeshes.Clear();
-            RegenerateLineRenderers();
+            RegenerateLines();
         }
     }
 
@@ -63,6 +61,4 @@ public class Map : MonoBehaviour
     {
         return Quaternion.Euler(0, 0, angle) * transform.up * mapRadius;
     }
-
-    public List<TextMeshProUGUI> list = new List<TextMeshProUGUI>();
 }

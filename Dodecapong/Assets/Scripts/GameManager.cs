@@ -1,14 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Net.Http.Headers;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static GameManager;
-using static UnityEngine.Rendering.DebugUI;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,7 +16,7 @@ public class GameManager : MonoBehaviour
         SETTINGSMENU,
         GAMEPLAY,
         GAMEPAUSED,
-        SCOREBOARD,
+        GAMEOVER,
     }
     public UnityEvent gameStateChanged;
 
@@ -47,9 +44,10 @@ public class GameManager : MonoBehaviour
 
     public List<Player> alivePlayers;
     public List<Player> players;
+
     public int alivePlayerCount { get { return alivePlayers.Count; } }
 
-    public static GameManager instance;
+    public static GameManager gameManagerInstance;
 
     public Map map;
     public Ball ball;
@@ -65,9 +63,12 @@ public class GameManager : MonoBehaviour
 
     public List<Image> playerImages;
 
+    public GameObject shieldTextObj;
+    public Transform shieldTextParent;
+    public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
     void Awake()
     {
-        if (!instance) instance = this;
+        if (!gameManagerInstance) gameManagerInstance = this;
         else Destroy(this);
 
         if (gameStateChanged == null) gameStateChanged = new UnityEvent();
@@ -92,13 +93,12 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEPLAY:
 
-                GeneratePaddles();
                 BuildGameBoard();
                 break;
             case GameState.GAMEPAUSED:
 
                 break;
-            case GameState.SCOREBOARD:
+            case GameState.GAMEOVER:
 
                 break;
         }
@@ -110,6 +110,10 @@ public class GameManager : MonoBehaviour
         player.id = players.Count;
         player.shieldHealth = shieldHits;
         player.color = playerEmissives[players.Count];
+        player.paddle = Instantiate(paddleObject, map.transform).GetComponent<Paddle>();
+        player.paddle.Initialize(player.id, playerDistance, GetPlayerColor(player.id));
+        player.paddle.gameObject.SetActive(false);
+
         players.Add(player);
         alivePlayers.Add(player);
         UpdatePlayerImages();
@@ -122,6 +126,13 @@ public class GameManager : MonoBehaviour
         alivePlayers.Remove(playerToRemove);
         UpdatePlayerImages();
     }
+    public void EliminatePlayer(Player player)
+    {
+        player.paddle.gameObject.SetActive(false);
+        alivePlayers.Remove(player);
+        if (alivePlayers.Count == 1) UpdateGameState(GameState.GAMEOVER);
+        BuildGameBoard();
+    }
 
     void UpdatePlayerImages()
     {
@@ -132,29 +143,50 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void GeneratePaddles()
-    {
-        foreach (Player player in players)
-        {
-            Paddle paddle = Instantiate(paddleObject, map.transform).GetComponent<Paddle>();
-            player.paddle = paddle;
-
-            // the "starting position" is as follows, with 2 players as an example:
-            // 360 / player count to get the base angle (360 / 2 = 180)
-            // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
-            // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
-            // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
-            // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
-            paddle.Initialise(player.id, playerDistance, 360.0f / alivePlayerCount * (player.id + 1) + mapRotationOffset - 360.0f / (alivePlayerCount * 2), 180.0f / alivePlayerCount);
-            paddle.SetColor(player.color);
-            paddle.name = "Player " + player.id;
-        }
-    }
-       
-
     void BuildGameBoard()
     {
         map.GenerateMap();
+        UpdatePaddles();
+    }
+
+    void UpdatePaddles()
+    {
+        for (int i = 0; i < alivePlayerCount; i++)
+        {
+            alivePlayers[i].paddle.gameObject.SetActive(true);
+            alivePlayers[i].paddle.Recalculate(i, alivePlayerCount, mapRotationOffset);
+        }
+    }
+
+    private void UpdateShields()
+    {
+        if (shieldText.Count == 0)
+        {
+            Vector3 nextPos = Vector3.zero;
+
+            for (int i = 0; i < alivePlayers.Count; i++)
+            {
+                TextMeshProUGUI proUGUI;
+                nextPos.y = i * -50;
+                Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
+                if (proUGUI != null)
+                {
+                    proUGUI.transform.SetParent(shieldTextParent, false);
+                    proUGUI.text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
+                    shieldText.Add(proUGUI);
+                } 
+            }
+        }
+        else
+        {
+            foreach (TextMeshProUGUI proUGUI in shieldText)
+            {
+                Destroy(proUGUI.gameObject);
+            }
+            shieldText.Clear();
+            UpdateShields();
+        }
+
     }
 
     public Color GetPlayerColor(int index)
@@ -166,17 +198,16 @@ public class GameManager : MonoBehaviour
     // returns true if a hit causes a player to die.
     public bool OnSheildHit(int alivePlayerID)
     {
-        Player player = players[alivePlayerID];
+        Player player = alivePlayers[alivePlayerID];
         if (player.shieldHealth <= 0)
         {
-            alivePlayers.Add(player);
-            players.Remove(player);
-            map.GenerateMap();
+            EliminatePlayer(player);
             return true;
         }
         else
         {
             player.shieldHealth--;
+            UpdateShields();
             return false;
         }
     }
