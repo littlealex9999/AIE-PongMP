@@ -4,8 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using static GameManager;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class GameManager : MonoBehaviour
 {
@@ -156,6 +154,17 @@ public class GameManager : MonoBehaviour
             alivePlayers[i].paddle.gameObject.SetActive(true);
             alivePlayers[i].paddle.Recalculate(i, alivePlayerCount, mapRotationOffset);
         }
+    }
+
+    void ResetGame()
+    {
+        alivePlayers.Clear();
+        foreach (Player player in players)
+        {
+            player.paddle.gameObject.SetActive(false);
+            alivePlayers.Add(player);
+        }
+        BuildGameBoard();
     }
 
     private void UpdateShields()

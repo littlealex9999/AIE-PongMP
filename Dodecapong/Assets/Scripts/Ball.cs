@@ -13,8 +13,10 @@ public class Ball : MonoBehaviour
     public float constantVel;
     public float ballRadius;
     public float dampStrength;
-    [Range(0f, 1f)]
-    public float bounceTowardsCenterBias;
+    [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
+    public float shieldBounceTowardsCenterBias;
+    [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
+    public float paddleBounceTowardsCenterBias;
 
     float distFromCenter
     {
@@ -43,15 +45,28 @@ public class Ball : MonoBehaviour
             rb.velocity = rb.transform.forward * constantVel;
         }
     }
+    private void Bounce(float centerBias, Vector2 bounceNormal)
+    {
+        Vector2 forward = rb.velocity.normalized;
+        Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
+        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
+        rb.velocity = finalBounceDir * constantVel;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        Paddle paddle;
+        if (other.TryGetComponent(out paddle))
+        {
+            Bounce(paddleBounceTowardsCenterBias, paddle.facingDirection);
+        }
+    }
 
     private void BounceOnBounds()
     {
-        Vector2 forward = rb.velocity.normalized;
-        Vector2 normalToCenter = (Vector3.zero - transform.position).normalized;
-        Vector2 bounceDir = Vector2.Reflect(forward, normalToCenter).normalized;
-        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, normalToCenter, bounceTowardsCenterBias).normalized;
-        rb.velocity = finalBounceDir * constantVel;
-        rb.position += normalToCenter * 0.1f;
+        Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
+        Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+        rb.position += shieldNormal * 0.1f;
     }
     private void ResetBall()
     {
@@ -101,4 +116,5 @@ public class Ball : MonoBehaviour
 
         return 360 - ret;
     }
+
 }

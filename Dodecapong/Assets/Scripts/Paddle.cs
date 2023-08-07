@@ -12,7 +12,7 @@ public class Paddle : MonoBehaviour
     public float pushDistance = 0.1f;
     public float pushStrength = 3.0f;
 
-    Vector3 facingDirection = Vector3.right;
+    [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
     // the max amount you can move from your starting rotation
     float angleDeviance;
