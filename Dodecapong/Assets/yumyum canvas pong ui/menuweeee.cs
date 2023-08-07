@@ -78,6 +78,11 @@ public class menuweeee : MonoBehaviour
         scoreSettings.SetActive(false);
     }
 
+    public void UpdateState(StateToChangeTo stateToChangeTo)
+    {
+        instance.UpdateGameState(stateToChangeTo.state);
+    }
+
     void OnGameStateChanged()
     {
         switch (instance.gameState)
