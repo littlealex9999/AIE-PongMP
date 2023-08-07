@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Ball : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class Ball : MonoBehaviour
     public float constantVel;
     public float ballRadius;
     public float dampStrength;
+    [Range(0f, 1f)]
+    public float bounceTowardsCenterBias;
 
     float distFromCenter
     {
@@ -30,30 +33,28 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        rb.velocity = Random.insideUnitCircle.normalized * constantVel;
+        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
+    }
+
+    private void OnGameStateChanged()
+    {
+        if (GameManager.instance.gameState == GameManager.GameState.MAINMENU)
+        {
+            rb.velocity = rb.transform.forward * constantVel;
+        }
     }
 
     private void BounceOnBounds()
     {
-        if ((transform.position - map.transform.position).sqrMagnitude > map.mapRadius * map.mapRadius) 
-        {
-            transform.position = (transform.position - map.transform.position).normalized * map.mapRadius;
-        }
-
         Vector3 forward = rb.velocity.normalized;
-        Vector3 normal = (Vector3.zero - transform.position).normalized;
-        rb.velocity = Vector3.Reflect(forward, normal) * constantVel;
+        Vector3 normalToCenter = (Vector3.zero - transform.position).normalized;
+        Vector2 bounceDir = Vector3.Reflect(forward, normalToCenter);
+        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, normalToCenter, bounceTowardsCenterBias);
+        rb.velocity = finalBounceDir * constantVel;
+        //rb.transform.position += normalToCenter;
     }
     private void ResetBall()
     {
-        Vector2 targetVec = transform.position.normalized;
-        float angle = Angle(targetVec);// Mathf.Atan2(targetVec.x, targetVec.y);
-        int alivePlayerCount = map.GetLivingPlayerCount();
-
-        float playerSector = 360.0f / alivePlayerCount;
-
-        map.ShieldHit(map.GetTargetLivingPlayerID((int)(angle / 360.0f * alivePlayerCount)));
-
         rb.position = Vector2.zero;
         rb.velocity = Random.insideUnitCircle.normalized * constantVel;
     }
@@ -65,6 +66,8 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY) return;
+
         if (rb.velocity.magnitude > constantVel)
         {
             rb.velocity -= Vector2.one * dampStrength * Time.fixedDeltaTime;
@@ -75,7 +78,12 @@ public class Ball : MonoBehaviour
         }
         if (distFromCenter + ballRadius > map.mapRadius)
         {
-            ResetBall();
+            float angle = Angle(transform.position.normalized);
+
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayerCount);
+            
+            if (GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
+            else BounceOnBounds();
         }
     }
     public static float Angle(Vector2 vector2)
