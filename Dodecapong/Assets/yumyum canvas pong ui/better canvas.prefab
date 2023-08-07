@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2321417688474564830}
   - component: {fileID: 290823377379343345}
   m_Layer: 5
-  m_Name: pause
+  m_Name: '4: pause'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,7 +33,7 @@ RectTransform:
   - {fileID: 7345673594284511413}
   - {fileID: 2635174355057755907}
   m_Father: {fileID: 7521882063367354051}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -5384,7 +5384,7 @@ RectTransform:
   - {fileID: 7521882062141001937}
   - {fileID: 7521882063313027676}
   m_Father: {fileID: 7521882063367354051}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7636,11 +7636,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7521882063367354052}
         m_TargetAssemblyTypeName: menuweeee, Assembly-CSharp
-        m_MethodName: PressStart
-        m_Mode: 1
+        m_MethodName: UpdateState
+        m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgumentAssemblyTypeName: StateToChangeTo, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -12634,8 +12634,8 @@ RectTransform:
   - {fileID: 7521882062114790254}
   - {fileID: 7521882063897928058}
   - {fileID: 7521882063906400500}
-  - {fileID: 7521882062615720048}
   - {fileID: 7849217573707024004}
+  - {fileID: 7521882062615720048}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
