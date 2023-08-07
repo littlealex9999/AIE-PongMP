@@ -16,11 +16,11 @@ public class Map : MonoBehaviour
     {
         if (lineStepCount < 1) return;
 
-        RegenerateLineRenderers();
+        RegenerateLines();
     }
 
     public List<GameObject> ringMeshes;
-    void RegenerateLineRenderers()
+    void RegenerateLines()
     {
         if (ringMeshes.Count == 0)
         {
@@ -50,7 +50,7 @@ public class Map : MonoBehaviour
                 Destroy(obj);
             }
             ringMeshes.Clear();
-            RegenerateLineRenderers();
+            RegenerateLines();
         }
     }
 
@@ -63,6 +63,4 @@ public class Map : MonoBehaviour
     {
         return Quaternion.Euler(0, 0, angle) * transform.up * mapRadius;
     }
-
-    public List<TextMeshProUGUI> list = new List<TextMeshProUGUI>();
 }

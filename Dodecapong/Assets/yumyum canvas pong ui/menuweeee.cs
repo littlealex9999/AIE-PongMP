@@ -115,7 +115,7 @@ public class menuweeee : MonoBehaviour
             case GameState.GAMEPAUSED:
                 PauseMenu();
                 break;
-            case GameState.SCOREBOARD:
+            case GameState.GAMEOVER:
                 EndGame();
                 break;
         }

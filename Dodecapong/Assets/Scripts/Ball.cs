@@ -13,6 +13,8 @@ public class Ball : MonoBehaviour
     public float constantVel;
     public float ballRadius;
     public float dampStrength;
+    [Range(0f, 1f)]
+    public float bounceTowardsCenterBias;
 
     float distFromCenter
     {
@@ -45,9 +47,11 @@ public class Ball : MonoBehaviour
     private void BounceOnBounds()
     {
         Vector3 forward = rb.velocity.normalized;
-        Vector3 normal = (Vector3.zero - transform.position).normalized;
-        rb.velocity = Vector3.Reflect(forward, normal) * constantVel;
-        rb.transform.position += normal;
+        Vector3 normalToCenter = (Vector3.zero - transform.position).normalized;
+        Vector2 bounceDir = Vector3.Reflect(forward, normalToCenter);
+        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, normalToCenter, bounceTowardsCenterBias);
+        rb.velocity = finalBounceDir * constantVel;
+        //rb.transform.position += normalToCenter;
     }
     private void ResetBall()
     {
@@ -75,9 +79,8 @@ public class Ball : MonoBehaviour
         if (distFromCenter + ballRadius > map.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
-            int alivePlayerCount = GameManager.instance.players.Count;
 
-            int alivePlayerID = (int)(angle / 360.0f * alivePlayerCount);
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayerCount);
             
             if (GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
             else BounceOnBounds();

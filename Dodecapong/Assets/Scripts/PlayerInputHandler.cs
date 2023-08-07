@@ -8,6 +8,9 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(PlayerInput))]
 public class PlayerInputHandler : MonoBehaviour
 {
+    public InputActionAsset UIMasterInputActionAsset;
+    public InputActionAsset inputActionAsset;
+
     PlayerInput playerInput;
 
     GameManager.Player mainPlayer;
@@ -25,6 +28,8 @@ public class PlayerInputHandler : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         gameManager = GameManager.instance;
         mainPlayer = gameManager.AddPlayer();
+        if (mainPlayer.id == 0) playerInput.actions = UIMasterInputActionAsset;
+        else playerInput.actions = inputActionAsset;
     }
 
     private void Update()
