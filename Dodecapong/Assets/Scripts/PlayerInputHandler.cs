@@ -32,7 +32,7 @@ public class PlayerInputHandler : MonoBehaviour
         else playerInput.actions = inputActionAsset;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (mainPlayer != null)
         {

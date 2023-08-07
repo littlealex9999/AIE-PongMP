@@ -40,7 +40,7 @@ public class Paddle : MonoBehaviour
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
-        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
 
         float maxDev = startingRotation + angleDeviance;
         float minDev = startingRotation - angleDeviance;

@@ -1,16 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
-using System.Net.Http.Headers;
-using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static GameManager;
-using static UnityEngine.Rendering.DebugUI;
 
 public class GameManager : MonoBehaviour
 {
@@ -168,13 +161,17 @@ public class GameManager : MonoBehaviour
     {
         if (shieldText.Count == 0)
         {
+            Vector3 nextPos = Vector3.zero;
+
             for (int i = 0; i < alivePlayers.Count; i++)
             {
                 TextMeshProUGUI proUGUI;
-                Instantiate(shieldTextObj, shieldTextParent).TryGetComponent(out proUGUI);
+                nextPos.y = i * -50;
+                Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
                 if (proUGUI != null)
                 {
-                    proUGUI.text = alivePlayers[i].shieldHealth.ToString();
+                    proUGUI.transform.SetParent(shieldTextParent, false);
+                    proUGUI.text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
                     shieldText.Add(proUGUI);
                 } 
             }

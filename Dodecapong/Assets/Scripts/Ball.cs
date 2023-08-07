@@ -46,12 +46,12 @@ public class Ball : MonoBehaviour
 
     private void BounceOnBounds()
     {
-        Vector3 forward = rb.velocity.normalized;
-        Vector3 normalToCenter = (Vector3.zero - transform.position).normalized;
-        Vector2 bounceDir = Vector3.Reflect(forward, normalToCenter);
-        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, normalToCenter, bounceTowardsCenterBias);
+        Vector2 forward = rb.velocity.normalized;
+        Vector2 normalToCenter = (Vector3.zero - transform.position).normalized;
+        Vector2 bounceDir = Vector2.Reflect(forward, normalToCenter).normalized;
+        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, normalToCenter, bounceTowardsCenterBias).normalized;
         rb.velocity = finalBounceDir * constantVel;
-        //rb.transform.position += normalToCenter;
+        rb.position += normalToCenter * 0.1f;
     }
     private void ResetBall()
     {
