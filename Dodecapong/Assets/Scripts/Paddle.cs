@@ -106,4 +106,9 @@ public class Paddle : MonoBehaviour
     {
         GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", col);
     }
+
+    public Vector2 BounceNormal()
+    {
+        return (transform.position - Vector3.zero).normalized;
+    }
 }

@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour
     {
         players.Remove(playerToRemove);
         alivePlayers.Remove(playerToRemove);
+        Destroy(playerToRemove.paddle.gameObject);
         UpdatePlayerImages();
     }
     public void EliminatePlayer(Player player)

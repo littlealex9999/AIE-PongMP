@@ -51,14 +51,15 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         rb.velocity = finalBounceDir * constantVel;
+        rb.position += bounceNormal * 0.1f;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
         Paddle paddle;
-        if (other.TryGetComponent(out paddle))
+        if (collision.gameObject.TryGetComponent(out paddle))
         {
-            Bounce(paddleBounceTowardsCenterBias, paddle.facingDirection);
+            //rb.velocity = paddle.BounceNormal() * constantVel;
         }
     }
 

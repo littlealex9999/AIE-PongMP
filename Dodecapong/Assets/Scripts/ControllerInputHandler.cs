@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerInput))]
-public class PlayerInputHandler : MonoBehaviour
+public class ControllerInputHandler : MonoBehaviour
 {
     public InputActionAsset UIMasterInputActionAsset;
     public InputActionAsset inputActionAsset;
@@ -28,8 +24,7 @@ public class PlayerInputHandler : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         gameManager = GameManager.gameManagerInstance;
         mainPlayer = gameManager.AddPlayer();
-        if (mainPlayer.id == 0) playerInput.actions = UIMasterInputActionAsset;
-        else playerInput.actions = inputActionAsset;
+        if (mainPlayer.id != 0) playerInput.actions = inputActionAsset;
     }
 
     private void FixedUpdate()
