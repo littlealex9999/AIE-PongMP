@@ -51,12 +51,15 @@ public class GameManager : MonoBehaviour
     public List<Player> players;
     public int alivePlayerCount { get { return alivePlayers.Count; } }
 
+    List<GameObject> pillars = new List<GameObject>();
+
     public static GameManager instance;
 
     public Map map;
     public Ball ball;
 
     public GameObject paddleObject;
+    public GameObject pillarObject;
 
     public GameVariables defaultGameVariables;
     GameVariables gameVariables;
@@ -117,6 +120,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEPLAY:
+                ResetPlayers();
 
                 GeneratePaddles();
                 BuildGameBoard();
@@ -140,6 +144,18 @@ public class GameManager : MonoBehaviour
         alivePlayers.Add(player);
         UpdatePlayerImages();
         return player;
+    }
+
+    public void ResetPlayers()
+    {
+        alivePlayers.Clear();
+
+        for (int i = 0; i < players.Count; i++) {
+            players[i].shieldHealth = gameVariables.shieldLives;
+            alivePlayers.Add(players[i]);
+        }
+
+        UpdatePlayerImages();
     }
 
     public void RemovePlayer(Player playerToRemove)
@@ -187,11 +203,11 @@ public class GameManager : MonoBehaviour
 
     void BuildGameBoard()
     {
+        ball.transform.position = map.transform.position;
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
         gameEndTimer = gameVariables.timeInSeconds;
 
-        GeneratePaddles();
         map.GenerateMap();
         UpdateShields();
     }
@@ -232,6 +248,8 @@ public class GameManager : MonoBehaviour
     // returns true if a hit causes a player to die.
     public bool OnSheildHit(int alivePlayerID)
     {
+        if (alivePlayerID >= alivePlayerCount) return false;
+
         Player player = alivePlayers[alivePlayerID];
         if (player.shieldHealth <= 0)
         {
