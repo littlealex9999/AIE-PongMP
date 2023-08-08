@@ -66,7 +66,10 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY) return;
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
+            rb.velocity = new Vector2(0, 0);
+            return;
+        }
 
         if (rb.velocity.magnitude > constantVel)
         {
