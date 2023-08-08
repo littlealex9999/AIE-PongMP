@@ -36,7 +36,7 @@ public class Map : MonoBehaviour
                 {
                     targetPos = rotationPerSegment * targetPos;
                     GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
-                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", gameManagerInstance.GetPlayerColor(currentPlayer));
+                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", gameManagerInstance.GetPlayerColor(gameManagerInstance.alivePlayers[currentPlayer].ID));
                     ringMeshes.Add(obj);
                 }
             }
