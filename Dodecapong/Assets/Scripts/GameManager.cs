@@ -4,53 +4,18 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 
 public class GameManager : MonoBehaviour
 {
-    public enum GameState
-    {
-        MAINMENU,
-        JOINMENU,
-        SETTINGSMENU,
-        GAMEPLAY,
-        GAMEPAUSED,
-        GAMEOVER,
-    }
-    public UnityEvent gameStateChanged;
+  
 
-    public GameState gameState { get; private set; }
-
-    public void UpdateGameState(GameState state)
-    {
-        gameState = state;
-        gameStateChanged.Invoke();
-    }
-
-    [Serializable]
-    public class Player
-    {
-        public int id;
-        public int shieldHealth;
-        public Paddle paddle;
-        public Color color;
-
-        ~Player()
-        {
-            if (paddle) Destroy(paddle.gameObject);
-        }
-    }
-
-    public List<Player> alivePlayers;
-    public List<Player> players;
-
-    public int alivePlayerCount { get { return alivePlayers.Count; } }
+   
 
     public static GameManager gameManagerInstance;
 
     public Map map;
     public Ball ball;
-
-    public GameObject paddleObject;
 
     [Range(0, 360)] public float mapRotationOffset = 0.0f;
 
@@ -76,6 +41,25 @@ public class GameManager : MonoBehaviour
         UpdateGameState(GameState.MAINMENU);
     }
 
+    //
+    // GameState
+    //
+    public UnityEvent gameStateChanged;
+    public GameState gameState { get; private set; }
+    public enum GameState
+    {
+        MAINMENU,
+        JOINMENU,
+        SETTINGSMENU,
+        GAMEPLAY,
+        GAMEPAUSED,
+        GAMEOVER,
+    }
+    public void UpdateGameState(GameState state)
+    {
+        gameState = state;
+        gameStateChanged.Invoke();
+    }
     void OnGameStateChanged()
     {
         switch (gameState)
@@ -90,8 +74,14 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEPLAY:
-
-                BuildGameBoard();
+                if (!inGame)
+                {
+                    StartGame(); 
+                }
+                else
+                {
+                    BuildGameBoard();
+                }
                 break;
             case GameState.GAMEPAUSED:
 
@@ -102,27 +92,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public Player AddPlayer()
-    {
-        Player player = new Player();
-        player.id = players.Count;
-        player.shieldHealth = shieldHits;
-        player.color = playerEmissives[players.Count];
-        player.paddle = Instantiate(paddleObject, map.transform).GetComponent<Paddle>();
-        player.paddle.Initialize(player.id, playerDistance, GetPlayerColor(player.id));
-        player.paddle.gameObject.SetActive(false);
+    //
+    // Players
+    //
+    public GameObject playerPrefab;
 
+    public List<Player> alivePlayers;
+    public List<Player> players;
+    public Player GetNewPlayer()
+    {
+        GameObject playerObject = Instantiate(playerPrefab);
+        playerObject.transform.parent = transform;
+        Player player = playerObject.GetComponent<Player>();
+        player.paddle.SetColor(GetPlayerColor(players.Count));
         players.Add(player);
-        alivePlayers.Add(player);
         UpdatePlayerImages();
         return player;
     }
 
     public void RemovePlayer(Player playerToRemove)
     {
+        if (playerToRemove == null) return;
         players.Remove(playerToRemove);
-        alivePlayers.Remove(playerToRemove);
-        Destroy(playerToRemove.paddle.gameObject);
+        Destroy(playerToRemove);
         UpdatePlayerImages();
     }
     public void EliminatePlayer(Player player)
@@ -133,12 +125,30 @@ public class GameManager : MonoBehaviour
         BuildGameBoard();
     }
 
+    //
+    // Gameplay
+    //
+
+    bool inGame;
+
+    void StartGame()
+    {
+        inGame = true;
+        foreach (Player player in players)
+        {
+            player.shieldHealth = shieldHits;
+        }
+        alivePlayers = players;
+        BuildGameBoard();
+
+    }
+
     void UpdatePlayerImages()
     {
         foreach (Image image in playerImages) image.color = Color.white;
         for (int i = 0; i < players.Count; i++)
         {
-            playerImages[i].color = players[i].color;
+            playerImages[i].color = GetPlayerColor(players[i].ID);
         }
     }
 
@@ -150,10 +160,10 @@ public class GameManager : MonoBehaviour
 
     void UpdatePaddles()
     {
-        for (int i = 0; i < alivePlayerCount; i++)
+        for (int i = 0; i < alivePlayers.Count; i++)
         {
             alivePlayers[i].paddle.gameObject.SetActive(true);
-            alivePlayers[i].paddle.Recalculate(i, alivePlayerCount, mapRotationOffset);
+            alivePlayers[i].paddle.CalculateBounds(i, alivePlayers.Count, mapRotationOffset);
         }
     }
 

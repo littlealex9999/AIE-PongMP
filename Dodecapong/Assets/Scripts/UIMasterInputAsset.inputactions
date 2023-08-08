@@ -1,12 +1,12 @@
 {
-    "name": "Dodecapong",
+    "name": "UIMasterInputAsset",
     "maps": [
         {
             "name": "Player",
             "id": "81ffd14c-6d58-4f5b-9bdd-c1e011d65ab2",
             "actions": [
                 {
-                    "name": "Move",
+                    "name": "Left Stick",
                     "type": "Value",
                     "id": "65043c29-0f72-429a-910e-d196cd0f3675",
                     "expectedControlType": "Vector2",
@@ -15,9 +15,27 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Dash",
+                    "name": "Right Stick",
+                    "type": "Value",
+                    "id": "25d1da8d-655f-4c3c-ac65-f1559d7e0c45",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Button South",
                     "type": "Button",
                     "id": "e0d17dbb-fe54-4e0e-b903-ba9ed444e529",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "D-Pad/Down",
+                    "type": "Button",
+                    "id": "8d7cd625-3b5b-4468-b4d9-e33215d98ebf",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -33,9 +51,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Start",
+                    "name": "Button East",
                     "type": "Button",
-                    "id": "02a82692-f1fd-43b2-8a91-fc3a5b6cd564",
+                    "id": "83150656-980d-4b74-b46e-e734b1b6ac4b",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -50,7 +68,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Gamepad",
-                    "action": "Move",
+                    "action": "Left Stick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -61,7 +79,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "Button South",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -78,140 +96,34 @@
                 },
                 {
                     "name": "",
-                    "id": "cf58f6dc-2e6d-4701-a25e-5f2710cb7a0b",
-                    "path": "<Gamepad>/select",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Start",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
-            "name": "Split Player",
-            "id": "ddb43bba-896b-44f5-85a4-1341e3e84f0c",
-            "actions": [
-                {
-                    "name": "Move 1",
-                    "type": "Value",
-                    "id": "337a0c15-f59f-4c7a-9aee-795ed7993e0e",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Dash 1",
-                    "type": "Button",
-                    "id": "71504f2f-2cf1-43f8-873c-be7c70c9d1e8",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Move 2",
-                    "type": "Value",
-                    "id": "9350d777-648d-45e2-b855-92444e950f95",
-                    "expectedControlType": "Vector2",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
-                    "name": "Dash 2",
-                    "type": "Button",
-                    "id": "9b2691c0-629f-4d23-863e-6925b8cbe2b8",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "SwapControllerScheme",
-                    "type": "Button",
-                    "id": "80b60448-5b0e-4dab-8e31-7b4463ba4d0e",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "start",
-                    "type": "Button",
-                    "id": "b9d2bba1-df78-45d0-8517-4fbdfbb4c19e",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "6236b576-6229-4945-b296-182a25cfc524",
+                    "id": "e81ce1e9-f5af-4ab7-b8f7-5c8f75959703",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
-                    "action": "Move 1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f64ea233-d60c-4bd4-abb1-e6d19d5dd3d8",
-                    "path": "<Gamepad>/leftStick",
-                    "interactions": "",
-                    "processors": "",
                     "groups": "Gamepad",
-                    "action": "Move 2",
+                    "action": "Right Stick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "dbb541e2-4e62-4ecc-ae7f-dbe5b4107eff",
+                    "id": "c87a170b-af00-4bed-b932-c58cc5912da0",
                     "path": "<Gamepad>/dpad/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash 2",
+                    "action": "D-Pad/Down",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "28173845-49aa-48b4-8fb8-508316d7d40f",
-                    "path": "<Gamepad>/buttonSouth",
+                    "id": "16503e86-191c-4ebf-a8b1-d21f872f96c7",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash 1",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4b294e1f-74bc-46e3-8d90-ba9013d26cfe",
-                    "path": "<Gamepad>/start",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SwapControllerScheme",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f9bfd74a-8849-4fbb-b0ed-969656483510",
-                    "path": "<Gamepad>/select",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "start",
+                    "action": "Button East",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

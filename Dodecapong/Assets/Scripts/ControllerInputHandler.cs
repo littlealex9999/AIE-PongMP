@@ -1,130 +1,98 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static GameManager;
 
 [RequireComponent(typeof(PlayerInput))]
 public class ControllerInputHandler : MonoBehaviour
 {
+    PlayerInputManager playerInputManager;
+
     public InputActionAsset UIMasterInputActionAsset;
     public InputActionAsset inputActionAsset;
 
     PlayerInput playerInput;
 
-    GameManager.Player mainPlayer;
-    GameManager.Player secondaryPlayer;
+    Player playerA;
+    Player playerB;
 
     bool splitControls = false;
 
-    GameManager gameManager;
-
-    Vector2 mainPlayerMoveInput;
-    Vector2 secondaryPlayerMoveInput;
+    int controllerID;
+    private void OnDestroy()
+    {
+        gameManagerInstance.RemovePlayer(playerA);
+        gameManagerInstance.RemovePlayer(playerB);
+    }
 
     private void Awake()
     {
+        playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerInput = GetComponent<PlayerInput>();
-        gameManager = GameManager.gameManagerInstance;
-        mainPlayer = gameManager.AddPlayer();
-        if (mainPlayer.id != 0) playerInput.actions = inputActionAsset;
+        controllerID = playerInput.playerIndex;
+        playerA = gameManagerInstance.GetNewPlayer();
+        if (playerA.ID != 0) playerInput.actions = inputActionAsset;
     }
 
-    private void FixedUpdate()
+    public void LeftStick(InputAction.CallbackContext context)
     {
-        if (mainPlayer == null) return;
-        if (mainPlayer.paddle == null) return;
-        if (!mainPlayer.paddle.gameObject.activeSelf) return;
-            
-        mainPlayer.paddle.Move(mainPlayerMoveInput);
+        if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
 
-        if (secondaryPlayer == null) return;
-        if (secondaryPlayer.paddle == null) return;
-        if (!secondaryPlayer.paddle.gameObject.activeSelf) return;
-
-        secondaryPlayer.paddle.Move(secondaryPlayerMoveInput);
+        playerA.movementInput = context.ReadValue<Vector2>();
     }
-
-    public void SwapActionMap(InputAction.CallbackContext callbackContext)
+    public void RightStick(InputAction.CallbackContext context)
     {
-        //if (gameManager.gameState != GameManager.GameState.JOINMENU) return;
-        if (callbackContext.started)
-        {
 
-        }
-        else if (callbackContext.performed)
-        {
+            if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
 
-        }
-        else if (callbackContext.canceled)
+        if (splitControls) playerB.movementInput = context.ReadValue<Vector2>();
+    }
+    public void ButtonSouth(InputAction.CallbackContext context)
+    {
+        if (context.canceled)
         {
+            if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+
+            if (splitControls) playerB.Dash();
+            else playerA.Dash();
+        }
+    }
+    public void DPadDown(InputAction.CallbackContext context)
+    {
+        if (context.canceled)
+        {
+            if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+
+            if (splitControls) playerA.Dash();
+        }
+    }
+    public void SwapControllerScheme(InputAction.CallbackContext context)
+    {
+        if (context.canceled)
+        {
+            if (gameManagerInstance.gameState != GameState.JOINMENU) return;
+
             if (splitControls)
             {
+                gameManagerInstance.RemovePlayer(playerB);
                 splitControls = false;
-                playerInput.SwitchCurrentActionMap("Player");
-                gameManager.RemovePlayer(secondaryPlayer);
             }
             else
             {
+                playerB = gameManagerInstance.GetNewPlayer();
                 splitControls = true;
-                playerInput.SwitchCurrentActionMap("Split Player");
-                secondaryPlayer = gameManager.AddPlayer();
             }
-        }
-        
-    }
-
-    public void Player1_Move(InputAction.CallbackContext callbackContext)
-    {
-        mainPlayerMoveInput = callbackContext.ReadValue<Vector2>();
-    }
-
-    public void Player1_Dash(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started)
-        {
-
-        }
-        else if (callbackContext.performed)
-        {
-
-        }
-        else if (callbackContext.canceled)
-        {
-          
+            Debug.Log(playerInputManager.playerCount);
         }
     }
-    public void Player2_Move(InputAction.CallbackContext callbackContext)
+    public void ButtonEast(InputAction.CallbackContext context)
     {
-        secondaryPlayerMoveInput = callbackContext.ReadValue<Vector2>();
-    }
-
-    public void Player2_Dash(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started)
+        if (context.canceled)
         {
+            if (gameManagerInstance.gameState != GameState.JOINMENU) return;
 
-        }
-        else if (callbackContext.performed)
-        {
+            Debug.Log(playerInputManager.playerCount);
 
-        }
-        else if (callbackContext.canceled)
-        {
-
-        }
-    }
-
-    public void StartGame(InputAction.CallbackContext callbackContext)
-    {
-        if (callbackContext.started)
-        {
-
-        }
-        else if (callbackContext.performed)
-        {
-
-        }
-        else if (callbackContext.canceled)
-        {
-            //gameManager.UpdateGameState(GameManager.GameState.GAMEPLAY);
+            Destroy(gameObject);
         }
     }
 }

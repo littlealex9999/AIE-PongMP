@@ -1,31 +1,25 @@
+using System;
 using UnityEngine;
 using static GameManager;
 
 public class Paddle : MonoBehaviour
 {
-    public float startingRotation;
-    float distance;
+    float startingAngle;
+    float angleDeviance; // the max amount you can move from your starting rotation
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
-    public int playerID;
 
     public float pushDistance = 0.1f;
     public float pushStrength = 3.0f;
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
-    // the max amount you can move from your starting rotation
-    float angleDeviance;
-    
-    public void Initialize(int id, float dist, Color col)
+    private void OnDestroy()
     {
-        playerID = id;
-        distance = dist;
-        SetColor(col);
-        gameObject.name = "Player " + id;
+        Destroy(gameObject);
     }
 
-    public void Recalculate(int alivePlayerId, int alivePlayerCount, float mapRotationOffset)
+    public void CalculateBounds(int alivePlayerId, int alivePlayerCount, float mapRotationOffset)
     {
         // the "starting position" is as follows, with 2 players as an example:
         // 360 / player count to get the base angle (360 / 2 = 180)
@@ -34,12 +28,12 @@ public class Paddle : MonoBehaviour
         // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
         // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
 
-        startingRotation = 360.0f / alivePlayerCount * (alivePlayerId + 1) + mapRotationOffset - 360.0f / (alivePlayerCount * 2);
+        startingAngle = 360.0f / alivePlayerCount * (alivePlayerId + 1) + mapRotationOffset - 360.0f / (alivePlayerCount * 2);
         angleDeviance = 180.0f / alivePlayerCount;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
-        facingDirection = Quaternion.Euler(0, 0, startingRotation) * -transform.up;
-        SetPosition(startingRotation);
+        facingDirection = Quaternion.Euler(0, 0, startingAngle) * -transform.up;
+        SetPosition(startingAngle);
     }
 
     /// <summary>
@@ -55,8 +49,8 @@ public class Paddle : MonoBehaviour
 
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
 
-        float maxDev = startingRotation + angleDeviance;
-        float minDev = startingRotation - angleDeviance;
+        float maxDev = startingAngle + angleDeviance;
+        float minDev = startingAngle - angleDeviance;
         float angle = Angle(transform.position);
 
         if (angle > maxDev || angle < minDev)
@@ -81,7 +75,7 @@ public class Paddle : MonoBehaviour
 
     public void SetPosition(float angle)
     {
-        transform.position = gameManagerInstance.map.GetTargetPointInCircleLocal(angle).normalized * distance;
+        transform.position = gameManagerInstance.map.GetTargetPointInCircleLocal(angle).normalized * gameManagerInstance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
@@ -110,5 +104,10 @@ public class Paddle : MonoBehaviour
     public Vector2 BounceNormal()
     {
         return (transform.position - Vector3.zero).normalized;
+    }
+
+    internal void Dash()
+    {
+        throw new NotImplementedException();
     }
 }

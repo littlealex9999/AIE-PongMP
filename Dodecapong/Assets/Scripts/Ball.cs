@@ -96,7 +96,7 @@ public class Ball : MonoBehaviour
         {
             float angle = Angle(transform.position.normalized);
 
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.gameManagerInstance.alivePlayerCount);
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.gameManagerInstance.alivePlayers.Count);
             
             if (GameManager.gameManagerInstance.OnSheildHit(alivePlayerID)) ResetBall();
             else BounceOnBounds();
