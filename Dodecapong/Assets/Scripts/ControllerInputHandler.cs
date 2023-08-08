@@ -8,7 +8,6 @@ public class ControllerInputHandler : MonoBehaviour
     PlayerInputManager playerInputManager;
 
     public InputActionAsset UIMasterInputActionAsset;
-    public InputActionAsset inputActionAsset;
 
     PlayerInput playerInput;
 
@@ -30,7 +29,7 @@ public class ControllerInputHandler : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         controllerID = playerInput.playerIndex;
         playerA = gameManagerInstance.GetNewPlayer();
-        if (playerA.ID != 0) playerInput.actions = inputActionAsset;
+        if (playerA.ID == 0) playerInput.actions = UIMasterInputActionAsset;
     }
 
     public void LeftStick(InputAction.CallbackContext context)
