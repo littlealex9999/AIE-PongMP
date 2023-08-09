@@ -164,7 +164,7 @@ public class GameManager : MonoBehaviour
     }
     public void EliminatePlayer(Player player)
     {
-        if (alivePlayers.Count == 2)
+        if (alivePlayers.Count <= 2)
         {
             UpdateGameState(GameState.GAMEOVER);
             return;

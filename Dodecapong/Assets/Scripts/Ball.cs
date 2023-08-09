@@ -51,12 +51,12 @@ public class Ball : MonoBehaviour
         rb.position += bounceNormal * 0.1f;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         Paddle paddle;
         if (collision.gameObject.TryGetComponent(out paddle))
         {
-            //rb.velocity = paddle.BounceNormal() * constantVel;
+            Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
         }
     }
 
@@ -64,7 +64,6 @@ public class Ball : MonoBehaviour
     {
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
-        rb.position += shieldNormal * 0.1f;
     }
     private void ResetBall()
     {
@@ -115,4 +114,5 @@ public class Ball : MonoBehaviour
         return 360 - ret;
     }
 
+    // pee
 }

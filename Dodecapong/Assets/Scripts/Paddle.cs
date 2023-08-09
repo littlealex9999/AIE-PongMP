@@ -45,7 +45,7 @@ public class Paddle : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (GameManager.gameManagerInstance.holdGameplay) return;
+        if (gameManagerInstance.holdGameplay) return;
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -101,7 +101,7 @@ public class Paddle : MonoBehaviour
 
     public Vector2 BounceNormal()
     {
-        return (transform.position - Vector3.zero).normalized;
+        return (Vector3.zero - transform.position).normalized;
     }
 
     internal void Dash()
