@@ -10,6 +10,8 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public int shieldHealth;
 
+    [HideInInspector] public Color color;
+
     private void OnDestroy()
     {
         Destroy(gameObject);

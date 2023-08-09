@@ -619,6 +619,7 @@ GameObject:
   - component: {fileID: 1796106085}
   - component: {fileID: 1796106084}
   - component: {fileID: 1796106083}
+  - component: {fileID: 1796106087}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -660,7 +661,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 455e3dd2b372c474288720fd9eddd950, type: 2}
+  - {fileID: 2100000, guid: 9738b7d19f838db4cbc7b3fc47760916, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -705,6 +706,28 @@ Transform:
   m_Father: {fileID: 6903803110016064107}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1796106087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1796106082}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 96ffdcd41b3f80449a759fbf282ae40c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mat: {fileID: 2100000, guid: 9738b7d19f838db4cbc7b3fc47760916, type: 2}
+  colors:
+  - {r: 1, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &1895458814 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7521882062921523701, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
@@ -1061,6 +1084,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   map: {fileID: 6311386384562661521}
   ball: {fileID: 6311386385564727867}
+  pillarObject: {fileID: 6051333089294521256, guid: c93a086c1c0561249928e95327a6a5f3, type: 3}
+  pillarSmashTime: 2
+  defaultGameVariables: {fileID: 0}
   mapRotationOffset: 0
   playerEmissives:
   - {r: 0, g: 0.16753925, b: 3.9999995, a: 1}
@@ -1072,7 +1098,6 @@ MonoBehaviour:
   - {r: 3.9999995, g: 0.47696885, b: 0, a: 1}
   - {r: 4.085757, g: 0, b: 5.3403134, a: 1}
   playerDistance: 4
-  shieldHits: 100
   playerImages:
   - {fileID: 1538804592}
   - {fileID: 1895458814}

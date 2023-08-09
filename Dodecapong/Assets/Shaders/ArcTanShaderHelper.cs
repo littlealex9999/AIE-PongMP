@@ -17,7 +17,7 @@ public class ArcTanShaderHelper : MonoBehaviour
     }
 
     [ContextMenu("Calculate Tex Array")]
-    void CalculateTextureArray()
+    public void CalculateTextureArray()
     {
         if (!mat) mat = GetComponent<MeshRenderer>().sharedMaterial;
 

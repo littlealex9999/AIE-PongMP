@@ -99,11 +99,6 @@ public class Paddle : MonoBehaviour
         return 360 - ret;
     }
 
-    public void SetColor(Color col)
-    {
-        GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", col);
-    }
-
     public Vector2 BounceNormal()
     {
         return (transform.position - Vector3.zero).normalized;

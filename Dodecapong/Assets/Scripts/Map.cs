@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static GameManager;
@@ -10,7 +11,52 @@ public class Map : MonoBehaviour
     [Min(3)] public int lineStepCount;
 
     public GameObject ringMesh;
-    public void GenerateMap()
+
+    public ArcTanShaderHelper shaderHelper;
+    public Material arcTangentShader;
+    public float removeSpeed = 1;
+
+    public void SetupMap(List<Player> alivePlayers)
+    {
+        GenerateMap();
+        arcTangentShader.SetFloat("_Shrink", 0);
+        shaderHelper.colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            shaderHelper.colors[i] = alivePlayers[i].color;
+        }
+        shaderHelper.CalculateTextureArray();
+    }
+
+    public void RemoveSegment(int index, List<Player> alivePlayers)
+    {
+        StartCoroutine(RemovalCoroutine(index, alivePlayers));
+    }
+
+    IEnumerator RemovalCoroutine(int index, List<Player> alivePlayers)
+    {
+        arcTangentShader.SetFloat("_TargetPlayer", index);
+
+        float value = 0;
+        float timeElapsed = 0;
+        float duration = 1;
+        while (timeElapsed < duration)
+        { 
+            value = Mathf.Lerp(0, 1, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
+
+            arcTangentShader.SetFloat("_Shrink", value);
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        SetupMap(alivePlayers);
+
+        yield break;
+    }
+
+
+    void GenerateMap()
     {
         if (lineStepCount < 1) return;
 
@@ -22,23 +68,11 @@ public class Map : MonoBehaviour
     {
         if (ringMeshes.Count == 0)
         {
-            int alivePlayerCount = gameManagerInstance.alivePlayers.Count;
-            for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
+            for (int i = 0; i < lineStepCount; i++)
             {
-                // setup values
-                int pointCount = lineStepCount / alivePlayerCount;
-                Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
-                float angle = gameManagerInstance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer;
-                Vector3 targetPos = GetTargetPointInCircleLocal(angle);
-
-                // ring segment of players colour
-                for (int currentPoint = 0; currentPoint < pointCount; currentPoint++)
-                {
-                    targetPos = rotationPerSegment * targetPos;
-                    GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
-                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", gameManagerInstance.GetPlayerColor(gameManagerInstance.alivePlayers[currentPlayer].ID));
-                    ringMeshes.Add(obj);
-                }
+                Vector3 targetPos = GetTargetPointInCircleLocal(i);
+                GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
+                ringMeshes.Add(obj);
             }
         }
         else
