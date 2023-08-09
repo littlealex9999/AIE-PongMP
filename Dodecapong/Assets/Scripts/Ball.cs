@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
+using static GameManager;
 
 public class Ball : MonoBehaviour
 {
@@ -35,12 +32,12 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        GameManager.gameManagerInstance.gameStateChanged.AddListener(OnGameStateChanged);
+        gameManagerInstance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     private void OnGameStateChanged()
     {
-        if (GameManager.gameManagerInstance.gameState == GameManager.GameState.MAINMENU)
+        if (gameManagerInstance.gameState == GameState.MAINMENU)
         {
             rb.velocity = rb.transform.forward * constantVel;
         }
@@ -82,7 +79,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.gameManagerInstance.gameState != GameManager.GameState.GAMEPLAY) return;
+        if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
 
         if (rb.velocity.magnitude > constantVel)
         {
@@ -96,9 +93,9 @@ public class Ball : MonoBehaviour
         {
             float angle = Angle(transform.position.normalized);
 
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.gameManagerInstance.alivePlayers.Count);
+            int alivePlayerID = (int)(angle / 360.0f * gameManagerInstance.alivePlayers.Count);
             
-            if (GameManager.gameManagerInstance.OnSheildHit(alivePlayerID)) ResetBall();
+            if (gameManagerInstance.OnSheildHit(alivePlayerID)) ResetBall();
             else BounceOnBounds();
         }
     }
