@@ -33,7 +33,7 @@ public class Paddle : MonoBehaviour
         angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
-        facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -transform.up;
+        facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
         SetPosition(playerMidPoint);
     }
 
@@ -111,6 +111,7 @@ public class Paddle : MonoBehaviour
 
     internal void Dash()
     {
-        throw new NotImplementedException();
+        Debug.LogWarning("Dash is not currently implemented", this);
+        // throw new NotImplementedException();
     }
 }

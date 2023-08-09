@@ -212,6 +212,7 @@ public class GameManager : MonoBehaviour
         while (alivePlayers.Count != pillars.Count) {
             if (pillars.Count > alivePlayers.Count) {
                 Destroy(pillars[pillars.Count - 1]);
+                pillars.RemoveAt(pillars.Count - 1);
             } else {
                 pillars.Add(Instantiate(pillarObject, map.transform));
             }
