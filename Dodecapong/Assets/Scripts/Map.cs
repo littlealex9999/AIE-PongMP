@@ -22,7 +22,7 @@ public class Map : MonoBehaviour
     {
         if (ringMeshes.Count == 0)
         {
-            int alivePlayerCount = gameManagerInstance.alivePlayerCount;
+            int alivePlayerCount = gameManagerInstance.alivePlayers.Count;
             for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
             {
                 // setup values
@@ -36,7 +36,7 @@ public class Map : MonoBehaviour
                 {
                     targetPos = rotationPerSegment * targetPos;
                     GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
-                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", gameManagerInstance.alivePlayers[currentPlayer].color);
+                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", gameManagerInstance.GetPlayerColor(gameManagerInstance.alivePlayers[currentPlayer].ID));
                     ringMeshes.Add(obj);
                 }
             }
