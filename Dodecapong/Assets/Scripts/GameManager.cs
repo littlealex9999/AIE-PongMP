@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
 
     public Map map;
     public Ball ball;
+    public ArcTanShaderHelper arcTanShader;
 
     public GameObject pillarObject;
 
@@ -172,9 +173,11 @@ public class GameManager : MonoBehaviour
         }
         int index = alivePlayers.IndexOf(player);
         player.paddle.gameObject.SetActive(false);
-        StartCoroutine(SmashPillars(index));
         alivePlayers.Remove(player);
-        map.RemoveSegment(index, alivePlayers); // must be called after the player is removed from the list.
+        StartCoroutine(SmashPillars(index));
+
+        //map.RemoveSegment(index, alivePlayers); // must be called after the player is removed from the list.
+
         BuildGameBoard();
     }
 
@@ -287,7 +290,11 @@ public class GameManager : MonoBehaviour
         else return playerEmissives[playerEmissives.Count - 1];
     }
 
-    // returns true if a hit causes a player to die.
+    /// <summary>
+    /// Manages shield health and player elimination. Returns true if a hit causes a player to die.
+    /// </summary>
+    /// <param name="alivePlayerID"></param>
+    /// <returns></returns>
     public bool OnSheildHit(int alivePlayerID)
     {
         if (alivePlayerID >= alivePlayers.Count) return false;
@@ -317,6 +324,7 @@ public class GameManager : MonoBehaviour
         smashingPillars = true;
 
         index %= pillars.Count;
+        arcTanShader.SetTargetPlayer(index);
 
         float pillarSmashTimer = 0.0f;
 
@@ -335,10 +343,11 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // move pillars over time
+        // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
             float playerRemovalPercentage = pillarSmashTimer / pillarSmashTime;
+            arcTanShader.SetShrink(playerRemovalPercentage);
 
             for (int i = 0; i < pillars.Count; i++) {
                 float targetAngle = Mathf.Lerp(startAngles[i], targetAngles[i], playerRemovalPercentage);
@@ -358,6 +367,8 @@ public class GameManager : MonoBehaviour
 
         Destroy(pillars[index]);
         pillars.RemoveAt(index);
+
+        map.SetupMap(alivePlayers);
 
         smashingPillars = false;
         yield break;
