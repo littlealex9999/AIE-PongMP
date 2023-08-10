@@ -336,7 +336,7 @@ public class GameManager : MonoBehaviour
             startAngles[i] = 360.0f / pillars.Count * i;
             targetAngles[i] = 360.0f / (pillars.Count - 1);
 
-            if (i >= index) {
+            if (i > index) {
                 targetAngles[i] *= i - 1;
             } else {
                 targetAngles[i] *= i;
