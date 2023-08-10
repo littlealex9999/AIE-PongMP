@@ -15,7 +15,6 @@ public class GameManager : MonoBehaviour
     public Map map;
     public Ball ball;
 
-    public GameObject paddleObject;
     public GameObject pillarObject;
 
     public float pillarSmashTime = 2.0f;
@@ -141,7 +140,7 @@ public class GameManager : MonoBehaviour
         GameObject playerObject = Instantiate(playerPrefab);
         playerObject.transform.parent = transform;
         Player player = playerObject.GetComponent<Player>();
-        player.paddle.SetColor(GetPlayerColor(players.Count));
+        player.color = GetPlayerColor(players.Count);
         players.Add(player);
         UpdatePlayerImages();
         return player;
@@ -166,10 +165,16 @@ public class GameManager : MonoBehaviour
     }
     public void EliminatePlayer(Player player)
     {
+        if (alivePlayers.Count <= 2)
+        {
+            UpdateGameState(GameState.GAMEOVER);
+            return;
+        }
+        int index = alivePlayers.IndexOf(player);
         player.paddle.gameObject.SetActive(false);
-        StartCoroutine(SmashPillars(alivePlayers.IndexOf(player)));
+        StartCoroutine(SmashPillars(index));
         alivePlayers.Remove(player);
-        if (alivePlayers.Count == 1) UpdateGameState(GameState.GAMEOVER);
+        map.RemoveSegment(index, alivePlayers); // must be called after the player is removed from the list.
         BuildGameBoard();
     }
 
@@ -181,6 +186,7 @@ public class GameManager : MonoBehaviour
     {
         inGame = true;
         ResetPlayers();
+        map.SetupMap(alivePlayers);
         BuildGameBoard();
     }
 
@@ -196,14 +202,13 @@ public class GameManager : MonoBehaviour
 
     void BuildGameBoard()
     {
-        ball.transform.position = map.transform.position;
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
         ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
         ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
 
         gameEndTimer = gameVariables.timeInSeconds;
-        map.GenerateMap();
+        
         UpdatePaddles();
         UpdateShields();
     }
@@ -292,7 +297,8 @@ public class GameManager : MonoBehaviour
         {
             EliminatePlayer(player);
             return true;
-        } else {
+        } else
+        {
             player.shieldHealth--;
             UpdateShields();
             return false;

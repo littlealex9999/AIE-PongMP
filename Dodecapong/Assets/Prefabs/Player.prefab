@@ -48,6 +48,7 @@ MonoBehaviour:
   paddle: {fileID: 4745262314672998519}
   movementInput: {x: 0, y: 0}
   shieldHealth: 0
+  color: {r: 0, g: 0, b: 0, a: 0}
 --- !u!1 &4745262314672998518
 GameObject:
   m_ObjectHideFlags: 0
@@ -111,7 +112,7 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5321488250a39384ba4079ae7a5d2c24, type: 2}
+  - {fileID: 2100000, guid: 9738b7d19f838db4cbc7b3fc47760916, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -143,7 +144,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 6200000, guid: e910d723cf491a7468cff2ae8aa059b1, type: 2}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}

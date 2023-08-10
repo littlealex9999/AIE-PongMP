@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using static GameManager;
 
 public class Paddle : MonoBehaviour
 {
@@ -78,7 +77,7 @@ public class Paddle : MonoBehaviour
 
     public void SetPosition(float angle)
     {
-        transform.position = instance.map.GetTargetPointInCircleLocal(angle).normalized * instance.playerDistance;
+        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * GameManager.instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
@@ -99,14 +98,9 @@ public class Paddle : MonoBehaviour
         return 360 - ret;
     }
 
-    public void SetColor(Color col)
-    {
-        GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", col);
-    }
-
     public Vector2 BounceNormal()
     {
-        return (transform.position - Vector3.zero).normalized;
+        return (Vector3.zero - transform.position).normalized;
     }
 
     internal void Dash()
