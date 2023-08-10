@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Game Variables", menuName = "")]
+[CreateAssetMenu(fileName = "Game Variables")]
 public class GameVariables : ScriptableObject
 {
     // comments will be placed on the same line for things that may not be implemented
@@ -13,6 +13,7 @@ public class GameVariables : ScriptableObject
         playerSpeed = gv.playerSpeed;
         playerSize = gv.playerSize;
         playerStickiness = gv.playerStickiness;
+        playerBounceTowardsCenterBias = gv.playerBounceTowardsCenterBias;
         dashEnabled = gv.dashEnabled;
 
         ballCount = gv.ballCount;
@@ -21,6 +22,7 @@ public class GameVariables : ScriptableObject
         ballSize = gv.ballSize;
 
         shieldLives = gv.shieldLives;
+        shieldBounceTowardsCenterBias = gv.shieldBounceTowardsCenterBias;
 
         obstacleFrequency = gv.obstacleFrequency;
         blackHoleEnabled = gv.blackHoleEnabled;
@@ -44,11 +46,13 @@ public class GameVariables : ScriptableObject
     [Header("Player")] public float playerSpeed = 90.0f;
     public Vector2 playerSize = new Vector2(2.0f, 0.5f);
     public float playerStickiness = 0; // note: may not be implemented
+    public float playerBounceTowardsCenterBias;
     public bool dashEnabled = true;
 
     public void SetPlayerSpeed(float value) { playerSpeed = value; }
     public void SetPlayerSize(float value) { playerSize.x = value; }
     public void SetPlayerStickiness(float value) { playerStickiness = value; }
+    public void SetPlayerBounceBias(float value) { playerBounceTowardsCenterBias = value; }
     public void SetPlayerDashEnabled(bool enabled) { dashEnabled = enabled; }
     #endregion
 
@@ -66,8 +70,10 @@ public class GameVariables : ScriptableObject
 
     #region Goal & Shield
     [Header("Goal & Shield"), Min(0)] public int shieldLives = 1;
+    public float shieldBounceTowardsCenterBias;
 
     public void SetShieldLives(int value) { shieldLives = value; }
+    public void SetShieldBounceBias(float value) { shieldBounceTowardsCenterBias = value; }
     #endregion
 
     #region Field

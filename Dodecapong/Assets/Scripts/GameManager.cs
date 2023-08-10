@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager gameManagerInstance;
+    public static GameManager instance;
 
     List<GameObject> pillars = new List<GameObject>();
 
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (!gameManagerInstance) gameManagerInstance = this;
+        if (!instance) instance = this;
         else Destroy(this);
 
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
@@ -134,7 +134,8 @@ public class GameManager : MonoBehaviour
 
     public List<Player> alivePlayers;
     public List<Player> players;
-    
+
+    [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
         GameObject playerObject = Instantiate(playerPrefab);
@@ -198,6 +199,9 @@ public class GameManager : MonoBehaviour
         ball.transform.position = map.transform.position;
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+        ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
+        ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+
         gameEndTimer = gameVariables.timeInSeconds;
         map.GenerateMap();
         UpdatePaddles();
@@ -209,16 +213,17 @@ public class GameManager : MonoBehaviour
         float segmentOffset = 180.0f / alivePlayers.Count;
 
         // pillars can now be accessed like alivePlayers
-        while (alivePlayers.Count != pillars.Count) {
-            if (pillars.Count > alivePlayers.Count) {
-                Destroy(pillars[pillars.Count - 1]);
-                pillars.RemoveAt(pillars.Count - 1);
-            } else {
-                pillars.Add(Instantiate(pillarObject, map.transform));
+        // ignore while holdGameplay because that likely means something special is happening like the pillar smash
+        if (!holdGameplay) {
+            while (alivePlayers.Count != pillars.Count) {
+                if (pillars.Count > alivePlayers.Count) {
+                    Destroy(pillars[pillars.Count - 1]);
+                    pillars.RemoveAt(pillars.Count - 1);
+                } else {
+                    pillars.Add(Instantiate(pillarObject, map.transform));
+                }
             }
         }
-
-     
 
         for (int i = 0; i < alivePlayers.Count; i++)
         {
@@ -227,8 +232,8 @@ public class GameManager : MonoBehaviour
 
             float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
 
-            pillars[i].transform.position = map.GetTargetPointInCircle(playerMidPos - segmentOffset);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, playerMidPos - segmentOffset);
+            pillars[i].transform.position = map.GetTargetPointInCircle(360.0f / alivePlayers.Count * i);
+            pillars[i].transform.rotation = Quaternion.Euler(0, 0, 360.0f / alivePlayers.Count * i);
         }
     }
 
@@ -301,18 +306,52 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator SmashPillars(int index)
     {
+        if (smashingPillars) throw new Exception("Pillars are already being smashed");
+
         smashingPillars = true;
 
         index %= pillars.Count;
-        int nextIndex = (index + 1) % pillars.Count;
 
         float pillarSmashTimer = 0.0f;
 
+        float[] startAngles = new float[pillars.Count];
+        float[] targetAngles = new float[pillars.Count];
+
+        // calculate start and end angle for each pillar
+        for (int i = 0; i < pillars.Count; i++) {
+            startAngles[i] = 360.0f / pillars.Count * i;
+            targetAngles[i] = 360.0f / (pillars.Count - 1);
+
+            if (i >= index) {
+                targetAngles[i] *= i - 1;
+            } else {
+                targetAngles[i] *= i;
+            }
+        }
+
+        // move pillars over time
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
+            float playerRemovalPercentage = pillarSmashTimer / pillarSmashTime;
+
+            for (int i = 0; i < pillars.Count; i++) {
+                float targetAngle = Mathf.Lerp(startAngles[i], targetAngles[i], playerRemovalPercentage);
+                
+                pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+                pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+            }
 
             yield return new WaitForEndOfFrame();
         }
+
+        // ensure each pillar is exactly where it was calculated to belong
+        for (int i = 0; i < pillars.Count; i++) {
+            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngles[i]);
+            pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
+        }
+
+        Destroy(pillars[index]);
+        pillars.RemoveAt(index);
 
         smashingPillars = false;
         yield break;

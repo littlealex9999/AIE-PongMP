@@ -15,12 +15,14 @@ MonoBehaviour:
   playerSpeed: 90
   playerSize: {x: 2, y: 0.5}
   playerStickiness: 0
+  playerBounceTowardsCenterBias: 0
   dashEnabled: 1
   ballCount: 1
-  ballSpeed: 4
+  ballSpeed: 0
   ballSpeedPerHit: 0
   ballSize: 0.5
   shieldLives: 5
+  shieldBounceTowardsCenterBias: 0
   obstacleFrequency: 0
   blackHoleEnabled: 0
   powerupFrequency: 0

@@ -45,7 +45,7 @@ public class Paddle : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (GameManager.gameManagerInstance.holdGameplay) return;
+        if (GameManager.instance.holdGameplay) return;
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -78,7 +78,7 @@ public class Paddle : MonoBehaviour
 
     public void SetPosition(float angle)
     {
-        transform.position = gameManagerInstance.map.GetTargetPointInCircleLocal(angle).normalized * gameManagerInstance.playerDistance;
+        transform.position = instance.map.GetTargetPointInCircleLocal(angle).normalized * instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
