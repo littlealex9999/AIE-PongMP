@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static GameManager;
 
 public class Map : MonoBehaviour
 {
@@ -11,7 +10,6 @@ public class Map : MonoBehaviour
 
     public GameObject ringMesh;
 
-    public ArcTanShaderHelper shaderHelper;
     public Material arcTangentShader;
     public float removeSpeed = 1;
 
@@ -19,12 +17,12 @@ public class Map : MonoBehaviour
     {
         GenerateMap();
         arcTangentShader.SetFloat("_Shrink", 0);
-        shaderHelper.colors = new Color[alivePlayers.Count];
+        GameManager.instance.arcTanShader.colors = new Color[alivePlayers.Count];
         for (int i = 0; i < alivePlayers.Count; i++)
         {
-            shaderHelper.colors[i] = alivePlayers[i].color;
+            GameManager.instance.arcTanShader.colors[i] = alivePlayers[i].color;
         }
-        shaderHelper.CalculateTextureArray();
+        GameManager.instance.arcTanShader.CalculateTextureArray();
     }
 
     public void RemoveSegment(int index, List<Player> alivePlayers)
