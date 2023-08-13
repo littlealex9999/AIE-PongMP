@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject pillarObject;
 
+    public AnimationCurve pillarCurve;
     public float pillarSmashTime = 2.0f;
 
     public GameVariables defaultGameVariables;
@@ -346,7 +347,7 @@ public class GameManager : MonoBehaviour
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
-            float playerRemovalPercentage = pillarSmashTimer / pillarSmashTime;
+            float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
             arcTanShader.SetShrink(playerRemovalPercentage);
 
             for (int i = 0; i < pillars.Count; i++) {
