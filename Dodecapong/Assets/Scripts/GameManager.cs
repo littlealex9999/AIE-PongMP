@@ -193,6 +193,11 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        foreach (Player player in players)
+        {
+            player.dashCooldown = gameVariables.dashCooldown;
+            player.dashDuration = gameVariables.dashDuration;
+        }
         inGame = true;
         ResetPlayers();
         map.SetupMap(alivePlayers);

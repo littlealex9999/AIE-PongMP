@@ -15,6 +15,15 @@ public class Ball : MonoBehaviour
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float paddleBounceTowardsCenterBias;
 
+    Ball(float constantVel, float ballRadius, float dampStrength, float shieldBounceTowardsCenterBias, float paddleBounceTowardsCenterBias)
+    {
+        this.constantVel = constantVel;
+        this.ballRadius = ballRadius;
+        this.dampStrength = dampStrength;
+        this.shieldBounceTowardsCenterBias = shieldBounceTowardsCenterBias;
+        this.paddleBounceTowardsCenterBias = paddleBounceTowardsCenterBias;
+    }
+
     float distFromCenter
     {
         get
@@ -68,7 +77,12 @@ public class Ball : MonoBehaviour
     private void ResetBall()
     {
         rb.position = Vector2.zero;
-        rb.velocity = Random.insideUnitCircle.normalized * constantVel;
+
+        int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
+
+        Vector2 dir = (GameManager.instance.alivePlayers[player].transform.position - transform.position).normalized;
+
+        rb.velocity = dir * constantVel;
     }
 
     public void AddVelocity(Vector2 velocity)
@@ -97,8 +111,7 @@ public class Ball : MonoBehaviour
 
             int alivePlayerID = (int)(angle / 360.0f * instance.alivePlayers.Count);
             
-            if (instance.OnSheildHit(alivePlayerID)) ResetBall();
-            else BounceOnBounds();
+            if (!instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
         }
     }
     public static float Angle(Vector2 vector2)
