@@ -197,9 +197,9 @@ public class GameManager : MonoBehaviour
         }
         inGame = true;
         ResetPlayers();
-        ball.ResetBall();
         UpdatePaddles();
         map.SetupMap(alivePlayers);
+        ball.ResetBall();
         BuildGameBoard();
     }
 
