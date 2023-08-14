@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEOVER:
-
+                
                 break;
             default:
                 break;
@@ -150,11 +150,13 @@ public class GameManager : MonoBehaviour
 
     public void ResetPlayers()
     {
+        alivePlayers.Clear();
+
         foreach (Player player in players)
         {
             player.shieldHealth = gameVariables.shieldLives;
+            alivePlayers.Add(player);
         }
-        alivePlayers = players;
         UpdatePlayerImages();
     }
 
@@ -169,6 +171,7 @@ public class GameManager : MonoBehaviour
     {
         if (alivePlayers.Count <= 2)
         {
+            inGame = false;
             UpdateGameState(GameState.GAMEOVER);
             return;
         }
