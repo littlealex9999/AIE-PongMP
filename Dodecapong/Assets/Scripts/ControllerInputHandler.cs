@@ -47,7 +47,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void ButtonSouth(InputAction.CallbackContext context)
     {
-        if (context.canceled)
+        if (context.started)
         {
             if (instance.gameState != GameState.GAMEPLAY) return;
 
@@ -57,7 +57,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void DPadDown(InputAction.CallbackContext context)
     {
-        if (context.canceled)
+        if (context.started)
         {
             if (instance.gameState != GameState.GAMEPLAY) return;
 

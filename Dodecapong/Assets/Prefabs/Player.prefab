@@ -49,6 +49,8 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0}
   shieldHealth: 0
   color: {r: 0, g: 0, b: 0, a: 0}
+  dashDuration: 0
+  dashCooldown: 0
 --- !u!1 &4745262314672998518
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,7 +80,7 @@ Transform:
   m_GameObject: {fileID: 4745262314672998518}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 2, z: 0.5}
+  m_LocalScale: {x: 0.25, y: 1.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3769693338607014792}
@@ -176,3 +178,37 @@ MonoBehaviour:
   pushDistance: 0.1
   pushStrength: 10
   facingDirection: {x: 1, y: 0, z: 0}
+  dashAnimationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.77748066
+      value: 0.4420642
+      inSlope: 1.9500167
+      outSlope: 1.9500167
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.06470809
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  dashing: 0

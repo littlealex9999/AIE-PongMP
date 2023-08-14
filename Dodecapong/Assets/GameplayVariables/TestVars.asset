@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: TestVars
   m_EditorClassIdentifier: 
   playerSpeed: 90
-  playerSize: {x: 2, y: 0.5}
+  playerSize: {x: 1.5, y: 0.25}
   playerStickiness: 0
   playerBounceTowardsCenterBias: 0
   dashEnabled: 1
+  dashDuration: 0.2
+  dashCooldown: 1
   ballCount: 1
-  ballSpeed: 4
+  ballSpeed: 5
   ballSpeedPerHit: 0
   ballSize: 0.5
-  shieldLives: 5
+  shieldLives: 2
   shieldBounceTowardsCenterBias: 0
   obstacleFrequency: 0
   blackHoleEnabled: 0

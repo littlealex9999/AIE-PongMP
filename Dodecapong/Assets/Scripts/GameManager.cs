@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject pillarObject;
 
+    public AnimationCurve pillarCurve;
     public float pillarSmashTime = 2.0f;
 
     public GameVariables defaultGameVariables;
@@ -98,15 +99,16 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
-
+                EventManager.instance?.mainMenu?.Invoke();
                 break;
             case GameState.JOINMENU:
-
+                EventManager.instance?.joinMenu?.Invoke();
                 break;
             case GameState.SETTINGSMENU:
-
+                EventManager.instance?.settingsMenu?.Invoke();
                 break;
             case GameState.GAMEPLAY:
+                EventManager.instance?.gameplay?.Invoke();
                 if (!inGame)
                 {
                     StartGame(); 
@@ -117,10 +119,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.GAMEPAUSED:
+                EventManager.instance?.gamePaused?.Invoke();
 
                 break;
             case GameState.GAMEOVER:
-
+                EventManager.instance?.gameOver?.Invoke();
                 break;
             default:
                 break;
@@ -149,11 +152,13 @@ public class GameManager : MonoBehaviour
 
     public void ResetPlayers()
     {
+        alivePlayers.Clear();
+
         foreach (Player player in players)
         {
             player.shieldHealth = gameVariables.shieldLives;
+            alivePlayers.Add(player);
         }
-        alivePlayers = players;
         UpdatePlayerImages();
     }
 
@@ -168,15 +173,13 @@ public class GameManager : MonoBehaviour
     {
         if (alivePlayers.Count <= 2)
         {
+            inGame = false;
             UpdateGameState(GameState.GAMEOVER);
             return;
         }
         int index = alivePlayers.IndexOf(player);
         player.paddle.gameObject.SetActive(false);
-        alivePlayers.Remove(player);
-        StartCoroutine(SmashPillars(index));
-
-        //map.RemoveSegment(index, alivePlayers); // must be called after the player is removed from the list.
+        StartCoroutine(EliminatePlayerRoutine(index));
 
         BuildGameBoard();
     }
@@ -187,9 +190,16 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        foreach (Player player in players)
+        {
+            player.dashCooldown = gameVariables.dashCooldown;
+            player.dashDuration = gameVariables.dashDuration;
+        }
         inGame = true;
         ResetPlayers();
+        UpdatePaddles();
         map.SetupMap(alivePlayers);
+        ball.ResetBall();
         BuildGameBoard();
     }
 
@@ -212,7 +222,6 @@ public class GameManager : MonoBehaviour
 
         gameEndTimer = gameVariables.timeInSeconds;
         
-        UpdatePaddles();
         UpdateShields();
     }
 
@@ -237,6 +246,7 @@ public class GameManager : MonoBehaviour
         {
             alivePlayers[i].paddle.gameObject.SetActive(true);
             alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
+            alivePlayers[i].paddle.SetPosition(alivePlayers[i].paddle.playerSectionMiddle);
 
             float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
 
@@ -317,7 +327,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="index"></param>
     /// <returns></returns>
-    IEnumerator SmashPillars(int index)
+    IEnumerator EliminatePlayerRoutine(int index)
     {
         if (smashingPillars) throw new Exception("Pillars are already being smashed");
 
@@ -330,6 +340,8 @@ public class GameManager : MonoBehaviour
 
         float[] startAngles = new float[pillars.Count];
         float[] targetAngles = new float[pillars.Count];
+        float[] playerStartAngles = new float[alivePlayers.Count - 1];
+        float[] playerTargetAngles = new float[alivePlayers.Count - 1];
 
         // calculate start and end angle for each pillar
         for (int i = 0; i < pillars.Count; i++) {
@@ -343,10 +355,20 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        // calculate start and end angle for each player
+        for (int i = 0; i < alivePlayers.Count - 1; i++) {
+            int targetPlayer;
+            if (i < index) targetPlayer = i;
+            else targetPlayer = i + 1;
+
+            playerStartAngles[i] = Paddle.Angle(alivePlayers[targetPlayer].paddle.transform.position);
+            playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * i;
+        }
+
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
-            float playerRemovalPercentage = pillarSmashTimer / pillarSmashTime;
+            float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
             arcTanShader.SetShrink(playerRemovalPercentage);
 
             for (int i = 0; i < pillars.Count; i++) {
@@ -354,6 +376,21 @@ public class GameManager : MonoBehaviour
                 
                 pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+            }
+
+            for (int i = 0; i < alivePlayers.Count - 1; i++) {
+                int targetPlayer;
+                if (i < index) {
+                    targetPlayer = i;
+                } else if (i > index) {
+                    targetPlayer = i + 1;
+                } else {
+                    // player being eliminated
+
+                    continue;
+                }
+
+                alivePlayers[targetPlayer].paddle.SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
             }
 
             yield return new WaitForEndOfFrame();
@@ -365,10 +402,16 @@ public class GameManager : MonoBehaviour
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
         }
 
+        alivePlayers.RemoveAt(index);
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
+        }
+
         Destroy(pillars[index]);
         pillars.RemoveAt(index);
 
         map.SetupMap(alivePlayers);
+        ball.ResetBall();
 
         smashingPillars = false;
         yield break;

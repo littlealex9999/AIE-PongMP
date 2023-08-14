@@ -1,5 +1,4 @@
 using UnityEngine;
-using static GameManager;
 
 public class Ball : MonoBehaviour
 {
@@ -14,6 +13,15 @@ public class Ball : MonoBehaviour
     public float shieldBounceTowardsCenterBias;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float paddleBounceTowardsCenterBias;
+
+    Ball(float constantVel, float ballRadius, float dampStrength, float shieldBounceTowardsCenterBias, float paddleBounceTowardsCenterBias)
+    {
+        this.constantVel = constantVel;
+        this.ballRadius = ballRadius;
+        this.dampStrength = dampStrength;
+        this.shieldBounceTowardsCenterBias = shieldBounceTowardsCenterBias;
+        this.paddleBounceTowardsCenterBias = paddleBounceTowardsCenterBias;
+    }
 
     float distFromCenter
     {
@@ -32,12 +40,12 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        instance.gameStateChanged.AddListener(OnGameStateChanged);
+        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     private void OnGameStateChanged()
     {
-        if (instance.gameState == GameState.MAINMENU)
+        if (GameManager.instance.gameState == GameManager.GameState.MAINMENU)
         {
             rb.velocity = rb.transform.forward * constantVel;
         }
@@ -65,10 +73,15 @@ public class Ball : MonoBehaviour
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
     }
-    private void ResetBall()
+    public void ResetBall()
     {
-        rb.position = Vector2.zero;
-        rb.velocity = Random.insideUnitCircle.normalized * constantVel;
+        transform.position = Vector2.zero;
+
+        int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
+
+        Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
+
+        rb.velocity = dir * constantVel;
     }
 
     public void AddVelocity(Vector2 velocity)
@@ -78,7 +91,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (instance.gameState != GameState.GAMEPLAY || instance.holdGameplay) {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
             rb.velocity = Vector2.zero;
             return;
         }
@@ -95,10 +108,9 @@ public class Ball : MonoBehaviour
         {
             float angle = Angle(transform.position.normalized);
 
-            int alivePlayerID = (int)(angle / 360.0f * instance.alivePlayers.Count);
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
             
-            if (instance.OnSheildHit(alivePlayerID)) ResetBall();
-            else BounceOnBounds();
+            if (!GameManager.instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
         }
     }
     public static float Angle(Vector2 vector2)
