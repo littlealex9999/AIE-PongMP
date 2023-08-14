@@ -32,12 +32,12 @@ public class Ball : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-        gameManagerInstance.gameStateChanged.AddListener(OnGameStateChanged);
+        instance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
     private void OnGameStateChanged()
     {
-        if (gameManagerInstance.gameState == GameState.MAINMENU)
+        if (instance.gameState == GameState.MAINMENU)
         {
             rb.velocity = rb.transform.forward * constantVel;
         }
@@ -51,12 +51,12 @@ public class Ball : MonoBehaviour
         rb.position += bounceNormal * 0.1f;
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         Paddle paddle;
         if (collision.gameObject.TryGetComponent(out paddle))
         {
-            //rb.velocity = paddle.BounceNormal() * constantVel;
+            Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
         }
     }
 
@@ -64,7 +64,6 @@ public class Ball : MonoBehaviour
     {
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
-        rb.position += shieldNormal * 0.1f;
     }
     private void ResetBall()
     {
@@ -79,7 +78,10 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+        if (instance.gameState != GameState.GAMEPLAY || instance.holdGameplay) {
+            rb.velocity = Vector2.zero;
+            return;
+        }
 
         if (rb.velocity.magnitude > constantVel)
         {
@@ -93,9 +95,9 @@ public class Ball : MonoBehaviour
         {
             float angle = Angle(transform.position.normalized);
 
-            int alivePlayerID = (int)(angle / 360.0f * gameManagerInstance.alivePlayers.Count);
+            int alivePlayerID = (int)(angle / 360.0f * instance.alivePlayers.Count);
             
-            if (gameManagerInstance.OnSheildHit(alivePlayerID)) ResetBall();
+            if (instance.OnSheildHit(alivePlayerID)) ResetBall();
             else BounceOnBounds();
         }
     }
@@ -115,4 +117,5 @@ public class Ball : MonoBehaviour
         return 360 - ret;
     }
 
+    // pee
 }

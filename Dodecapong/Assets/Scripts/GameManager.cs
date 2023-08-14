@@ -8,14 +8,14 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager gameManagerInstance;
+    public static GameManager instance;
 
     List<GameObject> pillars = new List<GameObject>();
 
     public Map map;
     public Ball ball;
+    public ArcTanShaderHelper arcTanShader;
 
-    public GameObject paddleObject;
     public GameObject pillarObject;
 
     public float pillarSmashTime = 2.0f;
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
-        if (!gameManagerInstance) gameManagerInstance = this;
+        if (!instance) instance = this;
         else Destroy(this);
 
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
@@ -134,13 +134,14 @@ public class GameManager : MonoBehaviour
 
     public List<Player> alivePlayers;
     public List<Player> players;
-    
+
+    [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
         GameObject playerObject = Instantiate(playerPrefab);
         playerObject.transform.parent = transform;
         Player player = playerObject.GetComponent<Player>();
-        player.paddle.SetColor(GetPlayerColor(players.Count));
+        player.color = GetPlayerColor(players.Count);
         players.Add(player);
         UpdatePlayerImages();
         return player;
@@ -165,10 +166,18 @@ public class GameManager : MonoBehaviour
     }
     public void EliminatePlayer(Player player)
     {
+        if (alivePlayers.Count <= 2)
+        {
+            UpdateGameState(GameState.GAMEOVER);
+            return;
+        }
+        int index = alivePlayers.IndexOf(player);
         player.paddle.gameObject.SetActive(false);
-        StartCoroutine(SmashPillars(alivePlayers.IndexOf(player)));
         alivePlayers.Remove(player);
-        if (alivePlayers.Count == 1) UpdateGameState(GameState.GAMEOVER);
+        StartCoroutine(SmashPillars(index));
+
+        //map.RemoveSegment(index, alivePlayers); // must be called after the player is removed from the list.
+
         BuildGameBoard();
     }
 
@@ -180,6 +189,7 @@ public class GameManager : MonoBehaviour
     {
         inGame = true;
         ResetPlayers();
+        map.SetupMap(alivePlayers);
         BuildGameBoard();
     }
 
@@ -195,11 +205,13 @@ public class GameManager : MonoBehaviour
 
     void BuildGameBoard()
     {
-        ball.transform.position = map.transform.position;
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+        ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
+        ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+
         gameEndTimer = gameVariables.timeInSeconds;
-        map.GenerateMap();
+        
         UpdatePaddles();
         UpdateShields();
     }
@@ -209,15 +221,17 @@ public class GameManager : MonoBehaviour
         float segmentOffset = 180.0f / alivePlayers.Count;
 
         // pillars can now be accessed like alivePlayers
-        while (alivePlayers.Count != pillars.Count) {
-            if (pillars.Count > alivePlayers.Count) {
-                Destroy(pillars[pillars.Count - 1]);
-            } else {
-                pillars.Add(Instantiate(pillarObject, map.transform));
+        // ignore while holdGameplay because that likely means something special is happening like the pillar smash
+        if (!holdGameplay) {
+            while (alivePlayers.Count != pillars.Count) {
+                if (pillars.Count > alivePlayers.Count) {
+                    Destroy(pillars[pillars.Count - 1]);
+                    pillars.RemoveAt(pillars.Count - 1);
+                } else {
+                    pillars.Add(Instantiate(pillarObject, map.transform));
+                }
             }
         }
-
-     
 
         for (int i = 0; i < alivePlayers.Count; i++)
         {
@@ -226,8 +240,8 @@ public class GameManager : MonoBehaviour
 
             float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
 
-            pillars[i].transform.position = map.GetTargetPointInCircle(playerMidPos - segmentOffset);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, playerMidPos - segmentOffset);
+            pillars[i].transform.position = map.GetTargetPointInCircle(360.0f / alivePlayers.Count * i);
+            pillars[i].transform.rotation = Quaternion.Euler(0, 0, 360.0f / alivePlayers.Count * i);
         }
     }
 
@@ -276,7 +290,11 @@ public class GameManager : MonoBehaviour
         else return playerEmissives[playerEmissives.Count - 1];
     }
 
-    // returns true if a hit causes a player to die.
+    /// <summary>
+    /// Manages shield health and player elimination. Returns true if a hit causes a player to die.
+    /// </summary>
+    /// <param name="alivePlayerID"></param>
+    /// <returns></returns>
     public bool OnSheildHit(int alivePlayerID)
     {
         if (alivePlayerID >= alivePlayers.Count) return false;
@@ -286,7 +304,8 @@ public class GameManager : MonoBehaviour
         {
             EliminatePlayer(player);
             return true;
-        } else {
+        } else
+        {
             player.shieldHealth--;
             UpdateShields();
             return false;
@@ -300,18 +319,56 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     IEnumerator SmashPillars(int index)
     {
+        if (smashingPillars) throw new Exception("Pillars are already being smashed");
+
         smashingPillars = true;
 
         index %= pillars.Count;
-        int nextIndex = (index + 1) % pillars.Count;
+        arcTanShader.SetTargetPlayer(index);
 
         float pillarSmashTimer = 0.0f;
 
+        float[] startAngles = new float[pillars.Count];
+        float[] targetAngles = new float[pillars.Count];
+
+        // calculate start and end angle for each pillar
+        for (int i = 0; i < pillars.Count; i++) {
+            startAngles[i] = 360.0f / pillars.Count * i;
+            targetAngles[i] = 360.0f / (pillars.Count - 1);
+
+            if (i > index) {
+                targetAngles[i] *= i - 1;
+            } else {
+                targetAngles[i] *= i;
+            }
+        }
+
+        // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
+            float playerRemovalPercentage = pillarSmashTimer / pillarSmashTime;
+            arcTanShader.SetShrink(playerRemovalPercentage);
+
+            for (int i = 0; i < pillars.Count; i++) {
+                float targetAngle = Mathf.Lerp(startAngles[i], targetAngles[i], playerRemovalPercentage);
+                
+                pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+                pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+            }
 
             yield return new WaitForEndOfFrame();
         }
+
+        // ensure each pillar is exactly where it was calculated to belong
+        for (int i = 0; i < pillars.Count; i++) {
+            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngles[i]);
+            pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
+        }
+
+        Destroy(pillars[index]);
+        pillars.RemoveAt(index);
+
+        map.SetupMap(alivePlayers);
 
         smashingPillars = false;
         yield break;

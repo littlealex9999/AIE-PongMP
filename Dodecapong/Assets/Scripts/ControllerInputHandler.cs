@@ -19,8 +19,8 @@ public class ControllerInputHandler : MonoBehaviour
     int controllerID;
     private void OnDestroy()
     {
-        gameManagerInstance.RemovePlayer(playerA);
-        gameManagerInstance.RemovePlayer(playerB);
+        instance.RemovePlayer(playerA);
+        instance.RemovePlayer(playerB);
     }
 
     private void Awake()
@@ -28,20 +28,20 @@ public class ControllerInputHandler : MonoBehaviour
         playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerInput = GetComponent<PlayerInput>();
         controllerID = playerInput.playerIndex;
-        playerA = gameManagerInstance.GetNewPlayer();
+        playerA = instance.GetNewPlayer();
         if (playerA.ID == 0) playerInput.actions = UIMasterInputActionAsset;
     }
 
     public void LeftStick(InputAction.CallbackContext context)
     {
-        if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+        if (instance.gameState != GameState.GAMEPLAY) return;
 
         playerA.movementInput = context.ReadValue<Vector2>();
     }
     public void RightStick(InputAction.CallbackContext context)
     {
 
-            if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+            if (instance.gameState != GameState.GAMEPLAY) return;
 
         if (splitControls) playerB.movementInput = context.ReadValue<Vector2>();
     }
@@ -49,7 +49,7 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.canceled)
         {
-            if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+            if (instance.gameState != GameState.GAMEPLAY) return;
 
             if (splitControls) playerB.Dash();
             else playerA.Dash();
@@ -59,7 +59,7 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.canceled)
         {
-            if (gameManagerInstance.gameState != GameState.GAMEPLAY) return;
+            if (instance.gameState != GameState.GAMEPLAY) return;
 
             if (splitControls) playerA.Dash();
         }
@@ -68,16 +68,16 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.canceled)
         {
-            if (gameManagerInstance.gameState != GameState.JOINMENU) return;
+            if (instance.gameState != GameState.JOINMENU) return;
 
             if (splitControls)
             {
-                gameManagerInstance.RemovePlayer(playerB);
+                instance.RemovePlayer(playerB);
                 splitControls = false;
             }
             else
             {
-                playerB = gameManagerInstance.GetNewPlayer();
+                playerB = instance.GetNewPlayer();
                 splitControls = true;
             }
             Debug.Log(playerInputManager.playerCount);
@@ -87,7 +87,7 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.canceled)
         {
-            if (gameManagerInstance.gameState != GameState.JOINMENU) return;
+            if (instance.gameState != GameState.JOINMENU) return;
 
             Debug.Log(playerInputManager.playerCount);
 

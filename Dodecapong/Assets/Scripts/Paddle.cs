@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using static GameManager;
 
 public class Paddle : MonoBehaviour
 {
@@ -33,7 +32,7 @@ public class Paddle : MonoBehaviour
         angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
-        facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -transform.up;
+        facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
         SetPosition(playerMidPoint);
     }
 
@@ -45,7 +44,7 @@ public class Paddle : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (GameManager.gameManagerInstance.holdGameplay) return;
+        if (GameManager.instance.holdGameplay) return;
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -78,7 +77,7 @@ public class Paddle : MonoBehaviour
 
     public void SetPosition(float angle)
     {
-        transform.position = gameManagerInstance.map.GetTargetPointInCircleLocal(angle).normalized * gameManagerInstance.playerDistance;
+        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * GameManager.instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
@@ -99,18 +98,14 @@ public class Paddle : MonoBehaviour
         return 360 - ret;
     }
 
-    public void SetColor(Color col)
-    {
-        GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", col);
-    }
-
     public Vector2 BounceNormal()
     {
-        return (transform.position - Vector3.zero).normalized;
+        return (Vector3.zero - transform.position).normalized;
     }
 
     internal void Dash()
     {
-        throw new NotImplementedException();
+        Debug.LogWarning("Dash is not currently implemented", this);
+        // throw new NotImplementedException();
     }
 }
