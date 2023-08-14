@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Paddle : MonoBehaviour
@@ -13,6 +14,8 @@ public class Paddle : MonoBehaviour
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
+    public AnimationCurve dashAnimationCurve;
+    public bool dashing = false;
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -44,7 +47,7 @@ public class Paddle : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (GameManager.instance.holdGameplay) return;
+        
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -103,9 +106,27 @@ public class Paddle : MonoBehaviour
         return (Vector3.zero - transform.position).normalized;
     }
 
-    internal void Dash()
+    public IEnumerator Dash(Vector2 input, float duration)
     {
-        Debug.LogWarning("Dash is not currently implemented", this);
-        // throw new NotImplementedException();
+        if (dashing) yield break;
+
+        dashing = true;
+
+        float value = 0;
+        float timeElapsed = 0;
+
+        while (timeElapsed < duration)
+        {
+            value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / duration));
+            timeElapsed += Time.fixedDeltaTime;
+
+            Move(input * value, false);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        dashing = false;
+
+        yield break;
     }
 }

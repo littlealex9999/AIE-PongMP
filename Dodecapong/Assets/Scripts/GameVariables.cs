@@ -15,6 +15,8 @@ public class GameVariables : ScriptableObject
         playerStickiness = gv.playerStickiness;
         playerBounceTowardsCenterBias = gv.playerBounceTowardsCenterBias;
         dashEnabled = gv.dashEnabled;
+        dashDuration = gv.dashDuration;
+        dashCooldown = gv.dashCooldown;
 
         ballCount = gv.ballCount;
         ballSpeed = gv.ballSpeed;
@@ -48,12 +50,16 @@ public class GameVariables : ScriptableObject
     public float playerStickiness = 0; // note: may not be implemented
     public float playerBounceTowardsCenterBias;
     public bool dashEnabled = true;
+    public float dashDuration = 0.2f;
+    public float dashCooldown = 1;
 
     public void SetPlayerSpeed(float value) { playerSpeed = value; }
     public void SetPlayerSize(float value) { playerSize.x = value; }
     public void SetPlayerStickiness(float value) { playerStickiness = value; }
     public void SetPlayerBounceBias(float value) { playerBounceTowardsCenterBias = value; }
     public void SetPlayerDashEnabled(bool enabled) { dashEnabled = enabled; }
+    public void SetPlayerDashDuration(float value) { dashDuration = value; }
+    public void SetPlayerDashCooldown(float value) { dashCooldown = value; }
     #endregion
 
     #region Ball
