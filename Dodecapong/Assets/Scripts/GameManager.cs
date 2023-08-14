@@ -197,6 +197,7 @@ public class GameManager : MonoBehaviour
         }
         inGame = true;
         ResetPlayers();
+        ball.ResetBall();
         UpdatePaddles();
         map.SetupMap(alivePlayers);
         BuildGameBoard();
@@ -410,6 +411,7 @@ public class GameManager : MonoBehaviour
         pillars.RemoveAt(index);
 
         map.SetupMap(alivePlayers);
+        ball.ResetBall();
 
         smashingPillars = false;
         yield break;

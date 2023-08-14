@@ -74,7 +74,7 @@ public class Ball : MonoBehaviour
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
     }
-    private void ResetBall()
+    public void ResetBall()
     {
         rb.position = Vector2.zero;
 
