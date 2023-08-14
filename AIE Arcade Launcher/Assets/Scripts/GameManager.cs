@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -45,10 +46,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (gameData.Count == 0) {
-            GameData data = new GameData(Application.persistentDataPath + "/" + "RunUntilInput.exe", "Test", "This is a test app");
-            AddExistingGameData(data);
-        }
+        if (gameData.Count > 0) UpdateAllSelectionText();
     }
 
     private void OnApplicationQuit()
@@ -57,6 +55,15 @@ public class GameManager : MonoBehaviour
     }
 
     private void Update()
+    {
+        if (gameData.Count <= 0) {
+            UpdateAllSelectionTextCustom("Please Upload A Game");
+        } else {
+            GamesFoundUpdate();
+        }
+    }
+
+    void GamesFoundUpdate()
     {
         for (int i = 0; i < runningApps.Count; ++i) {
             if (runningApps[i] != null) {
@@ -105,20 +112,26 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SelectFileDialog(TMP_InputField inputField)
+    {
+        string[] outs = FileManager.FileDialog();
+        if (outs.Length > 0) inputField.text = outs[0];
+    }
+
     /// <summary>
     /// Creates new GameData based on input fields, then adds it to the list of games.
     /// </summary>
     public void CreateNewGameData()
     {
         GameData data = new GameData(gameExecutableInputField.text, gameTitleInputField.text, gameDescriptionInputField.text);
-        AddExistingGameData(data);
+        AddExistingGameData(data, true);
     }
 
     /// <summary>
     /// Adds GameData to the list of games the launcher is tracking.
     /// </summary>
     /// <param name="data"></param>
-    void AddExistingGameData(GameData data)
+    void AddExistingGameData(GameData data, bool updateText = false)
     {
         if (gameData.Contains(data)) return;
         for (int i = 0; i < gameData.Count; ++i) {
@@ -133,6 +146,7 @@ public class GameManager : MonoBehaviour
 
         gameData.Add(data);
         dataManager.WriteGameData(data);
+        if (updateText) UpdateAllSelectionText();
     }
 
     void UpdateSelectionText(int index)
@@ -154,6 +168,13 @@ public class GameManager : MonoBehaviour
             UpdateSelectionText(i);
             UpdateSelectionText(-i);
         }
+    }
+
+    void UpdateAllSelectionTextCustom(string txt)
+    {
+        for (int i = -gamesList.layers + 1; i < gamesList.layers; i++) {
+            gamesList.GetListObject(i).GetComponentInChildren<TextMeshProUGUI>().text = txt;
+        } 
     }
 
     GameData SafeGetGameData(int index)

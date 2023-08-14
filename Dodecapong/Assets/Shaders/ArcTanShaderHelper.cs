@@ -11,17 +11,13 @@ public class ArcTanShaderHelper : MonoBehaviour
 
     public Color[] colors = new Color[8];
 
-    void Update()
-    {
-        
-    }
-
     [ContextMenu("Calculate Tex Array")]
-    void CalculateTextureArray()
+    public void CalculateTextureArray()
     {
         if (!mat) mat = GetComponent<MeshRenderer>().sharedMaterial;
 
         tex = new Texture2D(colors.Length, 1, TextureFormat.ARGB32, false);
+        tex.wrapMode = TextureWrapMode.Clamp;
         tex.filterMode = FilterMode.Point;
 
         for (int i = 0; i < colors.Length; i++) {
@@ -36,4 +32,8 @@ public class ArcTanShaderHelper : MonoBehaviour
     {
         CalculateTextureArray();
     }
+
+    public void SetTargetPlayer(int index) { mat.SetFloat("_TargetPlayer", index); }
+
+    public void SetShrink(float value) { mat.SetFloat("_Shrink", value); }
 }

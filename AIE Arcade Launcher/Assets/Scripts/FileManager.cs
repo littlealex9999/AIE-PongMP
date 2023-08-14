@@ -1,3 +1,4 @@
+using SFB;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -81,9 +82,9 @@ public static class FileManager
         File.Delete(path);
     }
 
-    public static void FileDialog()
+    public static string[] FileDialog()
     {
-        
+        return StandaloneFileBrowser.OpenFilePanel("Open File", "", "exe", false);
     }
     #endregion
 

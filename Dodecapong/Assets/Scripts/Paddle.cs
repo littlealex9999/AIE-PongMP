@@ -1,67 +1,43 @@
+using System;
+using System.Collections;
 using UnityEngine;
-using UnityEngine.Windows;
-using Input = UnityEngine.Input;
 
 public class Paddle : MonoBehaviour
 {
-    public float startingRotation;
-    float distance;
+    float playerMidPoint;
+    float angleDeviance; // the max amount you can move from your starting rotation
+
+    public float playerSectionMiddle { get { return playerMidPoint; } }
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
-    public int playerID;
 
     public float pushDistance = 0.1f;
     public float pushStrength = 3.0f;
 
-    Vector3 facingDirection = Vector3.right;
+    [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
-    // the max amount you can move from your starting rotation
-    float angleDeviance;
-
-    Collider2D collider;
-
-    private void Awake()
+    public AnimationCurve dashAnimationCurve;
+    public bool dashing = false;
+    private void OnDestroy()
     {
-        collider = GetComponent<Collider2D>();
+        Destroy(gameObject);
     }
 
-    void Update()
+    public void CalculateLimits(int alivePlayerId, int alivePlayerCount, float mapRotationOffset)
     {
-        Vector3 input = Vector3.zero;
+        // the "starting position" is as follows, with 2 players as an example:
+        // 360 / player count to get the base angle (360 / 2 = 180)
+        // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
+        // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
+        // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
+        // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
+        float segmentOffset = 180.0f / alivePlayerCount;
 
-        // we could potentially concatenate a string to search for "HorizontalPlayer" + playerID
-        // and use that to reduce the complexity of this script per player
-        switch (playerID) {
-            default:
-            case 0:
-                if (Input.GetKey(KeyCode.D)) input.x = 1;
-                else if (Input.GetKey(KeyCode.A)) input.x = -1;
-
-                if (Input.GetKey(KeyCode.W)) input.y = 1;
-                else if (Input.GetKey(KeyCode.S)) input.y = -1;
-                break;
-            case 1:
-                if (Input.GetKey(KeyCode.RightArrow)) input.x = 1;
-                else if (Input.GetKey(KeyCode.LeftArrow)) input.x = -1;
-
-                if (Input.GetKey(KeyCode.UpArrow)) input.y = 1;
-                else if (Input.GetKey(KeyCode.DownArrow)) input.y = -1;
-                break;
-        }
-
-        Move(input);
-    }
-
-    public void Initialise(int playerID, float startingDistance, float startingAngle, float maxAngleDeviance)
-    {
-        this.playerID = playerID;
-        startingRotation = startingAngle;
-        angleDeviance = maxAngleDeviance;
-        distance = startingDistance;
+        playerMidPoint = 360.0f / alivePlayerCount * (alivePlayerId + 1) + mapRotationOffset - segmentOffset;
+        angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
-        facingDirection = Quaternion.Euler(0, 0, startingAngle) * -transform.up;
-        SetPosition(startingAngle);
+        facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
     }
 
     /// <summary>
@@ -70,18 +46,16 @@ public class Paddle : MonoBehaviour
     /// </summary>
     /// <param name="input"></param>
     /// <param name="clampSpeed"></param>
-    public void Move(Vector3 input, bool clampSpeed = true)
+    public void Move(Vector2 input, bool clampSpeed = true)
     {
-        float moveTarget = Vector3.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+        float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
-        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.deltaTime);
+        transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
 
+        float maxDev = playerMidPoint + angleDeviance;
+        float minDev = playerMidPoint - angleDeviance;
         float angle = Angle(transform.position);
-        float otherAngle = 180 + angle;
-
-        float maxDev = startingRotation + angleDeviance;
-        float minDev = startingRotation - angleDeviance;
 
         if (angle > maxDev || angle < minDev)
         {
@@ -105,7 +79,7 @@ public class Paddle : MonoBehaviour
 
     public void SetPosition(float angle)
     {
-        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * distance;
+        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * GameManager.instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
@@ -124,5 +98,34 @@ public class Paddle : MonoBehaviour
         }
 
         return 360 - ret;
+    }
+
+    public Vector2 BounceNormal()
+    {
+        return (Vector3.zero - transform.position).normalized;
+    }
+
+    public IEnumerator Dash(Vector2 input, float duration)
+    {
+        if (dashing) yield break;
+
+        dashing = true;
+
+        float value = 0;
+        float timeElapsed = 0;
+
+        while (timeElapsed < duration)
+        {
+            value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / duration));
+            timeElapsed += Time.fixedDeltaTime;
+
+            Move(input * value, false);
+
+            yield return new WaitForFixedUpdate();
+        }
+
+        dashing = false;
+
+        yield break;
     }
 }

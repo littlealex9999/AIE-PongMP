@@ -1,49 +1,75 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
-//[RequireComponent(typeof(LineRenderer))]
 public class Map : MonoBehaviour
 {
     public float mapRadius;
 
     [Min(3)] public int lineStepCount;
 
-    public List<int> shieldLevels = new List<int>();
-    public List<Paddle> players = new List<Paddle>();
-
     public GameObject ringMesh;
-    public void GenerateMap()
+
+    public Material arcTangentShader;
+    public float removeSpeed = 1;
+
+    public void SetupMap(List<Player> alivePlayers)
+    {
+        GenerateMap();
+        arcTangentShader.SetFloat("_Shrink", 0);
+        GameManager.instance.arcTanShader.colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            GameManager.instance.arcTanShader.colors[i] = alivePlayers[i].color;
+        }
+        GameManager.instance.arcTanShader.CalculateTextureArray();
+    }
+
+    public void RemoveSegment(int index, List<Player> alivePlayers)
+    {
+        StartCoroutine(RemovalCoroutine(index, alivePlayers));
+    }
+
+    IEnumerator RemovalCoroutine(int index, List<Player> alivePlayers)
+    {
+        arcTangentShader.SetFloat("_TargetPlayer", index);
+
+        float value = 0;
+        float timeElapsed = 0;
+        float duration = 1;
+        while (timeElapsed < duration)
+        { 
+            value = Mathf.Lerp(0, 1, timeElapsed / duration);
+            timeElapsed += Time.deltaTime;
+
+            arcTangentShader.SetFloat("_Shrink", value);
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        SetupMap(alivePlayers);
+
+        yield break;
+    }
+
+
+    void GenerateMap()
     {
         if (lineStepCount < 1) return;
 
-        RegenerateLineRenderers();
+        RegenerateLines();
     }
 
     public List<GameObject> ringMeshes;
-    void RegenerateLineRenderers()
+    void RegenerateLines()
     {
         if (ringMeshes.Count == 0)
         {
-            int alivePlayerCount = GetLivingPlayerCount();
-
-            for (int currentPlayer = 0; currentPlayer < alivePlayerCount; currentPlayer++)
+            for (int i = 0; i < lineStepCount; i++)
             {
-                // setup values
-                int pointCount = lineStepCount / alivePlayerCount;
-                Color playerColor = GameManager.instance.GetPlayerColor(GetTargetLivingPlayerID(currentPlayer));
-
-                Quaternion rotationPerSegment = Quaternion.Euler(0, 0, 360.0f / lineStepCount);
-                float angle = GameManager.instance.mapRotationOffset + 360 / alivePlayerCount * currentPlayer;
-                Vector3 targetPos = GetTargetPointInCircleLocal(angle);
-
-                for (int currentPoint = 0; currentPoint < pointCount; currentPoint++)
-                {
-                    targetPos = rotationPerSegment * targetPos;
-                    GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
-                    obj.GetComponent<MeshRenderer>().material.SetColor("_EmissiveColor", GameManager.instance.GetPlayerColor(currentPlayer));
-                    ringMeshes.Add(obj);
-                }
+                Vector3 targetPos = GetTargetPointInCircleLocal(i);
+                GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
+                ringMeshes.Add(obj);
             }
         }
         else
@@ -53,7 +79,7 @@ public class Map : MonoBehaviour
                 Destroy(obj);
             }
             ringMeshes.Clear();
-            RegenerateLineRenderers();
+            RegenerateLines();
         }
     }
 
@@ -65,43 +91,5 @@ public class Map : MonoBehaviour
     public Vector3 GetTargetPointInCircleLocal(float angle)
     {
         return Quaternion.Euler(0, 0, angle) * transform.up * mapRadius;
-    }
-
-    public bool ShieldHit(int playerID)
-    {
-        if (playerID < 0 || playerID >= shieldLevels.Count) return false;
-
-        --shieldLevels[playerID];
-        //if (shieldLevels[playerID] == 0)
-        //{
-        //    RegenerateLineRenderers();
-        //    RemovePlayer(playerID);
-        //}
-
-        return true;
-    }
-
-    public void RemovePlayer(int playerID)
-    {
-        players[playerID].gameObject.SetActive(false);
-    }
-
-    public int GetLivingPlayerCount()
-    {
-        int ret = 0;
-        for (int i = 0; i < shieldLevels.Count; i++) {
-            if (shieldLevels[i] > 0) ++ret;
-        }
-        return ret;
-    }
-
-    public int GetTargetLivingPlayerID(int index)
-    {
-        int hits = 0;
-        for (int i = 0; i < shieldLevels.Count; i++) {
-            if (shieldLevels[i] > 0) ++hits;
-            if (hits == index + 1) return i;
-        }
-        return -1;
     }
 }
