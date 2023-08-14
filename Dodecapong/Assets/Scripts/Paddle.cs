@@ -6,6 +6,8 @@ public class Paddle : MonoBehaviour
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
 
+    public float playerSectionMiddle { get { return playerMidPoint; } }
+
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
 
     public float pushDistance = 0.1f;
@@ -33,7 +35,6 @@ public class Paddle : MonoBehaviour
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
-        SetPosition(playerMidPoint);
     }
 
     /// <summary>
