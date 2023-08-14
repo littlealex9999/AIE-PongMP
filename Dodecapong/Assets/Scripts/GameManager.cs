@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     public GameObject pillarObject;
 
+    public AnimationCurve pillarCurve;
     public float pillarSmashTime = 2.0f;
 
     public GameVariables defaultGameVariables;
@@ -123,7 +124,6 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEOVER:
                 EventManager.instance?.gameOver?.Invoke();
-
                 break;
             default:
                 break;
@@ -152,11 +152,13 @@ public class GameManager : MonoBehaviour
 
     public void ResetPlayers()
     {
+        alivePlayers.Clear();
+
         foreach (Player player in players)
         {
             player.shieldHealth = gameVariables.shieldLives;
+            alivePlayers.Add(player);
         }
-        alivePlayers = players;
         UpdatePlayerImages();
     }
 
@@ -171,6 +173,7 @@ public class GameManager : MonoBehaviour
     {
         if (alivePlayers.Count <= 2)
         {
+            inGame = false;
             UpdateGameState(GameState.GAMEOVER);
             return;
         }
@@ -349,7 +352,7 @@ public class GameManager : MonoBehaviour
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
-            float playerRemovalPercentage = pillarSmashTimer / pillarSmashTime;
+            float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
             arcTanShader.SetShrink(playerRemovalPercentage);
 
             for (int i = 0; i < pillars.Count; i++) {
