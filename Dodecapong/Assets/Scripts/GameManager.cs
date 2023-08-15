@@ -386,6 +386,7 @@ public class GameManager : MonoBehaviour
                     targetPlayer = i + 1;
                 } else {
                     // player being eliminated
+                    // SQUISH PLAYER
 
                     continue;
                 }
@@ -402,6 +403,7 @@ public class GameManager : MonoBehaviour
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
         }
 
+        alivePlayers[index].paddle.gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
         for (int i = 0; i < alivePlayers.Count; i++) {
             alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);

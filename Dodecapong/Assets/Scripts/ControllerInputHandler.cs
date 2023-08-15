@@ -16,7 +16,6 @@ public class ControllerInputHandler : MonoBehaviour
 
     bool splitControls = false;
 
-    int controllerID;
     private void OnDestroy()
     {
         instance.RemovePlayer(playerA);
@@ -27,7 +26,6 @@ public class ControllerInputHandler : MonoBehaviour
     {
         playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerInput = GetComponent<PlayerInput>();
-        controllerID = playerInput.playerIndex;
         playerA = instance.GetNewPlayer();
         if (playerA.ID == 0) playerInput.actions = UIMasterInputActionAsset;
     }

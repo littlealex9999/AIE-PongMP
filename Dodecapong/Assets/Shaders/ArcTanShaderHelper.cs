@@ -6,7 +6,6 @@ using UnityEngine;
 public class ArcTanShaderHelper : MonoBehaviour
 {
     public Material mat;
-    Texture2DArray texArray;
     Texture2D tex;
 
     public Color[] colors = new Color[8];
