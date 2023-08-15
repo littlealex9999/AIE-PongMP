@@ -99,16 +99,16 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
-                EventManager.instance?.mainMenu?.Invoke();
+                EventManager.instance?.mainMenuEvent?.Invoke();
                 break;
             case GameState.JOINMENU:
-                EventManager.instance?.joinMenu?.Invoke();
+                EventManager.instance?.joinMenuEvent?.Invoke();
                 break;
             case GameState.SETTINGSMENU:
-                EventManager.instance?.settingsMenu?.Invoke();
+                EventManager.instance?.settingsMenuEvent?.Invoke();
                 break;
             case GameState.GAMEPLAY:
-                EventManager.instance?.gameplay?.Invoke();
+                EventManager.instance?.gameplayEvent?.Invoke();
                 if (!inGame)
                 {
                     StartGame(); 
@@ -119,11 +119,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.GAMEPAUSED:
-                EventManager.instance?.gamePaused?.Invoke();
+                EventManager.instance?.gamePausedEvent?.Invoke();
 
                 break;
             case GameState.GAMEOVER:
-                EventManager.instance?.gameOver?.Invoke();
+                EventManager.instance?.gameOverEvent?.Invoke();
                 break;
             default:
                 break;
@@ -317,6 +317,9 @@ public class GameManager : MonoBehaviour
         } else
         {
             player.shieldHealth--;
+
+            if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
+            else EventManager.instance?.shieldHitEvent?.Invoke();
             UpdateShields();
             return false;
         }
@@ -330,6 +333,9 @@ public class GameManager : MonoBehaviour
     IEnumerator EliminatePlayerRoutine(int index)
     {
         if (smashingPillars) throw new Exception("Pillars are already being smashed");
+
+        EventManager.instance?.playerEliminatedEvent?.Invoke();
+        EventManager.instance?.towerMoveEvent?.Invoke();
 
         smashingPillars = true;
 

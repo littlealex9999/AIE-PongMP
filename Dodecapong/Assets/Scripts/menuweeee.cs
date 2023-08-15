@@ -194,4 +194,13 @@ public class menuweeee : MonoBehaviour
         eventSystem.SetSelectedGameObject(pauseDefault);
         //time scale 0 or whatever 
     }
+
+    public void SelectButton()
+    {
+        EventManager.instance?.hoverUIEvent?.Invoke();
+    }
+    public void SubmitButton()
+    {
+        EventManager.instance?.selectUIEvent?.Invoke();
+    }
 }
