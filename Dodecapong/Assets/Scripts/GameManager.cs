@@ -178,7 +178,6 @@ public class GameManager : MonoBehaviour
             return;
         }
         int index = alivePlayers.IndexOf(player);
-        player.paddle.gameObject.SetActive(false);
         StartCoroutine(EliminatePlayerRoutine(index));
 
         BuildGameBoard();
@@ -194,7 +193,10 @@ public class GameManager : MonoBehaviour
         {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
+            player.paddle.transform.localScale = new Vector3(gameVariables.playerSize.y, gameVariables.playerSize.x, 1);
+            player.paddle.gameObject.SetActive(true);
         }
+
         inGame = true;
         ResetPlayers();
         UpdatePaddles();
@@ -253,17 +255,6 @@ public class GameManager : MonoBehaviour
             pillars[i].transform.position = map.GetTargetPointInCircle(360.0f / alivePlayers.Count * i);
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, 360.0f / alivePlayers.Count * i);
         }
-    }
-
-    void ResetGame()
-    {
-        alivePlayers.Clear();
-        foreach (Player player in players)
-        {
-            player.paddle.gameObject.SetActive(false);
-            alivePlayers.Add(player);
-        }
-        BuildGameBoard();
     }
 
     private void UpdateShields()
@@ -340,8 +331,10 @@ public class GameManager : MonoBehaviour
 
         float[] startAngles = new float[pillars.Count];
         float[] targetAngles = new float[pillars.Count];
-        float[] playerStartAngles = new float[alivePlayers.Count - 1];
-        float[] playerTargetAngles = new float[alivePlayers.Count - 1];
+        float[] playerStartAngles = new float[alivePlayers.Count];
+        float[] playerTargetAngles = new float[alivePlayers.Count];
+
+        Vector3 elimPlayerStartScale = alivePlayers[index].paddle.transform.localScale;
 
         // calculate start and end angle for each pillar
         for (int i = 0; i < pillars.Count; i++) {
@@ -356,13 +349,16 @@ public class GameManager : MonoBehaviour
         }
 
         // calculate start and end angle for each player
-        for (int i = 0; i < alivePlayers.Count - 1; i++) {
+        for (int i = 0; i < alivePlayers.Count; i++) {
             int targetPlayer;
-            if (i < index) targetPlayer = i;
-            else targetPlayer = i + 1;
 
-            playerStartAngles[i] = Paddle.Angle(alivePlayers[targetPlayer].paddle.transform.position);
-            playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * i;
+            playerStartAngles[i] = Paddle.Angle(alivePlayers[i].paddle.transform.position);
+            if (i == index) {
+                // player being eliminated
+                playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * i;
+            } else {
+                playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * i;
+            }
         }
 
         // move pillars over time & handle ArcTanShader shrinkage
@@ -378,20 +374,17 @@ public class GameManager : MonoBehaviour
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
 
-            for (int i = 0; i < alivePlayers.Count - 1; i++) {
-                int targetPlayer;
-                if (i < index) {
-                    targetPlayer = i;
-                } else if (i > index) {
-                    targetPlayer = i + 1;
-                } else {
-                    // player being eliminated
-                    // SQUISH PLAYER
-
-                    continue;
+            for (int i = 0; i < alivePlayers.Count; i++) {
+                if (i == index) {
+                    Vector3 targetScale = new Vector3(
+                        alivePlayers[i].paddle.transform.localScale.x,
+                        Mathf.Lerp(elimPlayerStartScale.y, 0, playerRemovalPercentage),
+                        Mathf.Lerp(elimPlayerStartScale.z, 0, playerRemovalPercentage)
+                        );
+                    alivePlayers[i].paddle.transform.localScale = targetScale;
                 }
 
-                alivePlayers[targetPlayer].paddle.SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
+                alivePlayers[i].paddle.SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
             }
 
             yield return new WaitForEndOfFrame();
