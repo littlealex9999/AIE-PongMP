@@ -350,8 +350,6 @@ public class GameManager : MonoBehaviour
 
         // calculate start and end angle for each player
         for (int i = 0; i < alivePlayers.Count; i++) {
-            int targetPlayer;
-
             playerStartAngles[i] = Paddle.Angle(alivePlayers[i].paddle.transform.position);
             if (i == index) {
                 // player being eliminated
