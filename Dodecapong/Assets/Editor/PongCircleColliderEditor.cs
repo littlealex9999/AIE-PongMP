@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(PongCircleCollider))]
-public class PongCircleColliderEditor : Editor
+public class PongCircleColliderEditor : PongColliderEditor
 {
     private void OnSceneGUI()
     {

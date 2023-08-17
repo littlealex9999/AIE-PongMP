@@ -8,7 +8,7 @@ public abstract class PongCollider : MonoBehaviour
 
     public Vector3 position { get { return transform.position; } set { transform.position = value; } }
     
-    public float inverseMass = 1;
+    [HideInInspector] public float inverseMass = 1;
     public float mass { get { return 1 / inverseMass; } set { inverseMass = 1 / value; } }
 
     public Vector2 velocity;

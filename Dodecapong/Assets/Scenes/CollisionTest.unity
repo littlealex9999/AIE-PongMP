@@ -454,7 +454,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 779396366}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.289, y: 0, z: 0}
+  m_LocalPosition: {x: 6.21, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -474,7 +474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inverseMass: 1
-  velocity: {x: 0, y: 0}
+  velocity: {x: -2, y: 0}
   acceleration: {x: 0, y: 0}
   immovable: 0
   radius: 0.5
@@ -509,10 +509,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee79f76029086d642ac387caf1a8f2e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inverseMass: 1
-  velocity: {x: 2.12, y: 0}
+  inverseMass: 0.1
+  velocity: {x: 2, y: 0}
   acceleration: {x: 0, y: 0}
-  immovable: 0
+  immovable: 1
   radius: 0.5
 --- !u!23 &1854693039
 MeshRenderer:
@@ -572,7 +572,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1854693037}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.908, y: 0, z: 0}
+  m_LocalPosition: {x: -7.04, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

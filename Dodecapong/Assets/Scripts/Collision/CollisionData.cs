@@ -26,20 +26,44 @@ public class CollisionData
 
     public void ResolveCollision()
     {
-        PongCollider primaryCollider;
-        PongCollider secondaryCollider;
+        // SOLVE DEPENETRATION
+        float movementOnA;
+        float movementOnB;
+        float totalIMass = colliderA.inverseMass + colliderB.inverseMass;
 
-        if (colliderB.immovable) {
-            if (colliderA.immovable) return; // both colliders are immovable, and cannot be resovled
+        if (colliderA.immovable) {
+            if (colliderB.immovable) return; // both objects are immovable
 
-            primaryCollider = colliderB;
-            secondaryCollider = colliderA;
-            normal *= -1;
+            // only A is immovable
+            movementOnA = 0.0f;
+            movementOnB = 1.0f;
+        } else if (colliderB.immovable) {
+            // only B is immovable
+            movementOnB = 0.0f;
+            movementOnA = 1.0f;
         } else {
-            primaryCollider = colliderA;
-            secondaryCollider = colliderB;
+            // neither is immovable, solve using relative mass
+            movementOnA = colliderA.inverseMass / totalIMass;
+            movementOnB = colliderB.inverseMass / totalIMass;
         }
 
-        secondaryCollider.position += depth * (Vector3)normal;
+        Vector2 movement = depth / 2 * normal;
+
+        colliderA.position -= (Vector3)movement * movementOnA;
+        colliderB.position += (Vector3)movement * movementOnB;
+
+
+        // SOLVE VELOCITY
+        float j = 2 * Vector2.Dot(colliderA.velocity - colliderB.velocity, normal) / totalIMass;
+
+        // both colliders cannot be immovable as we return before this if that is the case
+        if (colliderA.immovable) {
+            colliderB.ApplyImpulse(2 * j * normal);
+        } else if (colliderB.immovable) {
+            colliderA.ApplyImpulse(2 * j * -normal);
+        } else {
+            colliderA.ApplyImpulse(j * -normal);
+            colliderB.ApplyImpulse(j * normal);
+        }
     }
 }
