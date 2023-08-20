@@ -7,6 +7,8 @@ public class CollisionSystem : MonoBehaviour
     public enum ColliderTypes
     {
         CIRCLE,
+        RECTANGLE,
+        CONVEXHULL,
     }
 
     static List<PongCollider> colliders = new List<PongCollider>();
@@ -23,7 +25,7 @@ public class CollisionSystem : MonoBehaviour
         for (int i = 0; i < colliders.Count; i++) {
             for (int j = i + 1; j < colliders.Count; j++) {
                 CollisionData data = CheckCollision(colliders[i], colliders[j]);
-                if (data.isColliding) {
+                if (data != null && data.isColliding) {
                     data.ResolveCollision();
                 }
             }
@@ -38,8 +40,18 @@ public class CollisionSystem : MonoBehaviour
                 switch (colliderB.Type()) {
                     case ColliderTypes.CIRCLE:
                         return CircleCircleCollision((PongCircleCollider)colliderA, (PongCircleCollider)colliderB);
+                    case ColliderTypes.RECTANGLE:
+                        return CircleRectangleCollision((PongCircleCollider)colliderA, (PongRectangleCollider)colliderB);
                 }
+                break;
 
+            case ColliderTypes.RECTANGLE:
+                switch (colliderB.Type()) {
+                    case ColliderTypes.CIRCLE:
+                        return CircleRectangleCollision((PongCircleCollider)colliderB, (PongRectangleCollider)colliderA); // swapped for less implementation work
+                    case ColliderTypes.RECTANGLE:
+                        return null; // RECTANGLE RECTANGLE COLLISIONS CURRENTLY DO NOT NEED IMPLEMENTATION
+                }
                 break;
         }
 
@@ -61,6 +73,17 @@ public class CollisionSystem : MonoBehaviour
         else normal = aToB;
 
         return new CollisionData(circleA, circleB, depth, normal, collisionPos);
+    }
+
+    static CollisionData CircleRectangleCollision(PongCircleCollider circleA, PongRectangleCollider rectB)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    static CollisionData CircleConvexHullCollision(PongCircleCollider circleA, PongConvexHullCollider convexB)
+    {
+        Vector2 AToB = convexB.position - circleA.position;
+        return null;
     }
     #endregion
 }
