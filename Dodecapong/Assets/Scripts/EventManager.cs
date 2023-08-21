@@ -1,10 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-[System.Serializable]
-public class AudioEvent : UnityEvent<AudioClip>
-{
-}
+
 
 public class EventManager : MonoBehaviour
 {
@@ -18,56 +16,85 @@ public class EventManager : MonoBehaviour
     }
     #endregion
 
-    public AudioSource audioSource;
+    [SerializeField] AudioSource audioSource;
 
-    [Header("Gameplay Events")]
-    public UnityEvent goalScored;
-    public UnityEvent playerEliminated;
-    public UnityEvent ballHover;
-    public UnityEvent towerMove;
-    public AudioEvent shieldBreak;
+    [Header("Gameplay Clips")]
+    [SerializeField] AudioClip goalScored;
+    [SerializeField] AudioClip playerEliminated;
+    [SerializeField] AudioClip towerMove;
+    [SerializeField] AudioClip shieldBreak;
+    [SerializeField] AudioClip shieldHit;
+    
+    [HideInInspector] public UnityEvent goalScoredEvent;
+    [HideInInspector] public UnityEvent playerEliminatedEvent; //
+    [HideInInspector] public UnityEvent towerMoveEvent; // 
+    [HideInInspector] public UnityEvent shieldBreakEvent; // 
+    [HideInInspector] public UnityEvent shieldHitEvent; //
 
-    [Header("UI Events")]
-    public UnityEvent selectUI;
-    public UnityEvent hoverUI;
+    [Header("UI Clips")]
+    [SerializeField] AudioClip selectUI;
+    [SerializeField] AudioClip hoverUI;
 
-    [Header("Game State Events")]
-    public UnityEvent mainMenu;
-    public UnityEvent joinMenu;
-    public UnityEvent settingsMenu;
-    public UnityEvent gameplay;
-    public UnityEvent gamePaused;
-    public UnityEvent gameOver;
+    [HideInInspector] public UnityEvent selectUIEvent; //
+    [HideInInspector] public UnityEvent hoverUIEvent; //
+
+    [Header("Game State Clips")]
+    [SerializeField] AudioClip mainMenu;
+    [SerializeField] AudioClip joinMenu;
+    [SerializeField] AudioClip settingsMenu;
+    [SerializeField] AudioClip gameplay;
+    [SerializeField] AudioClip gamePaused;
+    [SerializeField] AudioClip gameOver;
+
+    [HideInInspector] public UnityEvent mainMenuEvent; //
+    [HideInInspector] public UnityEvent joinMenuEvent; //
+    [HideInInspector] public UnityEvent settingsMenuEvent; //
+    [HideInInspector] public UnityEvent gameplayEvent; //
+    [HideInInspector] public UnityEvent gamePausedEvent; //
+    [HideInInspector] public UnityEvent gameOverEvent; //
 
     private void Start()
     {
-        // Gameplay
-        goalScored ??= new UnityEvent();
-        playerEliminated ??= new UnityEvent();
-        ballHover ??= new UnityEvent();
-        towerMove ??= new UnityEvent();
-        shieldBreak ??= new AudioEvent();
+        goalScoredEvent ??= new UnityEvent();
+        playerEliminatedEvent ??= new UnityEvent();
+        towerMoveEvent ??= new UnityEvent();
+        shieldBreakEvent ??= new UnityEvent();
+        shieldHitEvent ??= new UnityEvent();
+        selectUIEvent ??= new UnityEvent();
+        hoverUIEvent ??= new UnityEvent();
+        mainMenuEvent ??= new UnityEvent();
+        joinMenuEvent ??= new UnityEvent();
+        settingsMenuEvent ??= new UnityEvent();
+        gameplayEvent ??= new UnityEvent();
+        gamePausedEvent ??= new UnityEvent();
+        gameOverEvent ??= new UnityEvent();
 
-        // UI
-        selectUI ??= new UnityEvent();
-        hoverUI ??= new UnityEvent();
-
-        // Game State
-        mainMenu ??= new UnityEvent();
-        joinMenu ??= new UnityEvent();
-        settingsMenu ??= new UnityEvent();
-        gameplay ??= new UnityEvent();
-        gamePaused ??= new UnityEvent();
-        gameOver ??= new UnityEvent();
-
-        shieldBreak.AddListener(PlayClip);
-
-        //shieldBreak.Invoke(null);
+        goalScoredEvent.AddListener(GoalScoredCallback);
+        playerEliminatedEvent.AddListener(PlayerElminatedCallback);
+        towerMoveEvent.AddListener(TowerMoveCallback);
+        shieldBreakEvent.AddListener(ShieldBreakCallback);
+        shieldHitEvent.AddListener(ShieldHitCallback);
+        selectUIEvent.AddListener(SelectUICallback);
+        hoverUIEvent.AddListener(HoverUICallback);
+        mainMenuEvent.AddListener(MainMenuCallback);
+        joinMenuEvent.AddListener(JoinMenuCallback);
+        settingsMenuEvent.AddListener(SettingsMenuCallback);
+        gameplayEvent.AddListener(GameplayCallback);
+        gamePausedEvent.AddListener(GamePausedCallback);
+        gameOverEvent.AddListener(GameOverCallback);
     }
 
-    public void PlayClip(AudioClip clip)
-    {
-        if (clip == null) return;
-        audioSource.PlayOneShot(clip);
-    }
+    void GoalScoredCallback() => audioSource.PlayOneShot(goalScored);
+    void PlayerElminatedCallback() => audioSource.PlayOneShot(playerEliminated);
+    void TowerMoveCallback() => audioSource.PlayOneShot(towerMove);
+    void ShieldBreakCallback() => audioSource.PlayOneShot(shieldBreak);
+    void ShieldHitCallback() => audioSource.PlayOneShot(shieldHit);
+    void SelectUICallback() => audioSource.PlayOneShot(selectUI);
+    void HoverUICallback() => audioSource.PlayOneShot(hoverUI);
+    void MainMenuCallback() => audioSource.PlayOneShot(mainMenu);
+    void JoinMenuCallback() => audioSource.PlayOneShot(joinMenu);
+    void SettingsMenuCallback() => audioSource.PlayOneShot(settingsMenu);
+    void GameplayCallback() => audioSource.PlayOneShot(gameplay);
+    void GamePausedCallback() => audioSource.PlayOneShot(gamePaused);
+    void GameOverCallback() => audioSource.PlayOneShot(gameOver);
 }
