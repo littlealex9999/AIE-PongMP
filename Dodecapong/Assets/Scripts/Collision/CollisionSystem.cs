@@ -19,14 +19,20 @@ public class CollisionSystem : MonoBehaviour
     private void FixedUpdate()
     {
         for (int i = 0; i < colliders.Count; i++) {
-            colliders[i].CollisionUpdate(Time.fixedDeltaTime);
+            if (colliders[i].isActiveAndEnabled) {
+                colliders[i].CollisionUpdate(Time.fixedDeltaTime);
+            }
         }
 
         for (int i = 0; i < colliders.Count; i++) {
-            for (int j = i + 1; j < colliders.Count; j++) {
-                CollisionData data = CheckCollision(colliders[i], colliders[j]);
-                if (data != null && data.isColliding) {
-                    data.ResolveCollision();
+            if (colliders[i].isActiveAndEnabled) {
+                for (int j = i + 1; j < colliders.Count; j++) {
+                    if (colliders[j].isActiveAndEnabled) {
+                        CollisionData data = CheckCollision(colliders[i], colliders[j]);
+                        if (data != null && data.isColliding) {
+                            data.ResolveCollision();
+                        }
+                    }
                 }
             }
         }
@@ -42,6 +48,8 @@ public class CollisionSystem : MonoBehaviour
                         return CircleCircleCollision((PongCircleCollider)colliderA, (PongCircleCollider)colliderB);
                     case ColliderTypes.RECTANGLE:
                         return CircleRectangleCollision((PongCircleCollider)colliderA, (PongRectangleCollider)colliderB);
+                    case ColliderTypes.CONVEXHULL:
+                        return CircleConvexHullCollision((PongCircleCollider)colliderA, (PongConvexHullCollider)colliderB);
                 }
                 break;
 
@@ -51,6 +59,19 @@ public class CollisionSystem : MonoBehaviour
                         return CircleRectangleCollision((PongCircleCollider)colliderB, (PongRectangleCollider)colliderA); // swapped for less implementation work
                     case ColliderTypes.RECTANGLE:
                         return null; // RECTANGLE RECTANGLE COLLISIONS CURRENTLY DO NOT NEED IMPLEMENTATION
+                    case ColliderTypes.CONVEXHULL:
+                        return null;
+                }
+                break;
+
+            case ColliderTypes.CONVEXHULL:
+                switch (colliderB.Type()) {
+                    case ColliderTypes.CIRCLE:
+                        return CircleConvexHullCollision((PongCircleCollider)colliderB, (PongConvexHullCollider)colliderA);
+                    case ColliderTypes.RECTANGLE:
+                        return null;
+                    case ColliderTypes.CONVEXHULL:
+                        return null;
                 }
                 break;
         }
@@ -82,8 +103,34 @@ public class CollisionSystem : MonoBehaviour
 
     static CollisionData CircleConvexHullCollision(PongCircleCollider circleA, PongConvexHullCollider convexB)
     {
-        Vector2 AToB = convexB.position - circleA.position;
-        return null;
+        Quaternion rotationOffset = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset());
+
+        float depth = float.MaxValue;
+        Vector2 normal = rotationOffset * -convexB.normals[0];
+        Vector2 collisionPos = (Vector2)circleA.transform.position + normal * circleA.radius;
+
+        Vector4[] midpoints = new Vector4[convexB.points.Length];
+        for (int i = 0; i < midpoints.Length; i++) {
+            midpoints[i] = rotationOffset * convexB.GetFaceMidpoint(i) + convexB.transform.position;
+        }
+
+        for (int i = 0; i < convexB.points.Length; i++) {
+            Vector2 testingNormal = rotationOffset * convexB.normals[i];
+            Vector2 testingPoint = (Vector2)circleA.transform.position - testingNormal * circleA.radius;
+            float leastDepth = float.MaxValue;
+
+            for (int j = 0; j < convexB.points.Length; j++) {
+                float testingDepth = Vector2.Dot((Vector2)midpoints[i] - testingPoint, testingNormal);
+                if (testingDepth < leastDepth) leastDepth = testingDepth;
+            }
+
+            if (leastDepth < depth) {
+                depth = leastDepth;
+                normal = -testingNormal;
+            }
+        }
+
+        return new CollisionData(circleA, convexB, depth, normal, collisionPos);
     }
     #endregion
 }
