@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
                     gameEndTimer -= Time.deltaTime;
                     if (gameEndTimer <= 0)
                     {
-                        // end game
+                        // UpdateGameState(GameState.GAMEOVER);
                     }
                 }
                 break;
@@ -78,7 +78,7 @@ public class GameManager : MonoBehaviour
     //
     // GameState
     //
-    public UnityEvent gameStateChanged;
+    [HideInInspector] public UnityEvent gameStateChanged;
     public GameState gameState { get; private set; }
     public enum GameState
     {
@@ -95,7 +95,7 @@ public class GameManager : MonoBehaviour
         gameStateChanged.Invoke();
     }
 
-    void OnGameStateChanged()
+    private void OnGameStateChanged()
     {
         switch (gameState) {
             case GameState.MAINMENU:

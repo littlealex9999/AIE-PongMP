@@ -48,8 +48,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collider: {fileID: 0}
   moveSpeed: 90
-  pushDistance: 0.1
-  pushStrength: 10
   facingDirection: {x: 1, y: 0, z: 0}
   dashAnimationCurve:
     serializedVersion: 2
@@ -85,6 +83,14 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   dashing: 0
+  hitAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hitting: 0
+  hitStrength: 0
 --- !u!114 &8340523038451981560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109,20 +115,20 @@ MonoBehaviour:
   - {x: 8.333333, y: -5}
   - {x: -8.333333, y: -5}
   scaledPoints:
-  - {x: -13.333333, y: 0}
-  - {x: -8.856696, y: 12.066889}
-  - {x: 8.333333, y: 11.666667}
-  - {x: 13.333333, y: 0}
+  - {x: -13.15, y: 0}
+  - {x: -8.8, y: 11.95}
+  - {x: 8.8, y: 11.95}
+  - {x: 13.15, y: 0}
   - {x: 8.333333, y: -5}
   - {x: -8.333333, y: -5}
   normals:
-  - {x: -0.9375609, y: 0.3478212}
-  - {x: 0.0232759, y: 0.9997291}
-  - {x: 0.91914505, y: 0.3939193}
-  - {x: 0.70710677, y: -0.70710677}
+  - {x: -0.93967855, y: 0.3420587}
+  - {x: 0, y: 1}
+  - {x: 0.93967855, y: 0.3420587}
+  - {x: 0.72018695, y: -0.69378006}
   - {x: 0, y: -1}
-  - {x: -0.70710677, y: -0.70710677}
-  center: {x: -0.08722719, y: 2.288926}
+  - {x: -0.72018695, y: -0.69378006}
+  center: {x: -0.00000015894572, y: 2.3166666}
   rotationOffset: {x: 0, y: 0, z: 90}
   scale: {x: 1, y: 1}
 --- !u!1 &4539453341973377358
@@ -176,6 +182,8 @@ MonoBehaviour:
   color: {r: 0, g: 0, b: 0, a: 0}
   dashDuration: 0
   dashCooldown: 0
+  hitDuration: 0
+  hitCooldown: 0
 --- !u!1001 &423905365415369213
 PrefabInstance:
   m_ObjectHideFlags: 0

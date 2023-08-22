@@ -44,11 +44,11 @@ public class Ball : MonoBehaviour
         {
             if (paddle.hitting)
             {
-                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal(), rb.velocity.magnitude + paddle.hitStrength);
+                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
             }
             else
             {
-                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal(), rb.velocity.magnitude);
+                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
             }
         }
     }
@@ -60,9 +60,12 @@ public class Ball : MonoBehaviour
             return;
         }
 
-        if (collider.velocity.sqrMagnitude > constantVel * constantVel) {
+        if (collider.velocity.sqrMagnitude > constantVel * constantVel)
+        {
             collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
-        } else if (collider.velocity.sqrMagnitude < constantVel * constantVel) {
+        } 
+        else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
+        {
             collider.velocity = collider.velocity.normalized * constantVel;
         }
 
@@ -78,7 +81,7 @@ public class Ball : MonoBehaviour
     private void BounceOnBounds()
     {
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-        Bounce(shieldBounceTowardsCenterBias, shieldNormal, rb.velocity.magnitude);
+        Bounce(shieldBounceTowardsCenterBias, shieldNormal);
     }
 
     public void ResetBall()
@@ -95,33 +98,6 @@ public class Ball : MonoBehaviour
     public void AddVelocity(Vector2 velocity)
     {
         collider.velocity += velocity;
-    }
-
-    private void FixedUpdate()
-    {
-        Debug.Log(rb.velocity.magnitude);
-
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
-            rb.velocity = Vector2.zero;
-            return;
-        }
-
-        if (rb.velocity.magnitude > constantVel)
-        {
-            rb.velocity -= rb.velocity.normalized * dampStrength * Time.fixedDeltaTime;
-        }
-        else if (rb.velocity.magnitude < constantVel)
-        {
-            rb.velocity = rb.velocity.normalized * constantVel;
-        }
-        if (distFromCenter + ballRadius > map.mapRadius)
-        {
-            float angle = Angle(transform.position.normalized);
-
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
-            
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
-        }
     }
 
     public static float Angle(Vector2 vector2)

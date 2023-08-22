@@ -18,13 +18,18 @@ MonoBehaviour:
   dashEnabled: 1
   dashDuration: 0.2
   dashCooldown: 1
+  hitEnabled: 1
+  hitDuration: 0.1
+  hitCooldown: 1
+  hitStrength: 4
   ballCount: 1
   ballSpeed: 5
+  ballSpeedDamp: 1.2
   ballSpeedPerHit: 0
   ballSize: 0.5
   playerBounceTowardsCenterBias: 0
   shieldBounceTowardsCenterBias: 0
-  shieldLives: 2
+  shieldLives: 10
   obstacleFrequency: 0
   blackHoleEnabled: 0
   powerupFrequency: 0
