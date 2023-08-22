@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    Rigidbody2D rb;
+    public Rigidbody2D rb;
 
     public Map map;
     
@@ -13,15 +13,6 @@ public class Ball : MonoBehaviour
     public float shieldBounceTowardsCenterBias;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float paddleBounceTowardsCenterBias;
-
-    Ball(float constantVel, float ballRadius, float dampStrength, float shieldBounceTowardsCenterBias, float paddleBounceTowardsCenterBias)
-    {
-        this.constantVel = constantVel;
-        this.ballRadius = ballRadius;
-        this.dampStrength = dampStrength;
-        this.shieldBounceTowardsCenterBias = shieldBounceTowardsCenterBias;
-        this.paddleBounceTowardsCenterBias = paddleBounceTowardsCenterBias;
-    }
 
     float distFromCenter
     {
@@ -50,29 +41,36 @@ public class Ball : MonoBehaviour
             rb.velocity = rb.transform.forward * constantVel;
         }
     }
-    private void Bounce(float centerBias, Vector2 bounceNormal)
+    private void Bounce(float centerBias, Vector2 bounceNormal, float velocity)
     {
         Vector2 forward = rb.velocity.normalized;
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        rb.velocity = finalBounceDir * constantVel;
+        rb.velocity = finalBounceDir * velocity;
         rb.position += bounceNormal * 0.1f;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Paddle paddle;
-        if (collision.gameObject.TryGetComponent(out paddle))
+        if (collision.gameObject.TryGetComponent(out Paddle paddle))
         {
-            Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
+            if (paddle.hitting)
+            {
+                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal(), rb.velocity.magnitude + paddle.hitStrength);
+            }
+            else
+            {
+                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal(), rb.velocity.magnitude);
+            }
         }
     }
 
     private void BounceOnBounds()
     {
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-        Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+        Bounce(shieldBounceTowardsCenterBias, shieldNormal, rb.velocity.magnitude);
     }
+
     public void ResetBall()
     {
         transform.position = Vector2.zero;
@@ -91,6 +89,8 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Debug.Log(rb.velocity.magnitude);
+
         if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
             rb.velocity = Vector2.zero;
             return;
@@ -98,11 +98,11 @@ public class Ball : MonoBehaviour
 
         if (rb.velocity.magnitude > constantVel)
         {
-            rb.velocity -= Vector2.one * dampStrength * Time.fixedDeltaTime;
+            rb.velocity -= rb.velocity.normalized * dampStrength * Time.fixedDeltaTime;
         }
         else if (rb.velocity.magnitude < constantVel)
         {
-            rb.velocity = Vector2.one * constantVel;
+            rb.velocity = rb.velocity.normalized * constantVel;
         }
         if (distFromCenter + ballRadius > map.mapRadius)
         {
@@ -110,7 +110,7 @@ public class Ball : MonoBehaviour
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
             
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
+            if (!GameManager.instance.OnSheildHit(alivePlayerID)) ResetBall();
         }
     }
     public static float Angle(Vector2 vector2)

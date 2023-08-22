@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
         else gameVariables = new GameVariables();
 
-        if (gameStateChanged == null) gameStateChanged = new UnityEvent();
+        gameStateChanged ??= new UnityEvent();
 
         gameStateChanged.AddListener(OnGameStateChanged);
 
@@ -190,11 +190,16 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        ball.dampStrength = gameVariables.ballSpeedDamp;
         foreach (Player player in players)
         {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
+            player.hitDuration = gameVariables.hitDuration;
+            player.hitCooldown = gameVariables.hitCooldown;
+            player.paddle.hitStrength = gameVariables.hitStrength;
         }
+
         inGame = true;
         ResetPlayers();
         UpdatePaddles();

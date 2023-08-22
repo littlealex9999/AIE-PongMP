@@ -69,6 +69,7 @@ public class Map : MonoBehaviour
             {
                 Vector3 targetPos = GetTargetPointInCircleLocal(i);
                 GameObject obj = Instantiate(ringMesh, targetPos, Quaternion.identity, transform);
+                obj.name = "ring segment " + i;
                 ringMeshes.Add(obj);
             }
         }

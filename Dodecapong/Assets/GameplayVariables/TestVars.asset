@@ -15,7 +15,6 @@ MonoBehaviour:
   playerSpeed: 90
   playerSize: {x: 1.5, y: 0.25}
   playerStickiness: 0
-  playerBounceTowardsCenterBias: 0
   dashEnabled: 1
   dashDuration: 0.2
   dashCooldown: 1
@@ -23,8 +22,9 @@ MonoBehaviour:
   ballSpeed: 5
   ballSpeedPerHit: 0
   ballSize: 0.5
-  shieldLives: 2
+  playerBounceTowardsCenterBias: 0
   shieldBounceTowardsCenterBias: 0
+  shieldLives: 2
   obstacleFrequency: 0
   blackHoleEnabled: 0
   powerupFrequency: 0
