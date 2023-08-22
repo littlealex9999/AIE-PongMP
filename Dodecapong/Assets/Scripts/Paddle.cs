@@ -13,6 +13,7 @@ public class Paddle : MonoBehaviour
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
 
+    public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
     public float pushStrength = 3.0f;
 
@@ -59,7 +60,10 @@ public class Paddle : MonoBehaviour
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
+        Vector3 startPos = transform.position;
+
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
+        Vector3 targetPos = transform.position;
 
         float maxDev = playerMidPoint + angleDeviance;
         float minDev = playerMidPoint - angleDeviance;
@@ -83,6 +87,13 @@ public class Paddle : MonoBehaviour
                 SetPosition(maxDev);
             }
         }
+
+        Vector3 clampedPos = transform.position;
+
+        Vector3 deltaTarget = targetPos - startPos;
+        Vector3 deltaPos = clampedPos - startPos;
+        //deltaTarget.x / deltaPos.x;
+        //deltaTarget.y / deltaPos.y;
     }
 
     public void SetPosition(float angle)

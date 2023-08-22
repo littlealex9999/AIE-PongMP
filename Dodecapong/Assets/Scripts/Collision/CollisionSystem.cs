@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 
 public class CollisionSystem : MonoBehaviour
@@ -129,6 +130,10 @@ public class CollisionSystem : MonoBehaviour
                 normal = -testingNormal;
             }
         }
+
+        Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
+        Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
+        normal = (normal - rotatedVelocity).normalized;
 
         return new CollisionData(circleA, convexB, depth, normal, collisionPos);
     }

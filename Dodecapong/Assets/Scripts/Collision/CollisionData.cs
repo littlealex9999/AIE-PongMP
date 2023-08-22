@@ -58,8 +58,10 @@ public class CollisionData
 
         // both colliders cannot be immovable as we return before this if that is the case
         if (colliderA.immovable) {
+            if (j < 0) j *= -1;
             colliderB.ApplyImpulse(2 * j * normal);
         } else if (colliderB.immovable) {
+            if (j < 0) j *= -1;
             colliderA.ApplyImpulse(2 * j * -normal);
         } else {
             colliderA.ApplyImpulse(j * -normal);
