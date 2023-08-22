@@ -32,7 +32,7 @@ public class MenuTextPair
     }
 }
 
-public class menuweeee : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
     public EventSystem eventSystem;
 

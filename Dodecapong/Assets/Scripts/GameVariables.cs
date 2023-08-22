@@ -49,7 +49,7 @@ public class GameVariables : ScriptableObject
 
     #region Player
     [Header("Player")] public float playerSpeed = 90.0f;
-    public Vector2 playerSize = new Vector2(2.0f, 0.5f);
+    public Vector3 playerSize = new Vector3(0.03f, 0.03f, 0.03f);
     public float playerStickiness = 0; // note: may not be implemented
     public bool dashEnabled = true;
     public float dashDuration = 0.2f;
@@ -60,7 +60,7 @@ public class GameVariables : ScriptableObject
     public float hitStrength = 4;
 
     public void SetPlayerSpeed(float value) { playerSpeed = value; }
-    public void SetPlayerSize(float value) { playerSize.x = value; }
+    public void SetPlayerSize(Vector3 value) { playerSize = value; }
     public void SetPlayerStickiness(float value) { playerStickiness = value; }
     public void SetPlayerDashEnabled(bool enabled) { dashEnabled = enabled; }
     public void SetPlayerDashDuration(float value) { dashDuration = value; }

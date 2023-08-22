@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Paddle : MonoBehaviour
 {
+    public PongConvexHullCollider collider;
+
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
 
@@ -15,11 +17,18 @@ public class Paddle : MonoBehaviour
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
     public AnimationCurve dashAnimationCurve;
+
     [HideInInspector] public bool dashing = false;
 
     public AnimationCurve hitAnimationCurve;
     [HideInInspector] public bool hitting = false;
     [HideInInspector] public float hitStrength;
+
+    private void Start()
+    {
+        collider = GetComponent<PongConvexHullCollider>();
+    }
+
     private void OnDestroy()
     {
         Destroy(gameObject);
