@@ -18,10 +18,20 @@ public abstract class PongCollider : MonoBehaviour
 
     private void Start()
     {
-        CollisionSystem.AddCollider(this);
+        StartEvents();
     }
 
     private void OnDestroy()
+    {
+        DestroyEvents();
+    }
+
+    protected virtual void StartEvents()
+    {
+        CollisionSystem.AddCollider(this);
+    }
+
+    protected virtual void DestroyEvents()
     {
         CollisionSystem.RemoveCollider(this);
     }

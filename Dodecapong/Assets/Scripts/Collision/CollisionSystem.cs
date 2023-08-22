@@ -13,9 +13,12 @@ public class CollisionSystem : MonoBehaviour
     }
 
     static List<PongCollider> colliders = new List<PongCollider>();
+    static List<PongCollider> paddleColliders = new List<PongCollider>();
 
     public static void AddCollider(PongCollider collider) => colliders.Add(collider);
     public static void RemoveCollider(PongCollider collider) => colliders.Remove(collider);
+    public static void AddPaddleCollider(PongCollider collider) => paddleColliders.Add(collider);
+    public static void RemovePaddleCollider(PongCollider collider) => paddleColliders.Remove(collider);
 
     private void FixedUpdate()
     {
@@ -27,9 +30,20 @@ public class CollisionSystem : MonoBehaviour
 
         for (int i = 0; i < colliders.Count; i++) {
             if (colliders[i].isActiveAndEnabled) {
+                // checks all regular colliders against eachother
                 for (int j = i + 1; j < colliders.Count; j++) {
                     if (colliders[j].isActiveAndEnabled) {
                         CollisionData data = CheckCollision(colliders[i], colliders[j]);
+                        if (data != null && data.isColliding) {
+                            data.ResolveCollision();
+                        }
+                    }
+                }
+
+                // checks everything against the paddles
+                for (int j = 0; j < paddleColliders.Count; j++) {
+                    if (paddleColliders[j].isActiveAndEnabled) {
+                        CollisionData data = CheckCollision(colliders[i], paddleColliders[j]);
                         if (data != null && data.isColliding) {
                             data.ResolveCollision();
                         }

@@ -69,4 +69,14 @@ public class PongConvexHullCollider : PongCollider
         // used to attempt calculating automatically
         return rotationOffset;
     }
+
+    protected override void StartEvents()
+    {
+        CollisionSystem.AddPaddleCollider(this);
+    }
+
+    protected override void DestroyEvents()
+    {
+        CollisionSystem.RemovePaddleCollider(this);
+    }
 }
