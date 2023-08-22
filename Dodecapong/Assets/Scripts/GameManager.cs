@@ -193,7 +193,9 @@ public class GameManager : MonoBehaviour
         {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
-            player.paddle.transform.localScale = new Vector3(gameVariables.playerSize.y, gameVariables.playerSize.x, 1);
+            player.paddle.transform.localScale = gameVariables.playerSize;
+            player.paddle.collider.scale = gameVariables.playerSize;
+            player.paddle.collider.RecalculateNormals();
             player.paddle.gameObject.SetActive(true);
         }
 

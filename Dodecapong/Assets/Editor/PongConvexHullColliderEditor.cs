@@ -34,7 +34,12 @@ public class PongConvexHullColliderEditor : PongColliderEditor
         }
 
         Handles.color = Color.red;
-        Handles.FreeMoveHandle((Vector3)collider.center + collider.transform.position, Quaternion.identity, 0.05f, new Vector3(0.1f, 0.1f, 0.0f), Handles.DotHandleCap);
+        Handles.FreeMoveHandle((Vector3)(collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * collider.center) + collider.transform.position, Quaternion.identity, 0.05f, new Vector3(0.1f, 0.1f, 0.0f), Handles.DotHandleCap);
+
+        for (int i = 0; i < points.Length; i++) {
+            points[i] = collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.scaledPoints[i] + collider.transform.position;
+        }
+        Handles.DrawLines(points, indices);
 
         for (int i = 0; i < points.Length; i++) {
             Vector3 midPoint = (points[i] + points[(i + 1) % points.Length]) / 2;

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    Rigidbody2D rb;
+    PongCollider collider;
 
     public Map map;
 
@@ -14,12 +14,12 @@ public class Ball : MonoBehaviour
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float paddleBounceTowardsCenterBias;
 
-    float distFromCenter { get { return Vector2.Distance(rb.position, Vector2.zero); } }
+    float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        collider = GetComponent<PongCollider>();
         GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
     }
 
@@ -30,11 +30,11 @@ public class Ball : MonoBehaviour
 
     private void Bounce(float centerBias, Vector2 bounceNormal)
     {
-        Vector2 forward = rb.velocity.normalized;
+        Vector2 forward = collider.velocity.normalized;
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        rb.velocity = finalBounceDir * constantVel;
-        rb.position += bounceNormal * 0.1f;
+        collider.velocity = finalBounceDir * constantVel;
+        transform.position += (Vector3)(bounceNormal * 0.1f);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -42,6 +42,28 @@ public class Ball : MonoBehaviour
         Paddle paddle;
         if (collision.gameObject.TryGetComponent(out paddle)) {
             Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
+            collider.velocity = Vector2.zero;
+            return;
+        }
+
+        if (collider.velocity.sqrMagnitude > constantVel * constantVel) {
+            collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
+        } else if (collider.velocity.sqrMagnitude < constantVel * constantVel) {
+            collider.velocity = collider.velocity.normalized * constantVel;
+        }
+
+        if (distFromCenter + ballRadius > map.mapRadius) {
+            float angle = Angle(transform.position.normalized);
+
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
+
+            if (!GameManager.instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
         }
     }
 
@@ -59,34 +81,14 @@ public class Ball : MonoBehaviour
 
         Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
 
-        rb.velocity = dir * constantVel;
+        collider.velocity = dir * constantVel;
     }
 
     public void AddVelocity(Vector2 velocity)
     {
-        rb.velocity += velocity;
+        collider.velocity += velocity;
     }
 
-    private void FixedUpdate()
-    {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
-            rb.velocity = Vector2.zero;
-            return;
-        }
-
-        if (rb.velocity.magnitude > constantVel) {
-            rb.velocity -= Vector2.one * dampStrength * Time.fixedDeltaTime;
-        } else if (rb.velocity.magnitude < constantVel) {
-            rb.velocity = Vector2.one * constantVel;
-        }
-        if (distFromCenter + ballRadius > map.mapRadius) {
-            float angle = Angle(transform.position.normalized);
-
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
-
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
-        }
-    }
     public static float Angle(Vector2 vector2)
     {
         float ret;
