@@ -172,6 +172,7 @@ public class Paddle : MonoBehaviour
         float value;
         float timeElapsed = 0;
         Vector3 startingScale = transform.localScale;
+        Vector2 colliderStart = collider.scale;
 
         while (timeElapsed < duration)
         {
@@ -179,11 +180,16 @@ public class Paddle : MonoBehaviour
             timeElapsed += Time.fixedDeltaTime;
 
             transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
+            collider.scale = new Vector2(transform.localScale.y, transform.localScale.x);
+            collider.RecalculateNormals();
 
             yield return new WaitForFixedUpdate();
         
         }
+
         transform.localScale = startingScale;
+        collider.scale = colliderStart;
+        collider.RecalculateNormals();
 
         hitting = false;
 
