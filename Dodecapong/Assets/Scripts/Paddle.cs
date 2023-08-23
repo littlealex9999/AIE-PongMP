@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Paddle : MonoBehaviour
 {
+    public PongConvexHullCollider collider;
+
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
 
@@ -11,13 +13,25 @@ public class Paddle : MonoBehaviour
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
 
+    public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
     public float pushStrength = 3.0f;
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
     public AnimationCurve dashAnimationCurve;
-    public bool dashing = false;
+
+    [HideInInspector] public bool dashing = false;
+
+    public AnimationCurve hitAnimationCurve;
+    [HideInInspector] public bool hitting = false;
+    [HideInInspector] public float hitStrength;
+
+    private void Start()
+    {
+        collider = GetComponent<PongConvexHullCollider>();
+    }
+
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -51,7 +65,10 @@ public class Paddle : MonoBehaviour
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
+        Vector3 startPos = transform.position;
+
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
+        Vector3 targetPos = transform.position;
 
         float maxDev = playerMidPoint + angleDeviance;
         float minDev = playerMidPoint - angleDeviance;
@@ -75,6 +92,23 @@ public class Paddle : MonoBehaviour
                 SetPosition(maxDev);
             }
         }
+
+        Vector3 clampedPos = transform.position;
+
+        // ensure we don't accidentally reverse the direction
+        Vector3 deltaTarget = targetPos - startPos;
+        Vector3 deltaPos = clampedPos - startPos;
+        if (deltaPos.x < 0) deltaPos.x *= -1;
+        if (deltaPos.y < 0) deltaPos.y *= -1;
+        if (moveTarget < 0) moveTarget *= -1;
+
+        // avoid divide by 0
+        if (deltaTarget.x == 0 || deltaPos.x == 0) deltaPos.x = 0;
+        else deltaPos.x = deltaTarget.x / deltaPos.x;
+        if (deltaTarget.y == 0 || deltaPos.y == 0) deltaPos.y = 0;
+        else deltaPos.y = deltaTarget.y / deltaPos.y;
+
+        collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
     }
 
     public void SetPosition(float angle)
@@ -111,7 +145,7 @@ public class Paddle : MonoBehaviour
 
         dashing = true;
 
-        float value = 0;
+        float value;
         float timeElapsed = 0;
 
         while (timeElapsed < duration)
@@ -125,6 +159,33 @@ public class Paddle : MonoBehaviour
         }
 
         dashing = false;
+
+        yield break;
+    }
+
+    public IEnumerator Hit(float duration)
+    {
+        if (hitting) yield break;
+
+        hitting = true;
+
+        float value;
+        float timeElapsed = 0;
+        Vector3 startingScale = transform.localScale;
+
+        while (timeElapsed < duration)
+        {
+            value = Mathf.Lerp(startingScale.x, startingScale.x * 2, hitAnimationCurve.Evaluate(timeElapsed / duration));
+            timeElapsed += Time.fixedDeltaTime;
+
+            transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
+
+            yield return new WaitForFixedUpdate();
+        
+        }
+        transform.localScale = startingScale;
+
+        hitting = false;
 
         yield break;
     }

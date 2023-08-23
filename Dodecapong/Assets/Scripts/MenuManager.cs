@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using System;
-using static GameManager;
 using UnityEngine.EventSystems;
 
 [Serializable]
@@ -32,7 +31,7 @@ public class MenuTextPair
     }
 }
 
-public class menuweeee : MonoBehaviour
+public class MenuManager : MonoBehaviour
 {
     public EventSystem eventSystem;
 
@@ -64,8 +63,8 @@ public class menuweeee : MonoBehaviour
     void Start()
     {
         DisableAll();
-        MainMenu();
-        instance.gameStateChanged.AddListener(OnGameStateChanged);
+        GameManager.instance.OnGameStateChange += OnGameStateChanged;
+        UpdateState(GameManager.GameState.MAINMENU);
     }
 
     public void Update()
@@ -93,29 +92,34 @@ public class menuweeee : MonoBehaviour
 
     public void UpdateState(StateToChangeTo stateToChangeTo)
     {
-        instance.UpdateGameState(stateToChangeTo.state);
+        UpdateState(stateToChangeTo.state);
+    }
+
+    public void UpdateState(GameManager.GameState state)
+    {
+        GameManager.instance.UpdateGameState(state);
     }
 
     void OnGameStateChanged()
     {
-        switch (instance.gameState)
+        switch (GameManager.instance.gameState)
         {
-            case GameState.MAINMENU:
+            case GameManager.GameState.MAINMENU:
                 MainMenu();
                 break;
-            case GameState.JOINMENU:
+            case GameManager.GameState.JOINMENU:
                 StartScreen();
                 break;
-            case GameState.SETTINGSMENU:
+            case GameManager.GameState.SETTINGSMENU:
                 SettingsScreen();
                 break;
-            case GameState.GAMEPLAY:
+            case GameManager.GameState.GAMEPLAY:
                 GameScreen();
                 break;
-            case GameState.GAMEPAUSED:
+            case GameManager.GameState.GAMEPAUSED:
                 PauseMenu();
                 break;
-            case GameState.GAMEOVER:
+            case GameManager.GameState.GAMEOVER:
                 EndGame();
                 break;
         }
@@ -193,5 +197,14 @@ public class menuweeee : MonoBehaviour
         pauseScreen.SetActive(true);
         eventSystem.SetSelectedGameObject(pauseDefault);
         //time scale 0 or whatever 
+    }
+
+    public void SelectButton()
+    {
+        EventManager.instance?.hoverUIEvent?.Invoke();
+    }
+    public void SubmitButton()
+    {
+        EventManager.instance?.selectUIEvent?.Invoke();
     }
 }
