@@ -36,6 +36,11 @@ public class CollisionSystem : MonoBehaviour
                         CollisionData data = CheckCollision(colliders[i], colliders[j]);
                         if (data != null && data.isColliding) {
                             data.ResolveCollision();
+
+                            if (colliders[i].OnCollision != null)
+                                colliders[i].OnCollision.Invoke(colliders[j]);
+                            if (colliders[j].OnCollision != null)
+                                colliders[j].OnCollision.Invoke(colliders[i]);
                         }
                     }
                 }
@@ -46,6 +51,11 @@ public class CollisionSystem : MonoBehaviour
                         CollisionData data = CheckCollision(colliders[i], paddleColliders[j]);
                         if (data != null && data.isColliding) {
                             data.ResolveCollision();
+
+                            if (colliders[i].OnCollision != null) 
+                                colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
+                            if (paddleColliders[i].OnCollision != null)
+                                paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
                         }
                     }
                 }
@@ -134,22 +144,30 @@ public class CollisionSystem : MonoBehaviour
             Vector2 testingPoint = (Vector2)circleA.transform.position - testingNormal * circleA.radius;
             float leastDepth = float.MaxValue;
 
+            float leastCollisionOnDepth = float.MaxValue;
+            Vector2 collisionOnNormal = rotationOffset * convexB.normals[i];
+
             for (int j = 0; j < convexB.points.Length; j++) {
                 float testingDepth = Vector2.Dot((Vector2)midpoints[i] - testingPoint, testingNormal);
                 if (testingDepth < leastDepth) leastDepth = testingDepth;
+
+                if (convexB.doResolutionOnFace[j]) {
+                    collisionOnNormal = testingNormal;
+                    leastCollisionOnDepth = leastDepth;
+                }
             }
 
-            if (leastDepth < depth) {
-                depth = leastDepth;
-                normal = -testingNormal;
+            if (leastCollisionOnDepth < depth) {
+                depth = leastCollisionOnDepth;
+                normal = -collisionOnNormal;
             }
         }
 
         Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
         Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
-        normal = (normal - rotatedVelocity).normalized;
+        Vector2 forceNormal = (normal - rotatedVelocity * convexB.normalBending).normalized;
 
-        return new CollisionData(circleA, convexB, depth, normal, collisionPos);
+        return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
     }
     #endregion
 }

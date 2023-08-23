@@ -20,7 +20,7 @@ public class Ball : MonoBehaviour
     void Start()
     {
         collider = GetComponent<PongCollider>();
-        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
+        GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
     private void OnGameStateChanged()

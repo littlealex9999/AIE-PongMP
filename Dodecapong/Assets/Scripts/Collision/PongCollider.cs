@@ -13,8 +13,13 @@ public abstract class PongCollider : MonoBehaviour
 
     public Vector2 velocity;
     public Vector2 acceleration;
+    public float normalBending = 1.0f;
 
     public bool immovable = false;
+
+    public delegate void CollisionEvents(PongCollider other);
+    public CollisionEvents OnCollision;
+    public CollisionEvents OnPaddleCollision;
 
     private void Start()
     {

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeed: 90
   playerSize: {x: 0.03, y: 0.03, z: 0.03}
-  playerStickiness: 0
+  playerRotationalForce: 0.5
   playerBounceTowardsCenterBias: 0
   dashEnabled: 1
   dashDuration: 0.2
@@ -23,7 +23,7 @@ MonoBehaviour:
   ballSpeed: 5
   ballSpeedPerHit: 0
   ballSize: 0.5
-  shieldLives: 2
+  shieldLives: 5
   shieldBounceTowardsCenterBias: 0
   obstacleFrequency: 0
   blackHoleEnabled: 0

@@ -7,11 +7,13 @@ public class CollisionData
 {
     public readonly float depth = -1.0f;
     public Vector2 normal { get; private set; } // from a to b
+    public Vector2 forceResolutionNormal { get; private set; }
     public readonly Vector2 collisionPos;
 
     public readonly PongCollider colliderA;
     public readonly PongCollider colliderB;
 
+    #region Constructors
     public CollisionData(PongCollider colliderA, PongCollider colliderB, float depth, Vector2 normal, Vector2 collisionPos)
     {
         this.colliderA = colliderA;
@@ -19,8 +21,21 @@ public class CollisionData
 
         this.depth = depth;
         this.normal = normal;
+        forceResolutionNormal = normal;
         this.collisionPos = collisionPos;
     }
+
+    public CollisionData(PongCollider colliderA, PongCollider colliderB, float depth, Vector2 normal, Vector2 forceResolutionNormal, Vector2 collisionPos)
+    {
+        this.colliderA = colliderA;
+        this.colliderB = colliderB;
+
+        this.depth = depth;
+        this.normal = normal;
+        this.forceResolutionNormal = forceResolutionNormal;
+        this.collisionPos = collisionPos;
+    }
+    #endregion
 
     public bool isColliding { get { return depth > 0.0f; } }
 
@@ -59,13 +74,13 @@ public class CollisionData
         // both colliders cannot be immovable as we return before this if that is the case
         if (colliderA.immovable) {
             if (j < 0) j *= -1;
-            colliderB.ApplyImpulse(2 * j * normal);
+            colliderB.ApplyImpulse(2 * j * forceResolutionNormal);
         } else if (colliderB.immovable) {
             if (j < 0) j *= -1;
-            colliderA.ApplyImpulse(2 * j * -normal);
+            colliderA.ApplyImpulse(2 * j * -forceResolutionNormal);
         } else {
-            colliderA.ApplyImpulse(j * -normal);
-            colliderB.ApplyImpulse(j * normal);
+            colliderA.ApplyImpulse(j * -forceResolutionNormal);
+            colliderB.ApplyImpulse(j * forceResolutionNormal);
         }
     }
 }

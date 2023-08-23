@@ -29,6 +29,8 @@ public class PongConvexHullCollider : PongCollider
         new Vector2(0, -1),
     };
 
+    public bool[] doResolutionOnFace;
+
     public Vector2 center = new Vector2(0.5f, 0.5f);
     public Vector3 rotationOffset;
 
@@ -37,6 +39,7 @@ public class PongConvexHullCollider : PongCollider
     public void RecalculateNormals()
     {
         RecalculateScale();
+        if (doResolutionOnFace.Length != points.Length) RegenrateResolutionBools();
 
         center = Vector2.zero;
         for (int i = 0; i < points.Length; i++) {
@@ -56,6 +59,29 @@ public class PongConvexHullCollider : PongCollider
         scaledPoints = new Vector2[points.Length];
         for (int i = 0; i < points.Length; i++) {
             scaledPoints[i] = points[i] * scale;
+        }
+    }
+
+    public void RegenrateResolutionBools()
+    {
+        if (doResolutionOnFace.Length > points.Length) {
+            bool[] temp = new bool[points.Length];
+            for (int i = 0; i < points.Length; i++) {
+                temp[i] = doResolutionOnFace[i];
+            }
+
+            doResolutionOnFace = temp;
+        } else if (doResolutionOnFace.Length < points.Length) {
+            bool[] temp = new bool[points.Length];
+            for (int i = 0; i < doResolutionOnFace.Length; i++) {
+                temp[i] = doResolutionOnFace[i];
+            }
+
+            for (int i = doResolutionOnFace.Length; i < points.Length; i++) {
+                temp[i] = true;
+            }
+
+            doResolutionOnFace = temp;
         }
     }
 

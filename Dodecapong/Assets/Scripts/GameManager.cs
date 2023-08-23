@@ -49,9 +49,7 @@ public class GameManager : MonoBehaviour
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
         else gameVariables = new GameVariables();
 
-        if (gameStateChanged == null) gameStateChanged = new UnityEvent();
-
-        gameStateChanged.AddListener(OnGameStateChanged);
+        OnGameStateChange += OnGameStateChanged;
 
         UpdateGameState(GameState.MAINMENU);
     }
@@ -78,8 +76,10 @@ public class GameManager : MonoBehaviour
     //
     // GameState
     //
-    public UnityEvent gameStateChanged;
-    public GameState gameState { get; private set; }
+    public delegate void GameStateChange();
+    public GameStateChange OnGameStateChange;
+
+    public GameState gameState = GameState.MAINMENU;
     public enum GameState
     {
         MAINMENU,
@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
     public void UpdateGameState(GameState state)
     {
         gameState = state;
-        gameStateChanged.Invoke();
+        OnGameStateChange.Invoke();
     }
 
     void OnGameStateChanged()
@@ -193,6 +193,7 @@ public class GameManager : MonoBehaviour
         {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
+            player.paddle.rotationalForce = gameVariables.playerRotationalForce;
             player.paddle.transform.localScale = gameVariables.playerSize;
             player.paddle.collider.scale = gameVariables.playerSize;
             player.paddle.collider.RecalculateNormals();
