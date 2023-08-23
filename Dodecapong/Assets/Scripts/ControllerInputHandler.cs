@@ -38,36 +38,30 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void RightStick(InputAction.CallbackContext context)
     {
-
-            if (instance.gameState != GameState.GAMEPLAY) return;
-
-        if (splitControls) playerB.movementInput = context.ReadValue<Vector2>();
+        if (splitControls && instance.gameState == GameState.GAMEPLAY)
+        {
+            playerB.movementInput = context.ReadValue<Vector2>();
+        }
     }
     public void ButtonSouth(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.canceled && instance.gameState == GameState.GAMEPLAY)
         {
-            if (instance.gameState != GameState.GAMEPLAY) return;
-
             if (splitControls) playerB.Dash();
             else playerA.Dash();
         }
     }
     public void DPadDown(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.canceled && instance.gameState == GameState.GAMEPLAY)
         {
-            if (instance.gameState != GameState.GAMEPLAY) return;
-
             if (splitControls) playerA.Dash();
         }
     }
     public void SwapControllerScheme(InputAction.CallbackContext context)
     {
-        if (context.canceled)
+        if (context.canceled && instance.gameState == GameState.JOINMENU)
         {
-            if (instance.gameState != GameState.JOINMENU) return;
-
             if (splitControls)
             {
                 instance.RemovePlayer(playerB);
@@ -83,13 +77,32 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void ButtonEast(InputAction.CallbackContext context)
     {
-        if (context.canceled)
+        if (context.canceled && instance.gameState == GameState.JOINMENU)
         {
-            if (instance.gameState != GameState.JOINMENU) return;
-
             Debug.Log(playerInputManager.playerCount);
 
             Destroy(gameObject);
+        }
+    }
+    public void LeftShoulder(InputAction.CallbackContext contect)
+    {
+        if (contect.started && instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls) playerA.Hit();
+        }
+    }
+    public void RightShoulder(InputAction.CallbackContext contect)
+    {
+        if (contect.started && instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls)
+            {
+                playerB.Hit();
+            }
+            else
+            {
+                playerA.Hit();
+            }
         }
     }
 }

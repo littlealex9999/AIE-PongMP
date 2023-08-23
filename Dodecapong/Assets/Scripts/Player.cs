@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -13,6 +14,13 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
+    float dashCooldownProgress;
+    bool readyToDash = true;
+
+    [HideInInspector] public float hitDuration;
+    [HideInInspector] public float hitCooldown;
+    float hitCooldownProgress;
+    bool readyToHit = true;
 
     private void OnDestroy()
     {
@@ -21,30 +29,42 @@ public class Player : MonoBehaviour
 
     public void Dash()
     {
-        if (readyToDash)
-        {
-            readyToDash = false;
-            progress = 0;
-            StartCoroutine(paddle.Dash(movementInput, dashDuration));
-        }
+        if (!readyToDash) return;
+
+        readyToDash = false;
+        dashCooldownProgress = dashCooldown + dashDuration;
+        StartCoroutine(paddle.Dash(movementInput, dashDuration));
     }
 
-    float progress;
-    bool readyToDash = true;
+    public void Hit()
+    {
+        if (!readyToHit) return;
+
+        readyToHit = false;
+        hitCooldownProgress = hitCooldown + hitDuration;
+        StartCoroutine(paddle.Hit(hitDuration));
+    }
 
     void FixedUpdate()
     {
         // animation value: progress / (dashCooldown + dashDuration)
 
-        if (progress < dashCooldown + dashDuration)
+        readyToDash = UpdateCooldown(ref dashCooldownProgress);
+        readyToHit = UpdateCooldown(ref hitCooldownProgress);
+
+        if (!paddle.dashing && !GameManager.instance.holdGameplay) paddle.Move(movementInput);
+    }
+
+    private bool UpdateCooldown(ref float progress)
+    {
+        if (progress > 0)
         {
-            progress += Time.fixedDeltaTime;
+            progress -= Time.fixedDeltaTime;
         }
         else
         {
-            readyToDash = true;
+            return true;
         }
-
-        if (!paddle.dashing && !GameManager.instance.holdGameplay) paddle.Move(movementInput);
+        return false;
     }
 }

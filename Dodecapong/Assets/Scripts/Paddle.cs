@@ -20,7 +20,12 @@ public class Paddle : MonoBehaviour
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
     public AnimationCurve dashAnimationCurve;
-    public bool dashing = false;
+
+    [HideInInspector] public bool dashing = false;
+
+    public AnimationCurve hitAnimationCurve;
+    [HideInInspector] public bool hitting = false;
+    [HideInInspector] public float hitStrength;
 
     private void Start()
     {
@@ -140,7 +145,7 @@ public class Paddle : MonoBehaviour
 
         dashing = true;
 
-        float value = 0;
+        float value;
         float timeElapsed = 0;
 
         while (timeElapsed < duration)
@@ -154,6 +159,33 @@ public class Paddle : MonoBehaviour
         }
 
         dashing = false;
+
+        yield break;
+    }
+
+    public IEnumerator Hit(float duration)
+    {
+        if (hitting) yield break;
+
+        hitting = true;
+
+        float value;
+        float timeElapsed = 0;
+        Vector3 startingScale = transform.localScale;
+
+        while (timeElapsed < duration)
+        {
+            value = Mathf.Lerp(startingScale.x, startingScale.x * 2, hitAnimationCurve.Evaluate(timeElapsed / duration));
+            timeElapsed += Time.fixedDeltaTime;
+
+            transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
+
+            yield return new WaitForFixedUpdate();
+        
+        }
+        transform.localScale = startingScale;
+
+        hitting = false;
 
         yield break;
     }

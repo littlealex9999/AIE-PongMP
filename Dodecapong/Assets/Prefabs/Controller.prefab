@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: c44330d5d17001d418f3d7a248f01f7f, type: 3}
+  m_Actions: {fileID: -944628639613478452, guid: 882063ea082371241b87e1270c12b8d1, type: 3}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -154,6 +154,38 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 83150656-980d-4b74-b46e-e734b1b6ac4b
     m_ActionName: Player/Button East[/DualShock4GamepadHID/buttonEast,/XInputControllerWindows/buttonEast,/XInputControllerWindows1/buttonEast,/XInputControllerWindows2/buttonEast]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3623185232625697688}
+        m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
+        m_MethodName: LeftShoulder
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 210eed4d-0565-4ab6-9ae3-29f2446b1a93
+    m_ActionName: Player/Left Shoulder[/DualShock4GamepadHID/leftShoulder]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3623185232625697688}
+        m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
+        m_MethodName: RightShoulder
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 185b28f4-b52e-4da7-8600-c47d6edb42c9
+    m_ActionName: Player/Right Shoulder[/DualShock4GamepadHID/rightShoulder]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player
@@ -172,4 +204,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIMasterInputActionAsset: {fileID: -944628639613478452, guid: 68e14fb3890b5d34f88078a7d0b4ecd5, type: 3}
-  inputActionAsset: {fileID: -944628639613478452, guid: c44330d5d17001d418f3d7a248f01f7f, type: 3}

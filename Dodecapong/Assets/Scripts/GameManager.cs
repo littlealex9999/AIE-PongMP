@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
                     gameEndTimer -= Time.deltaTime;
                     if (gameEndTimer <= 0)
                     {
-                        // end game
+                        // UpdateGameState(GameState.GAMEOVER);
                     }
                 }
                 break;
@@ -76,10 +76,12 @@ public class GameManager : MonoBehaviour
     //
     // GameState
     //
+
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
 
     public GameState gameState = GameState.MAINMENU;
+
     public enum GameState
     {
         MAINMENU,
@@ -89,13 +91,14 @@ public class GameManager : MonoBehaviour
         GAMEPAUSED,
         GAMEOVER,
     }
+
     public void UpdateGameState(GameState state)
     {
         gameState = state;
         OnGameStateChange.Invoke();
     }
 
-    void OnGameStateChanged()
+    private void OnGameStateChanged()
     {
         switch (gameState) {
             case GameState.MAINMENU:
@@ -189,14 +192,22 @@ public class GameManager : MonoBehaviour
 
     void StartGame()
     {
+        ball.dampStrength = gameVariables.ballSpeedDamp;
         foreach (Player player in players)
         {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
+
+            player.hitDuration = gameVariables.hitDuration;
+            player.hitCooldown = gameVariables.hitCooldown;
+            player.paddle.hitStrength = gameVariables.hitStrength;
+
             player.paddle.rotationalForce = gameVariables.playerRotationalForce;
+
             player.paddle.transform.localScale = gameVariables.playerSize;
             player.paddle.collider.scale = gameVariables.playerSize;
             player.paddle.collider.RecalculateNormals();
+
             player.paddle.gameObject.SetActive(true);
         }
 

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
+
     PongCollider collider;
 
     public Map map;
@@ -39,9 +40,16 @@ public class Ball : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Paddle paddle;
-        if (collision.gameObject.TryGetComponent(out paddle)) {
-            Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
+        if (collision.gameObject.TryGetComponent(out Paddle paddle))
+        {
+            if (paddle.hitting)
+            {
+                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
+            }
+            else
+            {
+                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
+            }
         }
     }
 
@@ -52,9 +60,12 @@ public class Ball : MonoBehaviour
             return;
         }
 
-        if (collider.velocity.sqrMagnitude > constantVel * constantVel) {
+        if (collider.velocity.sqrMagnitude > constantVel * constantVel)
+        {
             collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
-        } else if (collider.velocity.sqrMagnitude < constantVel * constantVel) {
+        } 
+        else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
+        {
             collider.velocity = collider.velocity.normalized * constantVel;
         }
 
