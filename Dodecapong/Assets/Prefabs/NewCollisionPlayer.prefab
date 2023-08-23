@@ -86,6 +86,14 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   dashing: 0
+  hitAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  hitting: 0
+  hitStrength: 0
 --- !u!114 &8340523038451981560
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -124,7 +132,7 @@ MonoBehaviour:
   - {x: 0.70710677, y: -0.70710677}
   - {x: 0, y: -1}
   - {x: -0.70710677, y: -0.70710677}
-  doResolutionOnFace: 010101010101
+  doResolutionOnFace: 010101000000
   center: {x: -0.08722719, y: 2.288926}
   rotationOffset: {x: 0, y: 0, z: 90}
   scale: {x: 1, y: 1}
@@ -179,6 +187,8 @@ MonoBehaviour:
   color: {r: 0, g: 0, b: 0, a: 0}
   dashDuration: 0
   dashCooldown: 0
+  hitDuration: 0
+  hitCooldown: 0
 --- !u!1001 &423905365415369213
 PrefabInstance:
   m_ObjectHideFlags: 0

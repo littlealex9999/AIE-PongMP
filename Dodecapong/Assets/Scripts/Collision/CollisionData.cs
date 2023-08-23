@@ -62,7 +62,7 @@ public class CollisionData
             movementOnB = colliderB.inverseMass / totalIMass;
         }
 
-        Vector2 movement = depth / 2 * normal;
+        Vector2 movement = depth * normal;
 
         colliderA.position -= (Vector3)movement * movementOnA;
         colliderB.position += (Vector3)movement * movementOnB;

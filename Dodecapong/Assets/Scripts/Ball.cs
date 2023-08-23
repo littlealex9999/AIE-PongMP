@@ -3,7 +3,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
 
-    PongCollider collider;
+    new PongCollider collider;
 
     public Map map;
 

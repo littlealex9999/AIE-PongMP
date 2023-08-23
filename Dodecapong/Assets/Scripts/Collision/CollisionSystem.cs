@@ -54,7 +54,7 @@ public class CollisionSystem : MonoBehaviour
 
                             if (colliders[i].OnCollision != null) 
                                 colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
-                            if (paddleColliders[i].OnCollision != null)
+                            if (paddleColliders[j].OnCollision != null)
                                 paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
                         }
                     }
@@ -144,22 +144,14 @@ public class CollisionSystem : MonoBehaviour
             Vector2 testingPoint = (Vector2)circleA.transform.position - testingNormal * circleA.radius;
             float leastDepth = float.MaxValue;
 
-            float leastCollisionOnDepth = float.MaxValue;
-            Vector2 collisionOnNormal = rotationOffset * convexB.normals[i];
-
             for (int j = 0; j < convexB.points.Length; j++) {
                 float testingDepth = Vector2.Dot((Vector2)midpoints[i] - testingPoint, testingNormal);
                 if (testingDepth < leastDepth) leastDepth = testingDepth;
-
-                if (convexB.doResolutionOnFace[j]) {
-                    collisionOnNormal = testingNormal;
-                    leastCollisionOnDepth = leastDepth;
-                }
             }
 
-            if (leastCollisionOnDepth < depth) {
-                depth = leastCollisionOnDepth;
-                normal = -collisionOnNormal;
+            if (leastDepth < 0 && leastDepth < depth || convexB.doResolutionOnFace[i] && leastDepth < depth) {
+                depth = leastDepth;
+                normal = -testingNormal;
             }
         }
 

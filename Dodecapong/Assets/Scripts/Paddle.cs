@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Paddle : MonoBehaviour
 {
-    public PongConvexHullCollider collider;
+    new public PongConvexHullCollider collider;
 
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
