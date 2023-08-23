@@ -90,10 +90,20 @@ public class Paddle : MonoBehaviour
 
         Vector3 clampedPos = transform.position;
 
+        // ensure we don't accidentally reverse the direction
         Vector3 deltaTarget = targetPos - startPos;
         Vector3 deltaPos = clampedPos - startPos;
-        //deltaTarget.x / deltaPos.x;
-        //deltaTarget.y / deltaPos.y;
+        if (deltaPos.x < 0) deltaPos.x *= -1;
+        if (deltaPos.y < 0) deltaPos.y *= -1;
+        if (moveTarget < 0) moveTarget *= -1;
+
+        // avoid divide by 0
+        if (deltaTarget.x == 0 || deltaPos.x == 0) deltaPos.x = 0;
+        else deltaPos.x = deltaTarget.x / deltaPos.x;
+        if (deltaTarget.y == 0 || deltaPos.y == 0) deltaPos.y = 0;
+        else deltaPos.y = deltaTarget.y / deltaPos.y;
+
+        collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
     }
 
     public void SetPosition(float angle)
