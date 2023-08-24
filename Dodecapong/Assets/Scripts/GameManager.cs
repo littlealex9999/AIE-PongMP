@@ -387,7 +387,11 @@ public class GameManager : MonoBehaviour
         while (pillarSmashTimer < pillarSmashTime) {
             pillarSmashTimer += Time.deltaTime;
             float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
-            arcTanShader.SetShrink(playerRemovalPercentage);
+
+            float sin = Mathf.Sin(playerRemovalPercentage * Mathf.PI) / 3;
+            float sin2 = Mathf.Sqrt(Mathf.Sin(playerRemovalPercentage / 2 * Mathf.PI));
+            float arcTanShrink = playerRemovalPercentage + (sin2 - playerRemovalPercentage) * sin;
+            arcTanShader.SetShrink(arcTanShrink);
 
             for (int i = 0; i < pillars.Count; i++) {
                 float targetAngle = Mathf.Lerp(startAngles[i], targetAngles[i], playerRemovalPercentage);
