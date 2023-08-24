@@ -203,6 +203,7 @@ public class GameManager : MonoBehaviour
             player.paddle.hitStrength = gameVariables.hitStrength;
 
             player.paddle.rotationalForce = gameVariables.playerRotationalForce;
+            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
 
             player.paddle.transform.localScale = gameVariables.playerSize;
             player.paddle.collider.scale = gameVariables.playerSize;

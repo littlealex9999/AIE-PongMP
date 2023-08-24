@@ -109,6 +109,11 @@ public class Paddle : MonoBehaviour
         else deltaPos.y = deltaTarget.y / deltaPos.y;
 
         collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
+        if (hitting) {
+            Vector2 hitVel = (Vector2)(Quaternion.Euler(0, 0, -angle) * new Vector2(0, hitStrength));
+            hitVel.y *= -1;
+            collider.velocity += hitVel;
+        }
     }
 
     public void SetPosition(float angle)

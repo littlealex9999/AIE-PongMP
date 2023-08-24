@@ -156,8 +156,8 @@ public class CollisionSystem : MonoBehaviour
         }
 
         Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
-        Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
-        Vector2 forceNormal = (normal - rotatedVelocity * convexB.normalBending).normalized;
+        //Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
+        Vector2 forceNormal = (normal - convexB.velocity * convexB.normalBending).normalized;
 
         return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
     }

@@ -69,7 +69,7 @@ public class CollisionData
 
 
         // SOLVE VELOCITY
-        float j = 2 * Vector2.Dot(colliderA.velocity - colliderB.velocity, normal) / totalIMass;
+        float j = 2 * Vector2.Dot(colliderA.velocity - colliderB.velocity, forceResolutionNormal) / totalIMass;
 
         // both colliders cannot be immovable as we return before this if that is the case
         if (colliderA.immovable) {
