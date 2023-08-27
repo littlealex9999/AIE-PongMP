@@ -16,13 +16,25 @@ public class PongConvexHullColliderEditor : PongColliderEditor
             points[i] = collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.points[i] + collider.transform.position;
         }
 
-        int[] indices = new int[points.Length * 2];
+        collider.RegenrateResolutionBools();
+        int activeFaces = 0;
         for (int i = 0; i < points.Length; i++) {
-            indices[i * 2] = i;
-            indices[i * 2 + 1] = (i + 1) % points.Length;
+            if (collider.doResolutionOnFace[i]) ++activeFaces;
         }
 
-        Handles.DrawLines(points, indices);
+        int[] collisionActiveIndices = new int[activeFaces * 2];
+        for (int i = 0; i < collisionActiveIndices.Length / 2; i++) {
+            collisionActiveIndices[i * 2] = i;
+            collisionActiveIndices[i * 2 + 1] = (i + 1) % points.Length;
+        }
+
+        int[] collisionInactiveIndices = new int[(points.Length - activeFaces) * 2];
+        for (int i = 0; i < collisionInactiveIndices.Length / 2; i++) {
+            collisionActiveIndices[i * 2] = i;
+            collisionActiveIndices[i * 2 + 1] = (i + 1) % points.Length;
+        }
+
+        Handles.DrawLines(points, collisionActiveIndices);
 
         for (int i = 0; i < points.Length; i++) {
             Vector3 targetPoint = Handles.FreeMoveHandle(points[i], Quaternion.identity, 0.05f, new Vector3(0.1f, 0.1f, 0.0f), Handles.DotHandleCap);
@@ -39,7 +51,7 @@ public class PongConvexHullColliderEditor : PongColliderEditor
         for (int i = 0; i < points.Length; i++) {
             points[i] = collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.scaledPoints[i] + collider.transform.position;
         }
-        Handles.DrawLines(points, indices);
+        Handles.DrawLines(points, collisionActiveIndices);
 
         for (int i = 0; i < points.Length; i++) {
             Vector3 midPoint = (points[i] + points[(i + 1) % points.Length]) / 2;
@@ -49,10 +61,16 @@ public class PongConvexHullColliderEditor : PongColliderEditor
 
     public override void OnInspectorGUI()
     {
+        PongConvexHullCollider collider = (PongConvexHullCollider)target;
+
         base.OnInspectorGUI();
 
         if (GUILayout.Button("Recalculate Normals")) {
-            ((PongConvexHullCollider)target).RecalculateNormals();
+            collider.RecalculateNormals();
         }
+
+        //if (collider.doResolutionOnFace.Length != collider.points.Length) {
+        //    collider.RegenrateResolutionBools();
+        //}
     }
 }

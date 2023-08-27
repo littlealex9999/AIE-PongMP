@@ -48,6 +48,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collider: {fileID: 0}
   moveSpeed: 90
+  rotationalForce: 1
+  pushDistance: 0.1
+  pushStrength: 10
   facingDirection: {x: 1, y: 0, z: 0}
   dashAnimationCurve:
     serializedVersion: 2
@@ -85,7 +88,25 @@ MonoBehaviour:
   dashing: 0
   hitAnimationCurve:
     serializedVersion: 2
-    m_Curve: []
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -106,6 +127,7 @@ MonoBehaviour:
   inverseMass: 1
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
+  normalBending: 1
   immovable: 1
   points:
   - {x: -13.15, y: 0}
@@ -115,20 +137,21 @@ MonoBehaviour:
   - {x: 8.333333, y: -5}
   - {x: -8.333333, y: -5}
   scaledPoints:
-  - {x: -13.15, y: 0}
-  - {x: -8.8, y: 11.95}
-  - {x: 8.8, y: 11.95}
-  - {x: 13.15, y: 0}
+  - {x: -13.333333, y: 0}
+  - {x: -8.856696, y: 12.066889}
+  - {x: 8.333333, y: 11.666667}
+  - {x: 13.333333, y: 0}
   - {x: 8.333333, y: -5}
   - {x: -8.333333, y: -5}
   normals:
-  - {x: -0.93967855, y: 0.3420587}
-  - {x: 0, y: 1}
-  - {x: 0.93967855, y: 0.3420587}
-  - {x: 0.72018695, y: -0.69378006}
+  - {x: -0.1, y: 0.98}
+  - {x: 0.0232759, y: 0.9997291}
+  - {x: 0.1, y: 0.98}
+  - {x: 0.70710677, y: -0.70710677}
   - {x: 0, y: -1}
-  - {x: -0.72018695, y: -0.69378006}
-  center: {x: -0.00000015894572, y: 2.3166666}
+  - {x: -0.70710677, y: -0.70710677}
+  doResolutionOnFace: 010101000000
+  center: {x: -0.08722719, y: 2.288926}
   rotationOffset: {x: 0, y: 0, z: 90}
   scale: {x: 1, y: 1}
 --- !u!1 &4539453341973377358

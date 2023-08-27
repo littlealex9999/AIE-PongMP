@@ -29,6 +29,8 @@ public class PongConvexHullCollider : PongCollider
         new Vector2(0, -1),
     };
 
+    public bool[] doResolutionOnFace;
+
     public Vector2 center = new Vector2(0.5f, 0.5f);
     public Vector3 rotationOffset;
 
@@ -37,6 +39,7 @@ public class PongConvexHullCollider : PongCollider
     public void RecalculateNormals()
     {
         RecalculateScale();
+        if (doResolutionOnFace.Length != points.Length) RegenrateResolutionBools();
 
         center = Vector2.zero;
         for (int i = 0; i < points.Length; i++) {
@@ -59,6 +62,29 @@ public class PongConvexHullCollider : PongCollider
         }
     }
 
+    public void RegenrateResolutionBools()
+    {
+        if (doResolutionOnFace.Length > points.Length) {
+            bool[] temp = new bool[points.Length];
+            for (int i = 0; i < points.Length; i++) {
+                temp[i] = doResolutionOnFace[i];
+            }
+
+            doResolutionOnFace = temp;
+        } else if (doResolutionOnFace.Length < points.Length) {
+            bool[] temp = new bool[points.Length];
+            for (int i = 0; i < doResolutionOnFace.Length; i++) {
+                temp[i] = doResolutionOnFace[i];
+            }
+
+            for (int i = doResolutionOnFace.Length; i < points.Length; i++) {
+                temp[i] = true;
+            }
+
+            doResolutionOnFace = temp;
+        }
+    }
+
     public Vector2 GetFaceMidpoint(int index)
     {
         return (scaledPoints[index] + scaledPoints[(index + 1) % points.Length]) / 2;
@@ -68,5 +94,15 @@ public class PongConvexHullCollider : PongCollider
     {
         // used to attempt calculating automatically
         return rotationOffset;
+    }
+
+    protected override void StartEvents()
+    {
+        CollisionSystem.AddPaddleCollider(this);
+    }
+
+    protected override void DestroyEvents()
+    {
+        CollisionSystem.RemovePaddleCollider(this);
     }
 }

@@ -12,7 +12,9 @@ public class GameVariables : ScriptableObject
     {
         playerSpeed = gv.playerSpeed;
         playerSize = gv.playerSize;
-        playerStickiness = gv.playerStickiness;
+        playerRotationalForce = gv.playerRotationalForce;
+        playerNormalBending = gv.playerNormalBending;
+        playerBounceTowardsCenterBias = gv.playerBounceTowardsCenterBias;
         dashEnabled = gv.dashEnabled;
         dashDuration = gv.dashDuration;
         dashCooldown = gv.dashCooldown;
@@ -24,7 +26,6 @@ public class GameVariables : ScriptableObject
         ballSpeed = gv.ballSpeed;
         ballSpeedPerHit = gv.ballSpeedPerHit;
         ballSize = gv.ballSize;
-        playerBounceTowardsCenterBias = gv.playerBounceTowardsCenterBias;
         shieldBounceTowardsCenterBias = gv.shieldBounceTowardsCenterBias;
 
         shieldLives = gv.shieldLives;
@@ -50,7 +51,9 @@ public class GameVariables : ScriptableObject
     #region Player
     [Header("Player")] public float playerSpeed = 90.0f;
     public Vector3 playerSize = new Vector3(0.03f, 0.03f, 0.03f);
-    public float playerStickiness = 0; // note: may not be implemented
+    public float playerRotationalForce = 0.5f;
+    public float playerNormalBending = 2.0f;
+    public float playerBounceTowardsCenterBias;
     public bool dashEnabled = true;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1;
@@ -61,7 +64,9 @@ public class GameVariables : ScriptableObject
 
     public void SetPlayerSpeed(float value) { playerSpeed = value; }
     public void SetPlayerSize(Vector3 value) { playerSize = value; }
-    public void SetPlayerStickiness(float value) { playerStickiness = value; }
+    public void SetPlayerRotationalForce(float value) { playerRotationalForce = value; }
+    public void SetPlayerNormalBending(float value) { playerNormalBending = value; }
+    public void SetPlayerBounceBias(float value) { playerBounceTowardsCenterBias = value; }
     public void SetPlayerDashEnabled(bool enabled) { dashEnabled = enabled; }
     public void SetPlayerDashDuration(float value) { dashDuration = value; }
     public void SetPlayerDashCooldown(float value) { dashCooldown = value; }
@@ -77,7 +82,6 @@ public class GameVariables : ScriptableObject
     public float ballSpeedDamp = 1.2f;
     public float ballSpeedPerHit = 0.0f;
     public float ballSize = 0.5f;
-    [Range(0, 1)] public float playerBounceTowardsCenterBias;
     [Range(0, 1)] public float shieldBounceTowardsCenterBias;
 
     public void SetBallCount(int value) { ballCount = value; }
@@ -85,7 +89,6 @@ public class GameVariables : ScriptableObject
     public void SetBallSpeedDamp(float value) { ballSpeedDamp = value; }
     public void SetBallSpeedPerHit(float value) { ballSpeedPerHit = value; }
     public void SetBallSize(float value) { ballSize = value; }
-    public void SetPlayerBounceBias(float value) { playerBounceTowardsCenterBias = value; }
     public void SetShieldBounceBias(float value) { shieldBounceTowardsCenterBias = value; }
     #endregion
 

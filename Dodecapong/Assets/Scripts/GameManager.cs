@@ -49,9 +49,7 @@ public class GameManager : MonoBehaviour
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
         else gameVariables = new GameVariables();
 
-        gameStateChanged ??= new UnityEvent();
-
-        gameStateChanged.AddListener(OnGameStateChanged);
+        OnGameStateChange += OnGameStateChanged;
 
         UpdateGameState(GameState.MAINMENU);
     }
@@ -78,8 +76,12 @@ public class GameManager : MonoBehaviour
     //
     // GameState
     //
-    [HideInInspector] public UnityEvent gameStateChanged;
-    public GameState gameState { get; private set; }
+
+    public delegate void GameStateChange();
+    public GameStateChange OnGameStateChange;
+
+    public GameState gameState = GameState.MAINMENU;
+
     public enum GameState
     {
         MAINMENU,
@@ -89,10 +91,11 @@ public class GameManager : MonoBehaviour
         GAMEPAUSED,
         GAMEOVER,
     }
+
     public void UpdateGameState(GameState state)
     {
         gameState = state;
-        gameStateChanged.Invoke();
+        OnGameStateChange.Invoke();
     }
 
     private void OnGameStateChanged()
@@ -194,13 +197,18 @@ public class GameManager : MonoBehaviour
         {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
+
             player.hitDuration = gameVariables.hitDuration;
             player.hitCooldown = gameVariables.hitCooldown;
-            
             player.paddle.hitStrength = gameVariables.hitStrength;
+
+            player.paddle.rotationalForce = gameVariables.playerRotationalForce;
+            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
+
             player.paddle.transform.localScale = gameVariables.playerSize;
             player.paddle.collider.scale = gameVariables.playerSize;
             player.paddle.collider.RecalculateNormals();
+
             player.paddle.gameObject.SetActive(true);
         }
 
@@ -364,11 +372,14 @@ public class GameManager : MonoBehaviour
         // calculate start and end angle for each player
         for (int i = 0; i < alivePlayers.Count; i++) {
             playerStartAngles[i] = Paddle.Angle(alivePlayers[i].paddle.transform.position);
+            int targetPlayerIndex = i;
+            if (i > index) --targetPlayerIndex;
+
             if (i == index) {
                 // player being eliminated
-                playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * i;
+                playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             } else {
-                playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * i;
+                playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
         }
 

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using UnityEngine;
 
 public class CollisionSystem : MonoBehaviour
@@ -12,9 +13,12 @@ public class CollisionSystem : MonoBehaviour
     }
 
     static List<PongCollider> colliders = new List<PongCollider>();
+    static List<PongCollider> paddleColliders = new List<PongCollider>();
 
     public static void AddCollider(PongCollider collider) => colliders.Add(collider);
     public static void RemoveCollider(PongCollider collider) => colliders.Remove(collider);
+    public static void AddPaddleCollider(PongCollider collider) => paddleColliders.Add(collider);
+    public static void RemovePaddleCollider(PongCollider collider) => paddleColliders.Remove(collider);
 
     private void FixedUpdate()
     {
@@ -26,11 +30,32 @@ public class CollisionSystem : MonoBehaviour
 
         for (int i = 0; i < colliders.Count; i++) {
             if (colliders[i].isActiveAndEnabled) {
+                // checks all regular colliders against eachother
                 for (int j = i + 1; j < colliders.Count; j++) {
                     if (colliders[j].isActiveAndEnabled) {
                         CollisionData data = CheckCollision(colliders[i], colliders[j]);
                         if (data != null && data.isColliding) {
                             data.ResolveCollision();
+
+                            if (colliders[i].OnCollision != null)
+                                colliders[i].OnCollision.Invoke(colliders[j]);
+                            if (colliders[j].OnCollision != null)
+                                colliders[j].OnCollision.Invoke(colliders[i]);
+                        }
+                    }
+                }
+
+                // checks everything against the paddles
+                for (int j = 0; j < paddleColliders.Count; j++) {
+                    if (paddleColliders[j].isActiveAndEnabled) {
+                        CollisionData data = CheckCollision(colliders[i], paddleColliders[j]);
+                        if (data != null && data.isColliding) {
+                            data.ResolveCollision();
+
+                            if (colliders[i].OnCollision != null) 
+                                colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
+                            if (paddleColliders[j].OnCollision != null)
+                                paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
                         }
                     }
                 }
@@ -124,13 +149,17 @@ public class CollisionSystem : MonoBehaviour
                 if (testingDepth < leastDepth) leastDepth = testingDepth;
             }
 
-            if (leastDepth < depth) {
+            if (leastDepth < 0 && leastDepth < depth || convexB.doResolutionOnFace[i] && leastDepth < depth) {
                 depth = leastDepth;
                 normal = -testingNormal;
             }
         }
 
-        return new CollisionData(circleA, convexB, depth, normal, collisionPos);
+        Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
+        //Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
+        Vector2 forceNormal = (normal - convexB.velocity * convexB.normalBending).normalized;
+
+        return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
     }
     #endregion
 }

@@ -84,17 +84,22 @@ public class EventManager : MonoBehaviour
         gameOverEvent.AddListener(GameOverCallback);
     }
 
-    void GoalScoredCallback() => audioSource.PlayOneShot(goalScored);
-    void PlayerElminatedCallback() => audioSource.PlayOneShot(playerEliminated);
-    void TowerMoveCallback() => audioSource.PlayOneShot(towerMove);
-    void ShieldBreakCallback() => audioSource.PlayOneShot(shieldBreak);
-    void ShieldHitCallback() => audioSource.PlayOneShot(shieldHit);
-    void SelectUICallback() => audioSource.PlayOneShot(selectUI);
-    void HoverUICallback() => audioSource.PlayOneShot(hoverUI);
-    void MainMenuCallback() => audioSource.PlayOneShot(mainMenu);
-    void JoinMenuCallback() => audioSource.PlayOneShot(joinMenu);
-    void SettingsMenuCallback() => audioSource.PlayOneShot(settingsMenu);
-    void GameplayCallback() => audioSource.PlayOneShot(gameplay);
-    void GamePausedCallback() => audioSource.PlayOneShot(gamePaused);
-    void GameOverCallback() => audioSource.PlayOneShot(gameOver);
+    void SafePlayOneShot(AudioSource audioSource, AudioClip audioClip)
+    {
+        if (audioClip != null) audioSource.PlayOneShot(audioClip);
+    }
+
+    void GoalScoredCallback() => SafePlayOneShot(audioSource, goalScored);
+    void PlayerElminatedCallback() => SafePlayOneShot(audioSource, playerEliminated);
+    void TowerMoveCallback() => SafePlayOneShot(audioSource, towerMove);
+    void ShieldBreakCallback() => SafePlayOneShot(audioSource, shieldBreak);
+    void ShieldHitCallback() => SafePlayOneShot(audioSource, shieldHit);
+    void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
+    void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);
+    void MainMenuCallback() => SafePlayOneShot(audioSource, mainMenu);
+    void JoinMenuCallback() => SafePlayOneShot(audioSource, joinMenu);
+    void SettingsMenuCallback() => SafePlayOneShot(audioSource, settingsMenu);
+    void GameplayCallback() => SafePlayOneShot(audioSource, gameplay);
+    void GamePausedCallback() => SafePlayOneShot(audioSource, gamePaused);
+    void GameOverCallback() => SafePlayOneShot(audioSource, gameOver);
 }
