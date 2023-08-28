@@ -64,6 +64,8 @@ public class Ball : MonoBehaviour
                 transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
             }
         }
+
+        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
     }
 
     private void BounceOnBounds()
