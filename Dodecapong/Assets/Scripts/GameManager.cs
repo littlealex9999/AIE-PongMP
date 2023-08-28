@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
@@ -30,6 +31,11 @@ public class GameManager : MonoBehaviour
 
     public float playerDistance = 4.0f;
     float gameEndTimer;
+
+    public List<Transformer> transformers = new List<Transformer>();
+    public float transformerSpawnRadius = 2.0f;
+    public float transformerSpawnTime = 10.0f;
+    float transformerSpawnTimer;
 
     public List<Image> playerImages;
 
@@ -66,6 +72,8 @@ public class GameManager : MonoBehaviour
                     {
                         // UpdateGameState(GameState.GAMEOVER);
                     }
+
+                    TransformerUpdate();
                 }
                 break;
             default:
@@ -240,6 +248,25 @@ public class GameManager : MonoBehaviour
         gameEndTimer = gameVariables.timeInSeconds;
         
         UpdateShields();
+    }
+
+    void TransformerUpdate()
+    {
+        transformerSpawnTimer += Time.deltaTime;
+
+        if (transformerSpawnTimer > transformerSpawnTime) {
+            SpawnTransformer();
+            transformerSpawnTimer = 0;
+        }
+    }
+
+    [ContextMenu("Spawn Transformer")]
+    void SpawnTransformer()
+    {
+        Vector2 spawnPos = Random.insideUnitCircle;
+        spawnPos *= Random.Range(0, transformerSpawnRadius);
+
+        Instantiate(transformers[Random.Range(0, transformers.Count)], spawnPos, Quaternion.identity);
     }
 
     void UpdatePaddles()

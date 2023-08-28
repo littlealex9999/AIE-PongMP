@@ -3,12 +3,12 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
 
-    new PongCollider collider;
+    new PongCircleCollider collider;
 
     public Map map;
 
     public float constantVel;
-    public float ballRadius;
+    float ballRadius;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
@@ -16,11 +16,20 @@ public class Ball : MonoBehaviour
     public float paddleBounceTowardsCenterBias;
 
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
+    public float radius {
+        get {
+            return ballRadius;
+        } set {
+            ballRadius = value;
+            collider.radius = value;
+            transform.localScale = new Vector3(value, value, value);
+        }
+    }
 
     // Start is called before the first frame update
     void Start()
     {
-        collider = GetComponent<PongCollider>();
+        collider = GetComponent<PongCircleCollider>();
         GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
