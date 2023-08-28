@@ -149,6 +149,7 @@ public class GameManager : MonoBehaviour
         playerObject.transform.parent = transform;
         Player player = playerObject.GetComponent<Player>();
         player.color = GetPlayerColor(players.Count);
+        pillars.Add(Instantiate(pillarObject, map.transform));
         players.Add(player);
         UpdatePlayerImages();
         return player;
@@ -170,6 +171,7 @@ public class GameManager : MonoBehaviour
     {
         if (playerToRemove == null) return;
         EventManager.instance.playerLeaveEvent.Invoke();
+        pillars.RemoveAt(pillars.Count - 1);
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
         UpdatePlayerImages();
@@ -206,7 +208,8 @@ public class GameManager : MonoBehaviour
 
         inGame = true;
         ResetPlayers();
-        UpdatePaddles();
+        SetupPillars();
+        SetupPaddles();
         map.SetupMap(alivePlayers);
         ball.ResetBall();
         BuildGameBoard();
@@ -231,52 +234,42 @@ public class GameManager : MonoBehaviour
 
         gameEndTimer = gameVariables.timeInSeconds;
         
-        UpdateShields();
+        UpdateShieldText();
     }
 
-    void UpdatePaddles()
+    void SetupPillars()
     {
-        float segmentOffset = 180.0f / alivePlayers.Count;
-
-        // pillars can now be accessed like alivePlayers
-        // ignore while holdGameplay because that likely means something special is happening like the pillar smash
-        if (!holdGameplay) {
-            while (alivePlayers.Count != pillars.Count) {
-                if (pillars.Count > alivePlayers.Count) {
-                    Destroy(pillars[pillars.Count - 1]);
-                    pillars.RemoveAt(pillars.Count - 1);
-                } else {
-                    pillars.Add(Instantiate(pillarObject, map.transform));
-                }
-            }
+        for (int i = 0; i < pillars.Count; i++)
+        {
+            pillars[i].transform.SetPositionAndRotation(
+                map.GetTargetPointInCircle(360.0f / pillars.Count * i),
+                Quaternion.Euler(0, 0, 360.0f / pillars.Count * i));
         }
+    }
 
+    void SetupPaddles()
+    {
         for (int i = 0; i < alivePlayers.Count; i++)
         {
-            Player player = alivePlayers[i];
+            Paddle paddle = alivePlayers[i].paddle;
 
-            player.paddle.gameObject.SetActive(true);
+            paddle.gameObject.SetActive(true);
 
-            player.paddle.hitStrength = gameVariables.hitStrength;
+            paddle.hitStrength = gameVariables.hitStrength;
 
-            player.paddle.rotationalForce = gameVariables.playerRotationalForce;
-            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
+            paddle.rotationalForce = gameVariables.playerRotationalForce;
+            paddle.collider.normalBending = gameVariables.playerNormalBending;
 
-            player.paddle.transform.localScale = gameVariables.playerSize;
-            player.paddle.collider.scale = gameVariables.playerSize;
-            player.paddle.collider.RecalculateNormals();
+            paddle.transform.localScale = gameVariables.playerSize;
+            paddle.collider.scale = gameVariables.playerSize;
+            paddle.collider.RecalculateNormals();
 
-            player.paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
-            player.paddle.SetPosition(player.paddle.playerSectionMiddle);
-
-            float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
-
-            pillars[i].transform.position = map.GetTargetPointInCircle(360.0f / alivePlayers.Count * i);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, 360.0f / alivePlayers.Count * i);
+            paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
+            paddle.SetPosition(paddle.playerSectionMiddle);
         }
     }
 
-    private void UpdateShields()
+    private void UpdateShieldText()
     {
         if (shieldText.Count == 0)
         {
@@ -294,12 +287,15 @@ public class GameManager : MonoBehaviour
                     shieldText.Add(proUGUI);
                 }
             }
-        } else {
-            foreach (TextMeshProUGUI proUGUI in shieldText) {
+        }
+        else 
+        {
+            foreach (TextMeshProUGUI proUGUI in shieldText)
+            {
                 Destroy(proUGUI.gameObject);
             }
             shieldText.Clear();
-            UpdateShields();
+            UpdateShieldText();
         }
 
     }
@@ -330,7 +326,7 @@ public class GameManager : MonoBehaviour
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
-            UpdateShields();
+            UpdateShieldText();
             return false;
         }
     }
@@ -417,14 +413,16 @@ public class GameManager : MonoBehaviour
         }
 
         // ensure each pillar is exactly where it was calculated to belong
-        for (int i = 0; i < pillars.Count; i++) {
+        for (int i = 0; i < pillars.Count; i++)
+        {
             pillars[i].transform.position = map.GetTargetPointInCircle(targetAngles[i]);
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
         }
 
         alivePlayers[index].paddle.gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
-        for (int i = 0; i < alivePlayers.Count; i++) {
+        for (int i = 0; i < alivePlayers.Count; i++) 
+        {
             alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
         }
 
