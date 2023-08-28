@@ -146,7 +146,9 @@ public class Paddle : MonoBehaviour
 
     public IEnumerator Dash(Vector2 input, float duration)
     {
-        if (dashing) yield break;
+        if (dashing || input == Vector2.zero) yield break;
+
+        EventManager.instance.dashEvent.Invoke();
 
         dashing = true;
 

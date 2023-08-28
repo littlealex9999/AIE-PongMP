@@ -144,6 +144,7 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
+        EventManager.instance.playerJoinEvent.Invoke();
         GameObject playerObject = Instantiate(playerPrefab);
         playerObject.transform.parent = transform;
         Player player = playerObject.GetComponent<Player>();
@@ -168,6 +169,7 @@ public class GameManager : MonoBehaviour
     public void RemovePlayer(Player playerToRemove)
     {
         if (playerToRemove == null) return;
+        EventManager.instance.playerLeaveEvent.Invoke();
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
         UpdatePlayerImages();
