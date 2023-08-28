@@ -7,8 +7,6 @@ public class ControllerInputHandler : MonoBehaviour
 {
     PlayerInputManager playerInputManager;
 
-    public InputActionAsset UIMasterInputActionAsset;
-
     PlayerInput playerInput;
 
     Player playerA;
@@ -27,7 +25,7 @@ public class ControllerInputHandler : MonoBehaviour
         playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerInput = GetComponent<PlayerInput>();
         playerA = instance.GetNewPlayer();
-        if (playerA.ID == 0) playerInput.actions = UIMasterInputActionAsset;
+        if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
     }
 
     public void LeftStick(InputAction.CallbackContext context)
@@ -43,7 +41,7 @@ public class ControllerInputHandler : MonoBehaviour
             playerB.movementInput = context.ReadValue<Vector2>();
         }
     }
-    public void ButtonSouth(InputAction.CallbackContext context)
+    public void Dash(InputAction.CallbackContext context)
     {
         if (context.canceled && instance.gameState == GameState.GAMEPLAY)
         {
@@ -51,7 +49,7 @@ public class ControllerInputHandler : MonoBehaviour
             else playerA.Dash();
         }
     }
-    public void DPadDown(InputAction.CallbackContext context)
+    public void SplitDash(InputAction.CallbackContext context)
     {
         if (context.canceled && instance.gameState == GameState.GAMEPLAY)
         {
@@ -75,7 +73,7 @@ public class ControllerInputHandler : MonoBehaviour
             Debug.Log(playerInputManager.playerCount);
         }
     }
-    public void ButtonEast(InputAction.CallbackContext context)
+    public void DisconnectController(InputAction.CallbackContext context)
     {
         if (context.canceled && instance.gameState == GameState.JOINMENU)
         {
@@ -84,14 +82,14 @@ public class ControllerInputHandler : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void LeftShoulder(InputAction.CallbackContext contect)
+    public void SplitHit(InputAction.CallbackContext contect)
     {
         if (contect.started && instance.gameState == GameState.GAMEPLAY)
         {
             if (splitControls) playerA.Hit();
         }
     }
-    public void RightShoulder(InputAction.CallbackContext contect)
+    public void Hit(InputAction.CallbackContext contect)
     {
         if (contect.started && instance.gameState == GameState.GAMEPLAY)
         {
@@ -104,5 +102,13 @@ public class ControllerInputHandler : MonoBehaviour
                 playerA.Hit();
             }
         }
+    }
+    public void Grab(InputAction.CallbackContext context)
+    {
+
+    }
+    public void SplitGrab(InputAction.CallbackContext context)
+    {
+
     }
 }
