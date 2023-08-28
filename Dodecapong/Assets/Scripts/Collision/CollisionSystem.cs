@@ -52,9 +52,9 @@ public class CollisionSystem : MonoBehaviour
                         if (data != null && data.isColliding) {
                             data.ResolveCollision();
 
-                            if (colliders[i].OnCollision != null) 
+                            if (colliders[i].OnPaddleCollision != null) 
                                 colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
-                            if (paddleColliders[j].OnCollision != null)
+                            if (paddleColliders[j].OnPaddleCollision != null)
                                 paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
                         }
                     }
