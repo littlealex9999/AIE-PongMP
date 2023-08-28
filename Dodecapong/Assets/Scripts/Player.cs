@@ -33,7 +33,7 @@ public class Player : MonoBehaviour
 
         readyToDash = false;
         dashCooldownProgress = dashCooldown + dashDuration;
-        StartCoroutine(paddle.Dash(movementInput, dashDuration));
+        StartCoroutine(paddle.Dash(movementInput.normalized, dashDuration));
     }
 
     public void Hit()
