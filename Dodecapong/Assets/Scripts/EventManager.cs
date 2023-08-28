@@ -78,6 +78,8 @@ public class EventManager : MonoBehaviour
 
         selectUIEvent ??= new UnityEvent();
         hoverUIEvent ??= new UnityEvent();
+        playerJoinEvent ??= new UnityEvent();
+        playerLeaveEvent ??= new UnityEvent();
 
         mainMenuEvent ??= new UnityEvent();
         joinMenuEvent ??= new UnityEvent();
@@ -98,6 +100,8 @@ public class EventManager : MonoBehaviour
 
         selectUIEvent.AddListener(SelectUICallback);
         hoverUIEvent.AddListener(HoverUICallback);
+        playerJoinEvent.AddListener(PlayerJoinCallback);
+        playerLeaveEvent.AddListener(PlayerLeaveCallback);
 
         mainMenuEvent.AddListener(MainMenuCallback);
         joinMenuEvent.AddListener(JoinMenuCallback);
@@ -124,6 +128,8 @@ public class EventManager : MonoBehaviour
 
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
     void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);
+    void PlayerJoinCallback() => SafePlayOneShot(audioSource, playerJoin);
+    void PlayerLeaveCallback() => SafePlayOneShot(audioSource, playerLeave);
 
     void MainMenuCallback() => SafePlayOneShot(audioSource, mainMenu);
     void JoinMenuCallback() => SafePlayOneShot(audioSource, joinMenu);
