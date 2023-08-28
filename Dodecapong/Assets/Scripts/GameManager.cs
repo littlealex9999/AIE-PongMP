@@ -157,10 +157,12 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
+        EventManager.instance.playerJoinEvent.Invoke();
         GameObject playerObject = Instantiate(playerPrefab);
         playerObject.transform.parent = transform;
         Player player = playerObject.GetComponent<Player>();
         player.color = GetPlayerColor(players.Count);
+        pillars.Add(Instantiate(pillarObject, map.transform));
         players.Add(player);
         UpdatePlayerImages();
         return player;
@@ -181,6 +183,8 @@ public class GameManager : MonoBehaviour
     public void RemovePlayer(Player playerToRemove)
     {
         if (playerToRemove == null) return;
+        EventManager.instance.playerLeaveEvent.Invoke();
+        pillars.RemoveAt(pillars.Count - 1);
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
         UpdatePlayerImages();
@@ -213,21 +217,12 @@ public class GameManager : MonoBehaviour
 
             player.hitDuration = gameVariables.hitDuration;
             player.hitCooldown = gameVariables.hitCooldown;
-            player.paddle.hitStrength = gameVariables.hitStrength;
-
-            player.paddle.rotationalForce = gameVariables.playerRotationalForce;
-            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
-
-            player.paddle.transform.localScale = gameVariables.playerSize;
-            player.paddle.collider.scale = gameVariables.playerSize;
-            player.paddle.collider.RecalculateNormals();
-
-            player.paddle.gameObject.SetActive(true);
         }
 
         inGame = true;
         ResetPlayers();
-        UpdatePaddles();
+        SetupPillars();
+        SetupPaddles();
         map.SetupMap(alivePlayers);
         ball.ResetBall();
         BuildGameBoard();
@@ -252,7 +247,7 @@ public class GameManager : MonoBehaviour
 
         gameEndTimer = gameVariables.timeInSeconds;
         
-        UpdateShields();
+        UpdateShieldText();
     }
 
     void TransformerUpdate(float delta)
@@ -284,37 +279,39 @@ public class GameManager : MonoBehaviour
         Instantiate(transformers[Random.Range(0, transformers.Count)], spawnPos, Quaternion.identity);
     }
 
-    void UpdatePaddles()
+    void SetupPillars()
     {
-        float segmentOffset = 180.0f / alivePlayers.Count;
-
-        // pillars can now be accessed like alivePlayers
-        // ignore while holdGameplay because that likely means something special is happening like the pillar smash
-        if (!holdGameplay) {
-            while (alivePlayers.Count != pillars.Count) {
-                if (pillars.Count > alivePlayers.Count) {
-                    Destroy(pillars[pillars.Count - 1]);
-                    pillars.RemoveAt(pillars.Count - 1);
-                } else {
-                    pillars.Add(Instantiate(pillarObject, map.transform));
-                }
-            }
-        }
-
-        for (int i = 0; i < alivePlayers.Count; i++)
+        for (int i = 0; i < pillars.Count; i++)
         {
-            alivePlayers[i].paddle.gameObject.SetActive(true);
-            alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
-            alivePlayers[i].paddle.SetPosition(alivePlayers[i].paddle.playerSectionMiddle);
-
-            float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
-
-            pillars[i].transform.position = map.GetTargetPointInCircle(360.0f / alivePlayers.Count * i);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, 360.0f / alivePlayers.Count * i);
+            pillars[i].transform.SetPositionAndRotation(
+                map.GetTargetPointInCircle(360.0f / pillars.Count * i),
+                Quaternion.Euler(0, 0, 360.0f / pillars.Count * i));
         }
     }
 
-    private void UpdateShields()
+    void SetupPaddles()
+    {
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            Paddle paddle = alivePlayers[i].paddle;
+
+            paddle.gameObject.SetActive(true);
+
+            paddle.hitStrength = gameVariables.hitStrength;
+
+            paddle.rotationalForce = gameVariables.playerRotationalForce;
+            paddle.collider.normalBending = gameVariables.playerNormalBending;
+
+            paddle.transform.localScale = gameVariables.playerSize;
+            paddle.collider.scale = gameVariables.playerSize;
+            paddle.collider.RecalculateNormals();
+
+            paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
+            paddle.SetPosition(paddle.playerSectionMiddle);
+        }
+    }
+
+    private void UpdateShieldText()
     {
         if (shieldText.Count == 0)
         {
@@ -332,12 +329,15 @@ public class GameManager : MonoBehaviour
                     shieldText.Add(proUGUI);
                 }
             }
-        } else {
-            foreach (TextMeshProUGUI proUGUI in shieldText) {
+        }
+        else 
+        {
+            foreach (TextMeshProUGUI proUGUI in shieldText)
+            {
                 Destroy(proUGUI.gameObject);
             }
             shieldText.Clear();
-            UpdateShields();
+            UpdateShieldText();
         }
 
     }
@@ -368,7 +368,7 @@ public class GameManager : MonoBehaviour
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
-            UpdateShields();
+            UpdateShieldText();
             return false;
         }
     }
@@ -460,7 +460,8 @@ public class GameManager : MonoBehaviour
 
         alivePlayers[index].paddle.gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
-        for (int i = 0; i < alivePlayers.Count; i++) {
+        for (int i = 0; i < alivePlayers.Count; i++) 
+        {
             alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
         }
 

@@ -27,7 +27,7 @@ public class Paddle : MonoBehaviour
     [HideInInspector] public bool hitting = false;
     [HideInInspector] public float hitStrength;
 
-    private void Start()
+    private void Awake()
     {
         collider = GetComponent<PongConvexHullCollider>();
     }
@@ -109,6 +109,7 @@ public class Paddle : MonoBehaviour
         else deltaPos.y = deltaTarget.y / deltaPos.y;
 
         collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
+
         if (hitting) {
             Vector2 hitVel = (Vector2)(Quaternion.Euler(0, 0, -angle) * new Vector2(0, hitStrength));
             hitVel.y *= -1;
@@ -146,7 +147,9 @@ public class Paddle : MonoBehaviour
 
     public IEnumerator Dash(Vector2 input, float duration)
     {
-        if (dashing) yield break;
+        if (dashing || input == Vector2.zero) yield break;
+
+        EventManager.instance.dashEvent.Invoke();
 
         dashing = true;
 

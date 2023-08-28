@@ -64,12 +64,11 @@ public class CollisionSystem : MonoBehaviour
                                     paddleColliders[j].OnPaddleTrigger.Invoke(colliders[i]);
                             } else {
                                 data.ResolveCollision();
+                            if (colliders[i].OnPaddleCollision != null) 
+                                colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
+                            if (paddleColliders[j].OnPaddleCollision != null)
+                                paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
 
-                                if (colliders[i].OnCollision != null)
-                                    colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
-                                if (paddleColliders[j].OnCollision != null)
-                                    paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
-                            }
                         }
                     }
                 }
