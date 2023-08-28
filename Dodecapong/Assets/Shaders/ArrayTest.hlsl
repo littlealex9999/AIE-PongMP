@@ -6,7 +6,7 @@ int _testArraySize = 256;
 
 void GetArrayVal_float(int index, out float val)
 {
-	val = _testArray[index];
+	val = _testArray[index % _testArraySize];
 }
 
 #endif

@@ -350,24 +350,10 @@ public class GameManager : MonoBehaviour
 
         float pillarSmashTimer = 0.0f;
 
-        float[] startAngles = new float[pillars.Count];
-        float[] targetAngles = new float[pillars.Count];
         float[] playerStartAngles = new float[alivePlayers.Count];
         float[] playerTargetAngles = new float[alivePlayers.Count];
 
         Vector3 elimPlayerStartScale = alivePlayers[index].paddle.transform.localScale;
-
-        // calculate start and end angle for each pillar
-        for (int i = 0; i < pillars.Count; i++) {
-            startAngles[i] = 360.0f / pillars.Count * i;
-            targetAngles[i] = 360.0f / (pillars.Count - 1);
-
-            if (i > index) {
-                targetAngles[i] *= i - 1;
-            } else {
-                targetAngles[i] *= i;
-            }
-        }
 
         // calculate start and end angle for each player
         for (int i = 0; i < alivePlayers.Count; i++) {
@@ -388,17 +374,20 @@ public class GameManager : MonoBehaviour
             pillarSmashTimer += Time.deltaTime;
             float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
 
-            float sin = Mathf.Sin(playerRemovalPercentage * Mathf.PI) / 3;
-            float sin2 = Mathf.Sqrt(Mathf.Sin(playerRemovalPercentage / 2 * Mathf.PI));
-            float arcTanShrink = playerRemovalPercentage + (sin2 - playerRemovalPercentage) * sin;
-            arcTanShader.SetShrink(arcTanShrink);
+            float pseudoPlayerCount = alivePlayers.Count - playerRemovalPercentage;
+            for (int i = 0; i < alivePlayers.Count; i++) {
+                float targetAngle = 360.0f / pseudoPlayerCount * i;
+                if (i > index) {
+                    int countAfter = alivePlayers.Count - i;
+                    targetAngle = 360.0f / alivePlayers.Count * i - 360.0f / alivePlayers.Count / pseudoPlayerCount * playerRemovalPercentage * countAfter;
+                }
 
-            for (int i = 0; i < pillars.Count; i++) {
-                float targetAngle = Mathf.Lerp(startAngles[i], targetAngles[i], playerRemovalPercentage);
-                
                 pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
+
+            arcTanShader.SetTargetPlayer(index);
+            arcTanShader.SetShrink(playerRemovalPercentage);
 
             for (int i = 0; i < alivePlayers.Count; i++) {
                 if (i == index) {
@@ -416,10 +405,15 @@ public class GameManager : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        Destroy(pillars[index]);
+        pillars.RemoveAt(index);
+
         // ensure each pillar is exactly where it was calculated to belong
         for (int i = 0; i < pillars.Count; i++) {
-            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngles[i]);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
+            float targetAngle = 360.0f / (pillars.Count) * i;
+
+            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+            pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
         }
 
         alivePlayers[index].paddle.gameObject.SetActive(false);
@@ -427,9 +421,6 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < alivePlayers.Count; i++) {
             alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
         }
-
-        Destroy(pillars[index]);
-        pillars.RemoveAt(index);
 
         map.SetupMap(alivePlayers);
         ball.ResetBall();
