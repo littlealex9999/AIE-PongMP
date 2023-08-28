@@ -203,6 +203,7 @@ public class GameManager : MonoBehaviour
             player.paddle.hitStrength = gameVariables.hitStrength;
 
             player.paddle.rotationalForce = gameVariables.playerRotationalForce;
+            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
 
             player.paddle.transform.localScale = gameVariables.playerSize;
             player.paddle.collider.scale = gameVariables.playerSize;
@@ -371,11 +372,14 @@ public class GameManager : MonoBehaviour
         // calculate start and end angle for each player
         for (int i = 0; i < alivePlayers.Count; i++) {
             playerStartAngles[i] = Paddle.Angle(alivePlayers[i].paddle.transform.position);
+            int targetPlayerIndex = i;
+            if (i > index) --targetPlayerIndex;
+
             if (i == index) {
                 // player being eliminated
-                playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * i;
+                playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             } else {
-                playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * i;
+                playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
         }
 

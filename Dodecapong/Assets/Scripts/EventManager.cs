@@ -24,12 +24,14 @@ public class EventManager : MonoBehaviour
     [SerializeField] AudioClip towerMove;
     [SerializeField] AudioClip shieldBreak;
     [SerializeField] AudioClip shieldHit;
-    
+    [SerializeField] AudioClip ballHit;
+
     [HideInInspector] public UnityEvent goalScoredEvent;
     [HideInInspector] public UnityEvent playerEliminatedEvent; //
     [HideInInspector] public UnityEvent towerMoveEvent; // 
     [HideInInspector] public UnityEvent shieldBreakEvent; // 
     [HideInInspector] public UnityEvent shieldHitEvent; //
+    [HideInInspector] public UnityEvent ballHitEvent; //
 
     [Header("UI Clips")]
     [SerializeField] AudioClip selectUI;
@@ -60,8 +62,11 @@ public class EventManager : MonoBehaviour
         towerMoveEvent ??= new UnityEvent();
         shieldBreakEvent ??= new UnityEvent();
         shieldHitEvent ??= new UnityEvent();
+        ballHitEvent ??= new UnityEvent();
+
         selectUIEvent ??= new UnityEvent();
         hoverUIEvent ??= new UnityEvent();
+
         mainMenuEvent ??= new UnityEvent();
         joinMenuEvent ??= new UnityEvent();
         settingsMenuEvent ??= new UnityEvent();
@@ -74,8 +79,11 @@ public class EventManager : MonoBehaviour
         towerMoveEvent.AddListener(TowerMoveCallback);
         shieldBreakEvent.AddListener(ShieldBreakCallback);
         shieldHitEvent.AddListener(ShieldHitCallback);
+        ballHitEvent.AddListener(BallHitCallback);
+
         selectUIEvent.AddListener(SelectUICallback);
         hoverUIEvent.AddListener(HoverUICallback);
+
         mainMenuEvent.AddListener(MainMenuCallback);
         joinMenuEvent.AddListener(JoinMenuCallback);
         settingsMenuEvent.AddListener(SettingsMenuCallback);
@@ -94,8 +102,11 @@ public class EventManager : MonoBehaviour
     void TowerMoveCallback() => SafePlayOneShot(audioSource, towerMove);
     void ShieldBreakCallback() => SafePlayOneShot(audioSource, shieldBreak);
     void ShieldHitCallback() => SafePlayOneShot(audioSource, shieldHit);
+    void BallHitCallback() => SafePlayOneShot(audioSource, ballHit);
+
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
     void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);
+
     void MainMenuCallback() => SafePlayOneShot(audioSource, mainMenu);
     void JoinMenuCallback() => SafePlayOneShot(audioSource, joinMenu);
     void SettingsMenuCallback() => SafePlayOneShot(audioSource, settingsMenu);
