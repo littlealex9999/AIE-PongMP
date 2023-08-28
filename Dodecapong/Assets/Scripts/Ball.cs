@@ -17,6 +17,9 @@ public class Ball : MonoBehaviour
 
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
 
+    public float countdownTimer;
+    float currentCountdownTime;
+    bool reset;
 
     // Start is called before the first frame update
     void Start()
@@ -28,7 +31,17 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollision(PongCollider other)
     {
-        EventManager.instance?.ballHitEvent?.Invoke();
+        if (other.gameObject.TryGetComponent(out Paddle paddle))
+        {
+            if (paddle.hitting)
+            {
+                EventManager.instance.ballHitEvent.Invoke();
+            }
+            else
+            {
+                EventManager.instance.ballBounceEvent.Invoke();
+            }
+        }
     }
 
     private void OnGameStateChanged()
@@ -47,9 +60,26 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay)
+        {
             collider.velocity = Vector2.zero;
             return;
+        }
+
+        if (currentCountdownTime > 0)
+        {
+            currentCountdownTime -= Time.fixedDeltaTime;
+            return;
+        }
+        else if (reset)
+        {
+            int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
+
+            Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
+
+            collider.velocity = dir * constantVel;
+
+            reset = false;
         }
 
         if (collider.velocity.sqrMagnitude > constantVel * constantVel)
@@ -81,13 +111,13 @@ public class Ball : MonoBehaviour
 
     public void ResetBall()
     {
+        EventManager.instance.ballCountdownEvent.Invoke();
+
+        currentCountdownTime = countdownTimer;
+
         transform.position = Vector2.zero;
 
-        int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
-
-        Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
-
-        collider.velocity = dir * constantVel;
+        reset = true;
     }
 
     public void AddVelocity(Vector2 velocity)

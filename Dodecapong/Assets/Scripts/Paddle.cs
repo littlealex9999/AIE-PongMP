@@ -148,6 +148,8 @@ public class Paddle : MonoBehaviour
     {
         if (dashing) yield break;
 
+        EventManager.instance.dashEvent.Invoke();
+
         dashing = true;
 
         float value;
