@@ -52,7 +52,10 @@ public class Player : MonoBehaviour
         readyToDash = UpdateCooldown(ref dashCooldownProgress);
         readyToHit = UpdateCooldown(ref hitCooldownProgress);
 
-        if (!paddle.dashing && !GameManager.instance.holdGameplay) paddle.Move(movementInput);
+        if (paddle != null)
+        {   
+            if (!paddle.dashing && !GameManager.instance.holdGameplay && paddle.isActiveAndEnabled) paddle.Move(movementInput);
+        }
     }
 
     private bool UpdateCooldown(ref float progress)
