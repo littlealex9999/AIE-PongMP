@@ -36,9 +36,9 @@ public class CollisionSystem : MonoBehaviour
                         CollisionData data = CheckCollision(colliders[i], colliders[j]);
                         if (data != null && data.isColliding) {
                             if (colliders[i].trigger || colliders[j].trigger) {
-                                if (colliders[i].OnCollision != null)
+                                if (colliders[i].OnTrigger != null)
                                     colliders[i].OnTrigger.Invoke(colliders[j]);
-                                if (colliders[j].OnCollision != null)
+                                if (colliders[j].OnTrigger != null)
                                     colliders[j].OnTrigger.Invoke(colliders[i]);
                             } else {
                                 data.ResolveCollision();
@@ -58,9 +58,9 @@ public class CollisionSystem : MonoBehaviour
                         CollisionData data = CheckCollision(colliders[i], paddleColliders[j]);
                         if (data != null && data.isColliding) {
                             if (colliders[i].trigger || paddleColliders[j].trigger) {
-                                if (colliders[i].OnCollision != null)
+                                if (colliders[i].OnPaddleTrigger != null)
                                     colliders[i].OnPaddleTrigger.Invoke(paddleColliders[j]);
-                                if (paddleColliders[j].OnCollision != null)
+                                if (paddleColliders[j].OnPaddleTrigger != null)
                                     paddleColliders[j].OnPaddleTrigger.Invoke(colliders[i]);
                             } else {
                                 data.ResolveCollision();

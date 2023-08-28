@@ -10,4 +10,9 @@ public class BallSpeed : Transformer
     {
         GameManager.instance.ball.constantVel += speedMod;
     }
+
+    protected override void RemoveModifier()
+    {
+        GameManager.instance.ball.constantVel -= speedMod;
+    }
 }

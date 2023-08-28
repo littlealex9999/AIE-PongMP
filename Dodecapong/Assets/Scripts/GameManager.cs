@@ -25,18 +25,23 @@ public class GameManager : MonoBehaviour
     public GameVariables defaultGameVariables;
     GameVariables gameVariables;
 
-    [Range(0, 360)] public float mapRotationOffset = 0.0f;
-
-    [ColorUsage(true, true), SerializeField] List<Color> playerEmissives = new List<Color>();
-
+    [Range(0, 360)] 
+    public float mapRotationOffset = 0.0f;
     public float playerDistance = 4.0f;
+
+    [ColorUsage(true, true), SerializeField] 
+    List<Color> playerEmissives = new List<Color>();
+
     float gameEndTimer;
 
+    [Space]
     public List<Transformer> transformers = new List<Transformer>();
     public float transformerSpawnRadius = 2.0f;
     public float transformerSpawnTime = 10.0f;
     float transformerSpawnTimer;
+    public List<Transformer> activeTransformers = new List<Transformer>();
 
+    [Space]
     public List<Image> playerImages;
 
     public GameObject shieldTextObj;
@@ -73,7 +78,7 @@ public class GameManager : MonoBehaviour
                         // UpdateGameState(GameState.GAMEOVER);
                     }
 
-                    TransformerUpdate();
+                    TransformerUpdate(Time.deltaTime);
                 }
                 break;
             default:
@@ -250,18 +255,28 @@ public class GameManager : MonoBehaviour
         UpdateShields();
     }
 
-    void TransformerUpdate()
+    void TransformerUpdate(float delta)
     {
-        transformerSpawnTimer += Time.deltaTime;
+        transformerSpawnTimer += delta;
 
         if (transformerSpawnTimer > transformerSpawnTime) {
             SpawnTransformer();
             transformerSpawnTimer = 0;
         }
+
+        for (int i = 0; i < activeTransformers.Count; i++) {
+            if (activeTransformers[i].limitedTime) {
+                activeTransformers[i].duration -= delta;
+
+                if (activeTransformers[i].duration <= 0) {
+                    activeTransformers[i].EndModifier();
+                }
+            }
+        }
     }
 
     [ContextMenu("Spawn Transformer")]
-    void SpawnTransformer()
+    public void SpawnTransformer()
     {
         Vector2 spawnPos = Random.insideUnitCircle;
         spawnPos *= Random.Range(0, transformerSpawnRadius);

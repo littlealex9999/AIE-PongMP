@@ -10,4 +10,9 @@ public class BallSize : Transformer
     {
         GameManager.instance.ball.radius += sizeMod;
     }
+
+    protected override void RemoveModifier()
+    {
+        GameManager.instance.ball.constantVel -= sizeMod;
+    }
 }
