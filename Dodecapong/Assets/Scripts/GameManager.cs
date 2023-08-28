@@ -202,15 +202,6 @@ public class GameManager : MonoBehaviour
 
             player.hitDuration = gameVariables.hitDuration;
             player.hitCooldown = gameVariables.hitCooldown;
-
-            player.paddle.hitStrength = gameVariables.hitStrength;
-
-            player.paddle.rotationalForce = gameVariables.playerRotationalForce;
-            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
-
-            player.paddle.transform.localScale = gameVariables.playerSize;
-            player.paddle.collider.scale = gameVariables.playerSize;
-            player.paddle.collider.RecalculateNormals();
         }
 
         inGame = true;
@@ -262,9 +253,21 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < alivePlayers.Count; i++)
         {
-            alivePlayers[i].paddle.gameObject.SetActive(true);
-            alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
-            alivePlayers[i].paddle.SetPosition(alivePlayers[i].paddle.playerSectionMiddle);
+            Player player = alivePlayers[i];
+
+            player.paddle.gameObject.SetActive(true);
+
+            player.paddle.hitStrength = gameVariables.hitStrength;
+
+            player.paddle.rotationalForce = gameVariables.playerRotationalForce;
+            player.paddle.collider.normalBending = gameVariables.playerNormalBending;
+
+            player.paddle.transform.localScale = gameVariables.playerSize;
+            player.paddle.collider.scale = gameVariables.playerSize;
+            player.paddle.collider.RecalculateNormals();
+
+            player.paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
+            player.paddle.SetPosition(player.paddle.playerSectionMiddle);
 
             float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
 
