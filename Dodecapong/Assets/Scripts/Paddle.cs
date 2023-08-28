@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Paddle : MonoBehaviour
 {
-    public PongConvexHullCollider collider;
+    new public PongConvexHullCollider collider;
 
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
@@ -109,6 +109,11 @@ public class Paddle : MonoBehaviour
         else deltaPos.y = deltaTarget.y / deltaPos.y;
 
         collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
+        if (hitting) {
+            Vector2 hitVel = (Vector2)(Quaternion.Euler(0, 0, -angle) * new Vector2(0, hitStrength));
+            hitVel.y *= -1;
+            collider.velocity += hitVel;
+        }
     }
 
     public void SetPosition(float angle)
@@ -172,6 +177,7 @@ public class Paddle : MonoBehaviour
         float value;
         float timeElapsed = 0;
         Vector3 startingScale = transform.localScale;
+        Vector2 colliderStart = collider.scale;
 
         while (timeElapsed < duration)
         {
@@ -179,11 +185,16 @@ public class Paddle : MonoBehaviour
             timeElapsed += Time.fixedDeltaTime;
 
             transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
+            collider.scale = new Vector2(transform.localScale.y, transform.localScale.x);
+            collider.RecalculateNormals();
 
             yield return new WaitForFixedUpdate();
         
         }
+
         transform.localScale = startingScale;
+        collider.scale = colliderStart;
+        collider.RecalculateNormals();
 
         hitting = false;
 

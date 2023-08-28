@@ -62,14 +62,14 @@ public class CollisionData
             movementOnB = colliderB.inverseMass / totalIMass;
         }
 
-        Vector2 movement = depth / 2 * normal;
+        Vector2 movement = depth * normal;
 
         colliderA.position -= (Vector3)movement * movementOnA;
         colliderB.position += (Vector3)movement * movementOnB;
 
 
         // SOLVE VELOCITY
-        float j = 2 * Vector2.Dot(colliderA.velocity - colliderB.velocity, normal) / totalIMass;
+        float j = 2 * Vector2.Dot(colliderA.velocity - colliderB.velocity, forceResolutionNormal) / totalIMass;
 
         // both colliders cannot be immovable as we return before this if that is the case
         if (colliderA.immovable) {

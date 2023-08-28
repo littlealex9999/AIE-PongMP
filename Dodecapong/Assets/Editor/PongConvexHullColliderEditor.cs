@@ -16,6 +16,7 @@ public class PongConvexHullColliderEditor : PongColliderEditor
             points[i] = collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.points[i] + collider.transform.position;
         }
 
+        collider.RegenrateResolutionBools();
         int activeFaces = 0;
         for (int i = 0; i < points.Length; i++) {
             if (collider.doResolutionOnFace[i]) ++activeFaces;

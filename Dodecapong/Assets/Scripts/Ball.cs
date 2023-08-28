@@ -3,7 +3,7 @@ using UnityEngine;
 public class Ball : MonoBehaviour
 {
 
-    PongCollider collider;
+    new PongCollider collider;
 
     public Map map;
 
@@ -38,21 +38,6 @@ public class Ball : MonoBehaviour
         transform.position += (Vector3)(bounceNormal * 0.1f);
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.TryGetComponent(out Paddle paddle))
-        {
-            if (paddle.hitting)
-            {
-                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
-            }
-            else
-            {
-                Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
-            }
-        }
-    }
-
     private void FixedUpdate()
     {
         if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
@@ -74,8 +59,13 @@ public class Ball : MonoBehaviour
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
 
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
+            if (!GameManager.instance.OnSheildHit(alivePlayerID)) {
+                BounceOnBounds();
+                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
+            }
         }
+
+        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
     }
 
     private void BounceOnBounds()
