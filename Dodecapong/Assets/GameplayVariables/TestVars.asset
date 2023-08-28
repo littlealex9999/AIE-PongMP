@@ -18,14 +18,14 @@ MonoBehaviour:
   playerNormalBending: 2
   playerBounceTowardsCenterBias: 0
   dashEnabled: 1
-  dashDuration: 0.2
-  dashCooldown: 1
+  dashDuration: 0.25
+  dashCooldown: 0.5
   hitEnabled: 1
   hitDuration: 0.1
-  hitCooldown: 1
-  hitStrength: 4
+  hitCooldown: 0.5
+  hitStrength: 0.5
   ballCount: 1
-  ballSpeed: 3
+  ballSpeed: 4
   ballSpeedDamp: 1.2
   ballSpeedPerHit: 0
   ballSize: 0.5
