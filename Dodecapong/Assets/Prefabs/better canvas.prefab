@@ -13453,13 +13453,13 @@ MonoBehaviour:
   scoreSettings: {fileID: 7521882064014803974}
   ballSettings: {fileID: 7521882062458863511}
   mainMenuDefault: {fileID: 7521882062942111294}
-  startDefault: {fileID: 7521882062789274045}
-  settingsDefault: {fileID: 7521882062458863511}
+  startDefault: {fileID: 2026682087}
+  settingsDefault: {fileID: 7521882062177284132}
   pauseDefault: {fileID: 7011704752599882865}
   endDefault: {fileID: 7521882062511487374}
   menuTextPairs:
-  - sliderWidget: {fileID: 7521882063790965734}
-    labelWidget: {fileID: 7521882063870056666}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues:
     - 
     - Slowest
@@ -13467,14 +13467,14 @@ MonoBehaviour:
     - Normal
     - Fast
     - Fastest
-  - sliderWidget: {fileID: 7521882063033753607}
-    labelWidget: {fileID: 7521882062968766327}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues: []
-  - sliderWidget: {fileID: 7521882062465642069}
-    labelWidget: {fileID: 7521882063603407157}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues: []
-  - sliderWidget: {fileID: 7521882062245140331}
-    labelWidget: {fileID: 7521882063467707901}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues:
     - 
     - No Limit
@@ -13482,14 +13482,14 @@ MonoBehaviour:
     - 60 sec
     - 90 sec
     - 120 sec
-  - sliderWidget: {fileID: 7521882062536339453}
-    labelWidget: {fileID: 7521882062236811793}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues: []
-  - sliderWidget: {fileID: 7521882062636161276}
-    labelWidget: {fileID: 7521882062606334562}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues: []
-  - sliderWidget: {fileID: 7521882062638922602}
-    labelWidget: {fileID: 7521882063933380460}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues:
     - 
     - Smallest
@@ -13497,8 +13497,8 @@ MonoBehaviour:
     - Normal
     - Large
     - Largest
-  - sliderWidget: {fileID: 7521882064165586773}
-    labelWidget: {fileID: 7521882062890889619}
+  - sliderWidget: {fileID: 0}
+    labelWidget: {fileID: 0}
     customValues:
     - 
     - Slowest
