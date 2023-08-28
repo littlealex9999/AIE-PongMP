@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -24,21 +23,31 @@ public class EventManager : MonoBehaviour
     [SerializeField] AudioClip towerMove;
     [SerializeField] AudioClip shieldBreak;
     [SerializeField] AudioClip shieldHit;
+    [SerializeField] AudioClip ballCountdown;
+    [SerializeField] AudioClip ballBounce;
     [SerializeField] AudioClip ballHit;
+    [SerializeField] AudioClip dash;
 
-    [HideInInspector] public UnityEvent goalScoredEvent;
+    [HideInInspector] public UnityEvent goalScoredEvent; //
     [HideInInspector] public UnityEvent playerEliminatedEvent; //
     [HideInInspector] public UnityEvent towerMoveEvent; // 
     [HideInInspector] public UnityEvent shieldBreakEvent; // 
     [HideInInspector] public UnityEvent shieldHitEvent; //
+    [HideInInspector] public UnityEvent ballCountdownEvent; //
+    [HideInInspector] public UnityEvent ballBounceEvent; //
     [HideInInspector] public UnityEvent ballHitEvent; //
+    [HideInInspector] public UnityEvent dashEvent; //
 
     [Header("UI Clips")]
     [SerializeField] AudioClip selectUI;
     [SerializeField] AudioClip hoverUI;
+    [SerializeField] AudioClip playerJoin;
+    [SerializeField] AudioClip playerLeave;
 
     [HideInInspector] public UnityEvent selectUIEvent; //
     [HideInInspector] public UnityEvent hoverUIEvent; //
+    [HideInInspector] public UnityEvent playerJoinEvent; //
+    [HideInInspector] public UnityEvent playerLeaveEvent; //
 
     [Header("Game State Clips")]
     [SerializeField] AudioClip mainMenu;
@@ -62,7 +71,10 @@ public class EventManager : MonoBehaviour
         towerMoveEvent ??= new UnityEvent();
         shieldBreakEvent ??= new UnityEvent();
         shieldHitEvent ??= new UnityEvent();
+        ballCountdownEvent ??= new UnityEvent();
+        ballBounceEvent ??= new UnityEvent();
         ballHitEvent ??= new UnityEvent();
+        dashEvent ??= new UnityEvent();
 
         selectUIEvent ??= new UnityEvent();
         hoverUIEvent ??= new UnityEvent();
@@ -79,7 +91,10 @@ public class EventManager : MonoBehaviour
         towerMoveEvent.AddListener(TowerMoveCallback);
         shieldBreakEvent.AddListener(ShieldBreakCallback);
         shieldHitEvent.AddListener(ShieldHitCallback);
+        ballCountdownEvent.AddListener(BallCountdownCallback);
+        ballBounceEvent.AddListener(BallBounceCallback);
         ballHitEvent.AddListener(BallHitCallback);
+        dashEvent.AddListener(DashCallback);
 
         selectUIEvent.AddListener(SelectUICallback);
         hoverUIEvent.AddListener(HoverUICallback);
@@ -102,7 +117,10 @@ public class EventManager : MonoBehaviour
     void TowerMoveCallback() => SafePlayOneShot(audioSource, towerMove);
     void ShieldBreakCallback() => SafePlayOneShot(audioSource, shieldBreak);
     void ShieldHitCallback() => SafePlayOneShot(audioSource, shieldHit);
+    void BallCountdownCallback() => SafePlayOneShot(audioSource, ballCountdown);
+    void BallBounceCallback() => SafePlayOneShot(audioSource, ballBounce);
     void BallHitCallback() => SafePlayOneShot(audioSource, ballHit);
+    void DashCallback() => SafePlayOneShot(audioSource, dash);
 
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
     void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);
