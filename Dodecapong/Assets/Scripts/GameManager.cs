@@ -202,6 +202,7 @@ public class GameManager : MonoBehaviour
 
             player.hitDuration = gameVariables.hitDuration;
             player.hitCooldown = gameVariables.hitCooldown;
+
             player.paddle.hitStrength = gameVariables.hitStrength;
 
             player.paddle.rotationalForce = gameVariables.playerRotationalForce;
@@ -210,8 +211,6 @@ public class GameManager : MonoBehaviour
             player.paddle.transform.localScale = gameVariables.playerSize;
             player.paddle.collider.scale = gameVariables.playerSize;
             player.paddle.collider.RecalculateNormals();
-
-            player.paddle.gameObject.SetActive(true);
         }
 
         inGame = true;

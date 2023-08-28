@@ -1,5 +1,5 @@
 {
-    "name": "UIMasterInputAsset",
+    "name": "Input Action Asset",
     "maps": [
         {
             "name": "Player",
@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Button South",
+                    "name": "Dash",
                     "type": "Button",
                     "id": "e0d17dbb-fe54-4e0e-b903-ba9ed444e529",
                     "expectedControlType": "Button",
@@ -33,13 +33,49 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "D-Pad/Down",
+                    "name": "SplitDash",
                     "type": "Button",
                     "id": "8d7cd625-3b5b-4468-b4d9-e33215d98ebf",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "SplitHit",
+                    "type": "Button",
+                    "id": "210eed4d-0565-4ab6-9ae3-29f2446b1a93",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Hit",
+                    "type": "Button",
+                    "id": "185b28f4-b52e-4da7-8600-c47d6edb42c9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Grab",
+                    "type": "Value",
+                    "id": "1e015155-4827-43dd-9c59-4b01bb32f1c4",
+                    "expectedControlType": "Analog",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "SplitGrab",
+                    "type": "Value",
+                    "id": "34264beb-6d97-436f-9d49-d2400866f876",
+                    "expectedControlType": "Analog",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "SwapControllerScheme",
@@ -51,27 +87,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Button East",
+                    "name": "DisconnectController",
                     "type": "Button",
                     "id": "83150656-980d-4b74-b46e-e734b1b6ac4b",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Left Shoulder",
-                    "type": "Button",
-                    "id": "210eed4d-0565-4ab6-9ae3-29f2446b1a93",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
-                    "name": "Right Shoulder",
-                    "type": "Button",
-                    "id": "185b28f4-b52e-4da7-8600-c47d6edb42c9",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -97,18 +115,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Button South",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "1b898a1f-599c-4411-bece-bd5e506026b8",
-                    "path": "<Gamepad>/start",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "SwapControllerScheme",
+                    "action": "Dash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -130,18 +137,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "D-Pad/Down",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "16503e86-191c-4ebf-a8b1-d21f872f96c7",
-                    "path": "<Gamepad>/buttonEast",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Button East",
+                    "action": "SplitDash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -152,7 +148,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Left Shoulder",
+                    "action": "SplitHit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -163,7 +159,51 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Right Shoulder",
+                    "action": "Hit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "dcf6bbd7-5b87-460a-9276-1c48f84864a7",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Grab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "01cc4917-8a2e-4d61-818e-3e9f313e2083",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SplitGrab",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "16503e86-191c-4ebf-a8b1-d21f872f96c7",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DisconnectController",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1b898a1f-599c-4411-bece-bd5e506026b8",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "SwapControllerScheme",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
