@@ -214,6 +214,16 @@ public class GameManager : MonoBehaviour
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
+
+    public Color[] GenerateLivingColors()
+    {
+        Color[] colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            colors[i] = alivePlayers[i].color;
+        }
+
+        return colors;
+    }
     #endregion
 
     #region GAMEPLAY MANAGEMENT
@@ -292,7 +302,7 @@ public class GameManager : MonoBehaviour
         {
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
         }
-        arcTanShaderHelper.CalculateTextureArray();
+        arcTanShaderHelper.CreateTexture();
     }
 
     void BuildGameBoard()
@@ -495,7 +505,11 @@ public class GameManager : MonoBehaviour
         }
 
         UpdateShieldText();
-        arcTanShaderHelper.CalculateTextureArray();
+        
+        arcTanShaderHelper.colors = GenerateLivingColors();
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
         ball.ResetBall();
 
         smashingPillars = false;

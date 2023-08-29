@@ -35,7 +35,7 @@ public class Map : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        GameManager.instance.arcTanShaderHelper.CalculateTextureArray();
+        GameManager.instance.arcTanShaderHelper.CreateTexture();
 
         yield break;
     }
