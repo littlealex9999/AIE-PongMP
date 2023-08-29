@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -30,7 +31,7 @@ public class Ball : MonoBehaviour
     float currentCountdownTime;
     bool reset;
 
-    Paddle paddle;
+    bool held;
 
     // Start is called before the first frame update
     void Start()
@@ -42,9 +43,15 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollision(PongCollider other)
     {
-        if (other.gameObject.TryGetComponent(out paddle))
+        if (other.gameObject.TryGetComponent(out Paddle paddle))
         {
-            if (paddle.hitting)
+            if (paddle.grabbing)
+            {
+                paddle.heldBall = this;
+                transform.parent = paddle.transform;
+                held = true;
+            }
+            else if (paddle.hitting)
             {
                 EventManager.instance.ballHitEvent.Invoke();
             }
@@ -71,7 +78,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay)
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held)
         {
             collider.velocity = Vector2.zero;
             return;
@@ -93,21 +100,24 @@ public class Ball : MonoBehaviour
             reset = false;
         }
 
-        if (collider.velocity.sqrMagnitude > constantVel * constantVel)
-        {
-            collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
-        } 
-        else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
-        {
-            collider.velocity = collider.velocity.normalized * constantVel;
-        }
+        DampVelocity();
 
         CheckIfHitBounds();
 
         transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
     }
 
-
+    private void DampVelocity()
+    {
+        if (collider.velocity.sqrMagnitude > constantVel * constantVel)
+        {
+            collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
+        }
+        else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
+        {
+            collider.velocity = collider.velocity.normalized * constantVel;
+        }
+    }
 
     private void BounceOnBounds()
     {
@@ -140,6 +150,16 @@ public class Ball : MonoBehaviour
         transform.position = Vector2.zero;
 
         reset = true;
+    }
+
+    public void Release()
+    {
+        if (!held) return;
+        held = false;
+        transform.parent = null;
+        Vector2 dir = (Vector3.zero - transform.position).normalized;
+
+        collider.velocity = dir * constantVel;
     }
 
     public void AddVelocity(Vector2 velocity)

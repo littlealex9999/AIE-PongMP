@@ -28,7 +28,7 @@ public class Paddle : MonoBehaviour
     [HideInInspector] public bool hitting = false;
     [HideInInspector] public float hitStrength;
 
-    [HideInInspector] public bool grabbing = false;
+ 
 
 
     private void Awake()
@@ -196,7 +196,7 @@ public class Paddle : MonoBehaviour
             collider.RecalculateNormals();
 
             yield return new WaitForFixedUpdate();
-        
+
         }
 
         transform.localScale = startingScale;
@@ -208,15 +208,32 @@ public class Paddle : MonoBehaviour
         yield break;
     }
 
-    public void Grab(InputAction.CallbackContext context)
+    [HideInInspector] public Ball heldBall;
+    [HideInInspector] public bool grabbing = false;
+
+    public void Release()
     {
-        if (context.started)
+        if (!heldBall) return;
+        heldBall.Release();
+        heldBall = null;
+        grabbing = false;
+    }
+
+    public IEnumerator Grab(float duration)
+    {
+        grabbing = true;
+
+        float timeElapsed = 0;
+
+        while (timeElapsed < duration)
         {
-            grabbing = true;
+            timeElapsed += Time.fixedDeltaTime;
+
+            yield return new WaitForFixedUpdate();
         }
-        else if (context.canceled)
-        {
-            grabbing = false;
-        }
+
+        Release();
+
+        yield break;
     }
 }

@@ -25,6 +25,11 @@ public class Player : MonoBehaviour
     float hitCooldownProgress;
     bool readyToHit = true;
 
+    [HideInInspector] public float grabDuration;
+    [HideInInspector] public float grabCooldown;
+    float grabCooldownProgress;
+    bool readyToGrab = true;
+
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -50,7 +55,18 @@ public class Player : MonoBehaviour
 
     public void Grab(InputAction.CallbackContext context)
     {
-        paddle.Grab(context);
+        if (context.started)
+        {
+            if (!readyToGrab) return;
+
+            readyToGrab = false;
+            grabCooldownProgress = grabCooldown + grabDuration;
+            StartCoroutine(paddle.Grab(grabDuration));
+        }
+        else if (context.canceled)
+        {
+            paddle.Release();
+        }
     }
 
     void FixedUpdate()
@@ -59,6 +75,7 @@ public class Player : MonoBehaviour
 
         readyToDash = UpdateCooldown(ref dashCooldownProgress);
         readyToHit = UpdateCooldown(ref hitCooldownProgress);
+        readyToGrab = UpdateCooldown(ref grabCooldownProgress);
 
         if (paddle != null)
         {   

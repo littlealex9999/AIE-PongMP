@@ -95,6 +95,20 @@ public class ControllerInputHandler : MonoBehaviour
         {
             if (splitControls)
             {
+                playerB.Hit();
+            }
+            else
+            {
+                playerA.Hit();
+            }
+        }
+    }
+    public void Grab(InputAction.CallbackContext context)
+    {
+        if (instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls)
+            {
                 playerB.Grab(context);
             }
             else
@@ -103,12 +117,11 @@ public class ControllerInputHandler : MonoBehaviour
             }
         }
     }
-    public void Grab(InputAction.CallbackContext context)
-    {
-
-    }
     public void SplitGrab(InputAction.CallbackContext context)
     {
-
+        if (instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls) playerA.Grab(context);
+        }
     }
 }

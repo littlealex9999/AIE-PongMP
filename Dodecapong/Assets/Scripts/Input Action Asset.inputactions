@@ -61,21 +61,21 @@
                 },
                 {
                     "name": "Grab",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "1e015155-4827-43dd-9c59-4b01bb32f1c4",
-                    "expectedControlType": "Analog",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "SplitGrab",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "34264beb-6d97-436f-9d49-d2400866f876",
-                    "expectedControlType": "Analog",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "SwapControllerScheme",
@@ -144,7 +144,7 @@
                 {
                     "name": "",
                     "id": "61b4a197-3825-4e56-9fa4-a5aae40513ac",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/dpad/down",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -155,7 +155,7 @@
                 {
                     "name": "",
                     "id": "e66cd4e5-e8d6-4519-968d-b7041996a383",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -166,7 +166,7 @@
                 {
                     "name": "",
                     "id": "dcf6bbd7-5b87-460a-9276-1c48f84864a7",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -177,7 +177,7 @@
                 {
                     "name": "",
                     "id": "01cc4917-8a2e-4d61-818e-3e9f313e2083",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/dpad/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
