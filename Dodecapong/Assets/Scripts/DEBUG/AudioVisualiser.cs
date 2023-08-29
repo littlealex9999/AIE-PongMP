@@ -8,16 +8,19 @@ public class AudioVisualiser : MonoBehaviour
     public AudioSource source;
     public Material mat;
 
+    public ParticleSystem particleSystem;
     public ParticleSystem.Particle[] particles;
     public int circleResolution = 360;
     public float circleRadius = 1.0f;
     public float circleWidthStep = 1.0f;
     
-    float[] spectrumData = new float[256];
+    float[] spectrumData = new float[128];
 
     private void Start()
     {
         particles = new ParticleSystem.Particle[spectrumData.Length * circleResolution];
+        particleSystem.maxParticles = particles.Length;
+        particleSystem.SetParticles(particles);
     }
 
     private void Update()
@@ -32,12 +35,16 @@ public class AudioVisualiser : MonoBehaviour
 
         if (mat) mat.SetFloatArray("_testArray", spectrumData);
 
-        for (int i = 0; i < circleResolution; i++) {
-            Vector3 normalDir = Quaternion.Euler(0, 0, i / 360.0f) * Vector3.up;
+        if (particleSystem) {
+            for (int i = 0; i < circleResolution; i++) {
+                Vector3 normalDir = Quaternion.Euler(0, 0, 360.0f / circleResolution * i) * Vector3.up;
 
-            for (int j = 0; j < spectrumData.Length; j++) {
-                particles[i * spectrumData.Length + j].position = normalDir * circleRadius + normalDir * circleWidthStep * j;
-                particles[i * spectrumData.Length + j].color = new Color(1, 1, 1, spectrumData[j]);
+                particleSystem.GetParticles(particles);
+                for (int j = 0; j < spectrumData.Length; j++) {
+                    particles[i * spectrumData.Length + j].position = normalDir * circleRadius + normalDir * circleWidthStep * j;
+                    particles[i * spectrumData.Length + j].startColor = new Color(1, 1, 1, spectrumData[j]);
+                }
+                particleSystem.SetParticles(particles, particles.Length);
             }
         }
     }
