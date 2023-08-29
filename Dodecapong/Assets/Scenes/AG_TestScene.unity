@@ -1579,6 +1579,10 @@ MonoBehaviour:
   - {r: 3.9999995, g: 0.47696885, b: 0, a: 1}
   - {r: 4.085757, g: 0, b: 5.3403134, a: 1}
   playerDistance: 4
+  transformers:
+  - {fileID: 7235906791884781308, guid: 1beffdf7f3b2de84b9a1639ed4ceba65, type: 3}
+  transformerSpawnRadius: 2
+  transformerSpawnTime: 10
   playerImages:
   - {fileID: 1538804592}
   - {fileID: 1895458814}
@@ -1591,9 +1595,7 @@ MonoBehaviour:
   shieldTextObj: {fileID: 906934315204513494, guid: 8916c61deebddb34a8f878f34c593695, type: 3}
   shieldTextParent: {fileID: 578928589}
   shieldText: []
-  gameStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
+  gameState: 0
   playerPrefab: {fileID: 4539453341973377358, guid: 045c3dcbbdf350147a7a4f6df7a0f42a, type: 3}
   alivePlayers: []
   players: []
@@ -1889,7 +1891,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   map: {fileID: 6311386384562661521}
   constantVel: 5
-  ballRadius: 0.5
   dampStrength: 0
   shieldBounceTowardsCenterBias: 0
   paddleBounceTowardsCenterBias: 0
@@ -1932,6 +1933,7 @@ MonoBehaviour:
   velocity: {x: 0, y: 0}
   acceleration: {x: 0, y: 0}
   normalBending: 1
+  trigger: 0
   immovable: 0
   radius: 0.25
 --- !u!4 &6903803110016064107
