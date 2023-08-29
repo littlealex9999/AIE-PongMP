@@ -243,7 +243,7 @@ public class GameManager : MonoBehaviour
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
         ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
-        ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+        //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
 
         gameEndTimer = gameVariables.timeInSeconds;
         

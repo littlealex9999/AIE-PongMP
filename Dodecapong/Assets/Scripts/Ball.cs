@@ -64,7 +64,7 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         collider.velocity = finalBounceDir * constantVel;
-        transform.position += (Vector3)(bounceNormal * 0.1f);
+        transform.position = (map.transform.position - (Vector3)bounceNormal) * (map.mapRadius - radius);
     }
 
     private void FixedUpdate()

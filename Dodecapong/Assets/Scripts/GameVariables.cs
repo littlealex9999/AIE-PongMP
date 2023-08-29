@@ -14,7 +14,7 @@ public class GameVariables : ScriptableObject
         playerSize = gv.playerSize;
         playerRotationalForce = gv.playerRotationalForce;
         playerNormalBending = gv.playerNormalBending;
-        playerBounceTowardsCenterBias = gv.playerBounceTowardsCenterBias;
+        //playerBounceTowardsCenterBias = gv.playerBounceTowardsCenterBias;
         dashEnabled = gv.dashEnabled;
         dashDuration = gv.dashDuration;
         dashCooldown = gv.dashCooldown;
@@ -53,7 +53,7 @@ public class GameVariables : ScriptableObject
     public Vector3 playerSize = new Vector3(0.03f, 0.03f, 0.03f);
     public float playerRotationalForce = 0.5f;
     public float playerNormalBending = 2.0f;
-    public float playerBounceTowardsCenterBias;
+    //public float playerBounceTowardsCenterBias;
     public bool dashEnabled = true;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1;
@@ -66,7 +66,7 @@ public class GameVariables : ScriptableObject
     public void SetPlayerSize(Vector3 value) { playerSize = value; }
     public void SetPlayerRotationalForce(float value) { playerRotationalForce = value; }
     public void SetPlayerNormalBending(float value) { playerNormalBending = value; }
-    public void SetPlayerBounceBias(float value) { playerBounceTowardsCenterBias = value; }
+    //public void SetPlayerBounceBias(float value) { playerBounceTowardsCenterBias = value; }
     public void SetPlayerDashEnabled(bool enabled) { dashEnabled = enabled; }
     public void SetPlayerDashDuration(float value) { dashDuration = value; }
     public void SetPlayerDashCooldown(float value) { dashCooldown = value; }
