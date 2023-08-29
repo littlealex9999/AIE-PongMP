@@ -82,24 +82,24 @@ public class ControllerInputHandler : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void SplitHit(InputAction.CallbackContext contect)
+    public void SplitHit(InputAction.CallbackContext context)
     {
-        if (contect.started && instance.gameState == GameState.GAMEPLAY)
+        if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
             if (splitControls) playerA.Hit();
         }
     }
-    public void Hit(InputAction.CallbackContext contect)
+    public void Hit(InputAction.CallbackContext context)
     {
-        if (contect.started && instance.gameState == GameState.GAMEPLAY)
+        if (instance.gameState == GameState.GAMEPLAY)
         {
             if (splitControls)
             {
-                playerB.Hit();
+                playerB.Grab(context);
             }
             else
             {
-                playerA.Hit();
+                playerA.Grab(context);
             }
         }
     }

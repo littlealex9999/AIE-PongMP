@@ -37,7 +37,7 @@ public class AudioVisualiser : MonoBehaviour
 
             for (int j = 0; j < spectrumData.Length; j++) {
                 particles[i * spectrumData.Length + j].position = normalDir * circleRadius + normalDir * circleWidthStep * j;
-                particles[i * spectrumData.Length + j].color = new Color(1, 1, 1, spectrumData[j]);
+                particles[i * spectrumData.Length + j].startColor = new Color(1, 1, 1, spectrumData[j]);
             }
         }
     }

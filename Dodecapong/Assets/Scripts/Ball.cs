@@ -30,6 +30,8 @@ public class Ball : MonoBehaviour
     float currentCountdownTime;
     bool reset;
 
+    Paddle paddle;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -40,7 +42,7 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollision(PongCollider other)
     {
-        if (other.gameObject.TryGetComponent(out Paddle paddle))
+        if (other.gameObject.TryGetComponent(out paddle))
         {
             if (paddle.hitting)
             {
@@ -100,24 +102,33 @@ public class Ball : MonoBehaviour
             collider.velocity = collider.velocity.normalized * constantVel;
         }
 
-        if (distFromCenter + ballRadius > map.mapRadius) {
-            float angle = Angle(transform.position.normalized);
-
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
-
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) {
-                BounceOnBounds();
-                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
-            }
-        }
+        CheckIfHitBounds();
 
         transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
     }
+
+
 
     private void BounceOnBounds()
     {
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+    }
+
+    private void CheckIfHitBounds()
+    {
+        if (distFromCenter + ballRadius > map.mapRadius)
+        {
+            float angle = Angle(transform.position.normalized);
+
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
+
+            if (!GameManager.instance.OnSheildHit(alivePlayerID))
+            {
+                BounceOnBounds();
+                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
+            }
+        }
     }
 
     public void ResetBall()

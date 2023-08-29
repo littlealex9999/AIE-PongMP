@@ -1,5 +1,8 @@
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using static GameManager;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class Player : MonoBehaviour
 {
@@ -43,6 +46,11 @@ public class Player : MonoBehaviour
         readyToHit = false;
         hitCooldownProgress = hitCooldown + hitDuration;
         StartCoroutine(paddle.Hit(hitDuration));
+    }
+
+    public void Grab(InputAction.CallbackContext context)
+    {
+        paddle.Grab(context);
     }
 
     void FixedUpdate()

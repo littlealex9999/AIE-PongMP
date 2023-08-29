@@ -102,6 +102,7 @@ public class GameManager : MonoBehaviour
 
     public void UpdateGameState(GameState state)
     {
+        if (state == GameState.GAMEPLAY && players.Count < 2) return;
         gameState = state;
         OnGameStateChange.Invoke();
     }
@@ -122,7 +123,7 @@ public class GameManager : MonoBehaviour
                 EventManager.instance?.gameplayEvent?.Invoke();
                 if (!inGame)
                 {
-                    StartGame(); 
+                    StartGame();
                 }
                 else
                 {

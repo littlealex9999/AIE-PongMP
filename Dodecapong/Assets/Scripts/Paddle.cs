@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Paddle : MonoBehaviour
 {
@@ -26,6 +27,9 @@ public class Paddle : MonoBehaviour
     public AnimationCurve hitAnimationCurve;
     [HideInInspector] public bool hitting = false;
     [HideInInspector] public float hitStrength;
+
+    [HideInInspector] public bool grabbing = false;
+
 
     private void Awake()
     {
@@ -202,5 +206,17 @@ public class Paddle : MonoBehaviour
         hitting = false;
 
         yield break;
+    }
+
+    public void Grab(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            grabbing = true;
+        }
+        else if (context.canceled)
+        {
+            grabbing = false;
+        }
     }
 }
