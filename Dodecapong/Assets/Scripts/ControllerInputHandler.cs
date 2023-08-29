@@ -30,20 +30,15 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void LeftStick(InputAction.CallbackContext context)
     {
-        if (instance.gameState != GameState.GAMEPLAY) return;
-
         playerA.movementInput = context.ReadValue<Vector2>();
     }
     public void RightStick(InputAction.CallbackContext context)
     {
-        if (splitControls && instance.gameState == GameState.GAMEPLAY)
-        {
-            playerB.movementInput = context.ReadValue<Vector2>();
-        }
+        playerB.movementInput = context.ReadValue<Vector2>();
     }
     public void Dash(InputAction.CallbackContext context)
     {
-        if (context.canceled && instance.gameState == GameState.GAMEPLAY)
+        if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
             if (splitControls) playerB.Dash();
             else playerA.Dash();
@@ -51,7 +46,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void SplitDash(InputAction.CallbackContext context)
     {
-        if (context.canceled && instance.gameState == GameState.GAMEPLAY)
+        if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
             if (splitControls) playerA.Dash();
         }
@@ -70,15 +65,12 @@ public class ControllerInputHandler : MonoBehaviour
                 playerB = instance.GetNewPlayer();
                 splitControls = true;
             }
-            Debug.Log(playerInputManager.playerCount);
         }
     }
     public void DisconnectController(InputAction.CallbackContext context)
     {
         if (context.canceled && instance.gameState == GameState.JOINMENU)
         {
-            Debug.Log(playerInputManager.playerCount);
-
             Destroy(gameObject);
         }
     }

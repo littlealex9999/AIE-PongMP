@@ -43,15 +43,16 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollision(PongCollider other)
     {
-        if (other.gameObject.TryGetComponent(out Paddle paddle))
+        if (other.gameObject.TryGetComponent(out Player player))
         {
-            if (paddle.grabbing)
+            if (player.grabbing)
             {
-                paddle.heldBall = this;
-                transform.parent = paddle.transform;
+                StartCoroutine(player.GrabRoutine());
+                player.heldBall = this;
+                transform.parent = player.transform;
                 held = true;
             }
-            else if (paddle.hitting)
+            else if (player.hitting)
             {
                 EventManager.instance.ballHitEvent.Invoke();
             }
@@ -93,7 +94,7 @@ public class Ball : MonoBehaviour
         {
             int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
 
-            Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
+            Vector2 dir = (GameManager.instance.alivePlayers[player].transform.position - transform.position).normalized;
 
             collider.velocity = dir * constantVel;
 
