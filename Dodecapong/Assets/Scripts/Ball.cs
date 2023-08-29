@@ -21,6 +21,8 @@ public class Ball : MonoBehaviour
     float currentCountdownTime;
     bool reset;
 
+    public Vector3 respawnPos = new Vector3(0, 0, 0);
+
     // Start is called before the first frame update
     void Start()
     {
@@ -117,7 +119,7 @@ public class Ball : MonoBehaviour
 
         currentCountdownTime = countdownTimer;
 
-        transform.position = Vector2.zero;
+        transform.position = respawnPos;
 
         reset = true;
     }
