@@ -23,7 +23,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HeadDistortion
+  m_Name: HeatDistortion
   m_Shader: {fileID: -6465566751694194690, guid: 280adea9ed4f50b4b91bde7ec451a977, type: 3}
   m_ValidKeywords:
   - _ENABLE_FOG_ON_TRANSPARENT
@@ -74,7 +74,7 @@ Material:
     - _CullModeForward: 2
     - _DepthOffsetEnable: 0
     - _DistortionScale: 35
-    - _Distortion_Amount: 0.13
+    - _Distortion_Amount: 1
     - _DoubleSidedEnable: 0
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 2
@@ -103,7 +103,7 @@ Material:
     - _TransparentSortPriority: 0
     - _TransparentWritingMotionVec: 0
     - _TransparentZWrite: 0
-    - _TwirlStrength: 30
+    - _TwirlStrength: 22.4
     - _UseShadowThreshold: 0
     - _ZTestDepthEqualForOpaque: 4
     - _ZTestGBuffer: 4
