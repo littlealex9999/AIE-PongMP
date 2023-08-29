@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
@@ -29,6 +30,8 @@ public class Ball : MonoBehaviour
     float currentCountdownTime;
     bool reset;
 
+    bool held;
+
     void Start()
     {
         collider = GetComponent<PongCircleCollider>();
@@ -38,9 +41,16 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollision(PongCollider other)
     {
-        if (other.gameObject.TryGetComponent(out Paddle paddle))
+        if (other.gameObject.TryGetComponent(out Player player))
         {
-            if (paddle.hitting)
+            if (player.grabbing)
+            {
+                StartCoroutine(player.GrabRoutine());
+                player.heldBall = this;
+                transform.parent = player.transform;
+                held = true;
+            }
+            else if (player.hitting)
             {
                 EventManager.instance.ballHitEvent.Invoke();
             }
@@ -67,7 +77,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay)
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held)
         {
             collider.velocity = Vector2.zero;
             return;
@@ -82,40 +92,52 @@ public class Ball : MonoBehaviour
         {
             int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
 
-            Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
+            Vector2 dir = (GameManager.instance.alivePlayers[player].transform.position - transform.position).normalized;
 
             collider.velocity = dir * constantVel;
 
             reset = false;
         }
 
+        DampVelocity();
+
+        CheckIfHitBounds();
+
+        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
+    }
+
+    private void DampVelocity()
+    {
         if (collider.velocity.sqrMagnitude > constantVel * constantVel)
         {
             collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
-        } 
+        }
         else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
         {
             collider.velocity = collider.velocity.normalized * constantVel;
         }
-
-        if (distFromCenter + ballRadius > map.mapRadius) {
-            float angle = Angle(transform.position.normalized);
-
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
-
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) {
-                BounceOnBounds();
-                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
-            }
-        }
-
-        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
     }
 
     private void BounceOnBounds()
     {
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+    }
+
+    private void CheckIfHitBounds()
+    {
+        if (distFromCenter + ballRadius > map.mapRadius)
+        {
+            float angle = Angle(transform.position.normalized);
+
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
+
+            if (!GameManager.instance.OnSheildHit(alivePlayerID))
+            {
+                BounceOnBounds();
+                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
+            }
+        }
     }
 
     public void ResetBall()
@@ -127,6 +149,15 @@ public class Ball : MonoBehaviour
         transform.position = Vector2.zero;
 
         reset = true;
+    }
+
+    public void Release()
+    {
+        if (!held) return;
+        held = false;
+        transform.parent = null;
+        Vector2 dir = (Vector3.zero - transform.position).normalized;
+        collider.velocity = dir * constantVel;
     }
 
     public void AddVelocity(Vector2 velocity)
