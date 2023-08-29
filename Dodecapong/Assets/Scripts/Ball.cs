@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-
     new public PongCircleCollider collider;
 
     public Map map;
@@ -30,7 +29,6 @@ public class Ball : MonoBehaviour
     float currentCountdownTime;
     bool reset;
 
-    // Start is called before the first frame update
     void Start()
     {
         collider = GetComponent<PongCircleCollider>();

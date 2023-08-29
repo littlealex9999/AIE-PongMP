@@ -9,49 +9,88 @@ using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
 {
+    #region Variables
     public static GameManager instance;
 
-    List<GameObject> pillars = new List<GameObject>();
-
+    #region Game Objects
+    [Header("Game Objects")]
     public Map map;
     public Ball ball;
-    public ArcTanShaderHelper arcTanShader;
 
-    public GameObject pillarObject;
-
-    public AnimationCurve pillarCurve;
-    public float pillarSmashTime = 2.0f;
+    public GameObject pillarPrefab;
+    public GameObject playerPrefab;
+    List<GameObject> pillars = new List<GameObject>();
 
     public GameVariables defaultGameVariables;
     GameVariables gameVariables;
 
-    [Range(0, 360)] 
+    public ArcTanShaderHelper arcTanShader;
+    #endregion
+
+    #region Map Settings
+    [Header("Map Settings")]
+    public AnimationCurve elimSpeedCurve;
+    public float playerElimTime = 2.0f;
+
+    [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
     public float playerDistance = 4.0f;
 
-    [ColorUsage(true, true), SerializeField] 
+    [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
+    #endregion
 
-    float gameEndTimer;
-
-    [Space]
+    #region Transformers
+    [Header("Transformers")]
     public List<Transformer> transformers = new List<Transformer>();
     public float transformerSpawnRadius = 2.0f;
     public float transformerSpawnTime = 10.0f;
     float transformerSpawnTimer;
     public List<Transformer> activeTransformers = new List<Transformer>();
+    #endregion
 
-    [Space]
+    #region UI
+    [Header("UI")]
     public List<Image> playerImages;
 
     public GameObject shieldTextObj;
     public Transform shieldTextParent;
     public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
 
+
+    public delegate void GameStateChange();
+    public GameStateChange OnGameStateChange;
+
+    public GameState gameState = GameState.MAINMENU;
+
+    public enum GameState
+    {
+        MAINMENU,
+        JOINMENU,
+        SETTINGSMENU,
+        GAMEPLAY,
+        GAMEPAUSED,
+        GAMEOVER,
+    }
+    #endregion
+
+    #region Pause
     bool inGame;
     public bool holdGameplay { get { return smashingPillars; } }
     bool smashingPillars = false;
+    #endregion
 
+    #region Gameplay Settings
+    float gameEndTimer;
+    [HideInInspector] public List<Player> alivePlayers;
+    [HideInInspector] public List<Player> players;
+
+    [HideInInspector] public bool blackHoleActive = false;
+    #endregion
+    #endregion
+
+    #region Functions
+    #region Unity
     void Awake()
     {
         if (!instance) instance = this;
@@ -73,7 +112,7 @@ public class GameManager : MonoBehaviour
                 if (!holdGameplay)
                  {
                     gameEndTimer -= Time.deltaTime;
-                    if (gameEndTimer <= 0)
+                    if (gameVariables.useTimer && gameEndTimer <= 0)
                     {
                         // UpdateGameState(GameState.GAMEOVER);
                     }
@@ -85,26 +124,17 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+    #endregion
 
-    //
-    // GameState
-    //
-
-    public delegate void GameStateChange();
-    public GameStateChange OnGameStateChange;
-
-    public GameState gameState = GameState.MAINMENU;
-
-    public enum GameState
+    #region HELPER
+    public Color GetPlayerColor(int index)
     {
-        MAINMENU,
-        JOINMENU,
-        SETTINGSMENU,
-        GAMEPLAY,
-        GAMEPAUSED,
-        GAMEOVER,
+        if (index < playerEmissives.Count) return playerEmissives[index];
+        else return playerEmissives[playerEmissives.Count - 1];
     }
+    #endregion
 
+    #region GAMESTATE
     public void UpdateGameState(GameState state)
     {
         gameState = state;
@@ -145,15 +175,9 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+    #endregion
 
-    //
-    // Players
-    //
-    public GameObject playerPrefab;
-
-    public List<Player> alivePlayers;
-    public List<Player> players;
-
+    #region PLAYERS
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
@@ -162,7 +186,7 @@ public class GameManager : MonoBehaviour
         playerObject.transform.parent = transform;
         Player player = playerObject.GetComponent<Player>();
         player.color = GetPlayerColor(players.Count);
-        pillars.Add(Instantiate(pillarObject, map.transform));
+        pillars.Add(Instantiate(pillarPrefab, map.transform));
         players.Add(player);
         UpdatePlayerImages();
         return player;
@@ -202,16 +226,13 @@ public class GameManager : MonoBehaviour
 
         BuildGameBoard();
     }
+    #endregion
 
-    //
-    // Gameplay
-    //
-
+    #region GAMEPLAY MANAGEMENT
     void StartGame()
     {
         ball.dampStrength = gameVariables.ballSpeedDamp;
-        foreach (Player player in players)
-        {
+        foreach (Player player in players) {
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
 
@@ -228,15 +249,35 @@ public class GameManager : MonoBehaviour
         BuildGameBoard();
     }
 
-    void UpdatePlayerImages()
+    void SetupPillars()
     {
-        foreach (Image image in playerImages) image.color = Color.white;
-        for (int i = 0; i < players.Count; i++)
-        {
-            playerImages[i].color = GetPlayerColor(players[i].ID);
+        for (int i = 0; i < pillars.Count; i++) {
+            pillars[i].transform.SetPositionAndRotation(
+                map.GetTargetPointInCircle(360.0f / pillars.Count * i),
+                Quaternion.Euler(0, 0, 360.0f / pillars.Count * i));
         }
     }
 
+    void SetupPaddles()
+    {
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            Paddle paddle = alivePlayers[i].paddle;
+
+            paddle.gameObject.SetActive(true);
+
+            paddle.hitStrength = gameVariables.hitStrength;
+
+            paddle.rotationalForce = gameVariables.playerRotationalForce;
+            paddle.collider.normalBending = gameVariables.playerNormalBending;
+
+            paddle.transform.localScale = gameVariables.playerSize;
+            paddle.collider.scale = gameVariables.playerSize;
+            paddle.collider.RecalculateNormals();
+
+            paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
+            paddle.SetPosition(paddle.playerSectionMiddle);
+        }
+    }
 
     void BuildGameBoard()
     {
@@ -246,8 +287,19 @@ public class GameManager : MonoBehaviour
         //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
 
         gameEndTimer = gameVariables.timeInSeconds;
-        
+
         UpdateShieldText();
+    }
+    #endregion
+
+    #region GAMEPLAY
+    void UpdatePlayerImages()
+    {
+        foreach (Image image in playerImages) image.color = Color.white;
+        for (int i = 0; i < players.Count; i++)
+        {
+            playerImages[i].color = GetPlayerColor(players[i].ID);
+        }
     }
 
     void TransformerUpdate(float delta)
@@ -279,38 +331,6 @@ public class GameManager : MonoBehaviour
         Instantiate(transformers[Random.Range(0, transformers.Count)], spawnPos, Quaternion.identity);
     }
 
-    void SetupPillars()
-    {
-        for (int i = 0; i < pillars.Count; i++)
-        {
-            pillars[i].transform.SetPositionAndRotation(
-                map.GetTargetPointInCircle(360.0f / pillars.Count * i),
-                Quaternion.Euler(0, 0, 360.0f / pillars.Count * i));
-        }
-    }
-
-    void SetupPaddles()
-    {
-        for (int i = 0; i < alivePlayers.Count; i++)
-        {
-            Paddle paddle = alivePlayers[i].paddle;
-
-            paddle.gameObject.SetActive(true);
-
-            paddle.hitStrength = gameVariables.hitStrength;
-
-            paddle.rotationalForce = gameVariables.playerRotationalForce;
-            paddle.collider.normalBending = gameVariables.playerNormalBending;
-
-            paddle.transform.localScale = gameVariables.playerSize;
-            paddle.collider.scale = gameVariables.playerSize;
-            paddle.collider.RecalculateNormals();
-
-            paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
-            paddle.SetPosition(paddle.playerSectionMiddle);
-        }
-    }
-
     private void UpdateShieldText()
     {
         if (shieldText.Count == 0)
@@ -340,12 +360,6 @@ public class GameManager : MonoBehaviour
             UpdateShieldText();
         }
 
-    }
-
-    public Color GetPlayerColor(int index)
-    {
-        if (index < playerEmissives.Count) return playerEmissives[index];
-        else return playerEmissives[playerEmissives.Count - 1];
     }
 
     /// <summary>
@@ -412,9 +426,9 @@ public class GameManager : MonoBehaviour
         }
 
         // move pillars over time & handle ArcTanShader shrinkage
-        while (pillarSmashTimer < pillarSmashTime) {
+        while (pillarSmashTimer < playerElimTime) {
             pillarSmashTimer += Time.deltaTime;
-            float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
+            float playerRemovalPercentage = elimSpeedCurve.Evaluate(pillarSmashTimer / playerElimTime);
 
             float pseudoPlayerCount = alivePlayers.Count - playerRemovalPercentage;
             for (int i = 0; i < alivePlayers.Count; i++) {
@@ -471,4 +485,6 @@ public class GameManager : MonoBehaviour
         smashingPillars = false;
         yield break;
     }
+    #endregion
+    #endregion
 }

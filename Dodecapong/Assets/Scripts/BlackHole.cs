@@ -5,7 +5,9 @@ using UnityEngine;
 public class BlackHole : MonoBehaviour
 {
     public float gravityStrength;
-    float duration = 10.0f;
+    public float duration = 10.0f;
+
+    public float destroyTime = 2.0f;
 
     public bool pullEnabled = true;
 
@@ -21,7 +23,7 @@ public class BlackHole : MonoBehaviour
     {
         duration -= Time.fixedDeltaTime;
         if (duration <= 0) {
-            // stop
+            StartCoroutine(DestroyHole(null));
         }
 
         if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
@@ -35,7 +37,33 @@ public class BlackHole : MonoBehaviour
     {
         if (other.GetComponent<Ball>()) {
             pullEnabled = false;
-            // shoot out ball
+
+            other.gameObject.SetActive(false);
+            other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
+            other.velocity = Random.insideUnitCircle * GameManager.instance.ball.constantVel;
+
+            StartCoroutine(DestroyHole(other.gameObject));
         }
+    }
+
+    IEnumerator DestroyHole(GameObject enableOnEnd)
+    {
+        float destroyTimer = 0.0f;
+        Vector3 startScale = transform.localScale;
+        while (destroyTimer < destroyTime) {
+            destroyTimer += Time.deltaTime;
+            float endPercentage = destroyTime / destroyTimer;
+
+            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, endPercentage);
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        if (enableOnEnd) enableOnEnd.SetActive(true);
+
+        // we make the assumption that this is true, as only one black hole should be able to spawn at a time
+        GameManager.instance.blackHoleActive = false;
+        Destroy(gameObject);
+        yield break;
     }
 }
