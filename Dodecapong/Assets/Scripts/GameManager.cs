@@ -330,7 +330,7 @@ public class GameManager : MonoBehaviour
     }
 
     [ContextMenu("Spawn Transformer")]
-    void SpawnTransformer()
+    public void SpawnTransformer()
     {
         Vector2 spawnPos = Random.insideUnitCircle;
         spawnPos *= Random.Range(0, transformerSpawnRadius);

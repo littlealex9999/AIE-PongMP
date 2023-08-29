@@ -17,7 +17,7 @@ public class PlayerSpeed : Transformer
     protected override void RemoveModifier()
     {
         for (int i = 0; i < GameManager.instance.alivePlayers.Count; i++) {
-            GameManager.instance.alivePlayers[i].paddle.moveSpeed -= speedMod;
+            GameManager.instance.alivePlayers[i].moveSpeed -= speedMod;
         }
     }
 }
