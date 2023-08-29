@@ -158,7 +158,6 @@ public class Ball : MonoBehaviour
         held = false;
         transform.parent = null;
         Vector2 dir = (Vector3.zero - transform.position).normalized;
-
         collider.velocity = dir * constantVel;
     }
 

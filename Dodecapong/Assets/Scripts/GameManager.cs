@@ -211,8 +211,11 @@ public class GameManager : MonoBehaviour
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
 
-            player.hitDuration = gameVariables.hitDuration;
             player.hitCooldown = gameVariables.hitCooldown;
+            player.hitDuration = gameVariables.hitDuration;
+
+            player.grabCooldown = gameVariables.grabCooldown;
+            player.grabDuration = gameVariables.grabDuration;
         }
 
         inGame = true;
