@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -240,6 +241,7 @@ public class GameManager : MonoBehaviour
 
     void SetupPlayers()
     {
+        alivePlayers.Clear();
         foreach (Player p in players) alivePlayers.Add(p);
 
         for (int i = 0; i < players.Count; i++)
@@ -283,13 +285,20 @@ public class GameManager : MonoBehaviour
 
     void SetupPillars()
     {
+        while (pillars.Count != players.Count) {
+            if (pillars.Count < players.Count) {
+                pillars.Add(Instantiate(pillarPrefab, map.transform));
+            } else {
+                Destroy(pillars[pillars.Count - 1]);
+                pillars.RemoveAt(pillars.Count - 1);
+            }
+        }
+
         for (int i = 0; i < players.Count; i++)
         {
-            GameObject pillar = Instantiate(pillarPrefab, map.transform);
-            pillar.transform.SetPositionAndRotation(
+            pillars[i].transform.SetPositionAndRotation(
                 map.GetTargetPointInCircle(360.0f / players.Count * i),
                 Quaternion.Euler(0, 0, 360.0f / players.Count * i));
-            pillars.Add(pillar);
         }
     }
 
