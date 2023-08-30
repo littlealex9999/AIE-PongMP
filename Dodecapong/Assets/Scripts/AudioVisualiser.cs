@@ -17,7 +17,7 @@ public class AudioVisualiser : MonoBehaviour
 
     private void Start()
     {
-        spectrumData = new float[128];
+        spectrumData = new float[spectrumDataSize];
         particles = new ParticleSystem.Particle[spectrumData.Length * circleResolution];
         particleSystem.maxParticles = particles.Length;
         particleSystem.SetParticles(particles);
