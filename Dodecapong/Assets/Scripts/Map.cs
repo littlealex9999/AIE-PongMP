@@ -13,18 +13,6 @@ public class Map : MonoBehaviour
     public Material arcTangentShader;
     public float removeSpeed = 1;
 
-    public void SetupMap(List<Player> alivePlayers)
-    {
-        GenerateMap();
-        arcTangentShader.SetFloat("_Shrink", 0);
-        GameManager.instance.arcTanShader.colors = new Color[alivePlayers.Count];
-        for (int i = 0; i < alivePlayers.Count; i++)
-        {
-            GameManager.instance.arcTanShader.colors[i] = alivePlayers[i].color;
-        }
-        GameManager.instance.arcTanShader.CalculateTextureArray();
-    }
-
     public void RemoveSegment(int index, List<Player> alivePlayers)
     {
         StartCoroutine(RemovalCoroutine(index, alivePlayers));
@@ -47,13 +35,13 @@ public class Map : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        SetupMap(alivePlayers);
+        GameManager.instance.arcTanShaderHelper.CreateTexture();
 
         yield break;
     }
 
 
-    void GenerateMap()
+    public void GenerateMap()
     {
         if (lineStepCount < 1) return;
 
