@@ -33,7 +33,9 @@ public class AudioVisualiser : MonoBehaviour
                 particleSystem.maxParticles = spectrumData.Length * circleResolution;
             }
 
-            Vector3 offsetPos = followObject.transform.position;
+            Vector3 offsetPos;
+            if (followObject) offsetPos = followObject.transform.position;
+            else offsetPos = Vector3.zero;
 
             for (int i = 0; i < circleResolution; i++) {
                 Vector3 normalDir = Quaternion.Euler(0, 0, 360.0f / circleResolution * i) * Vector3.up;
