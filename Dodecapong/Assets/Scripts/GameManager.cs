@@ -348,18 +348,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public Vector2 GetRandomTransformerSpawnPoint()
+    {
+        return Random.insideUnitCircle * Random.Range(0, transformerSpawnRadius);
+    }
+
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        Vector2 spawnPos = Random.insideUnitCircle;
-        spawnPos *= Random.Range(0, transformerSpawnRadius);
-
-        Instantiate(transformers[Random.Range(0, transformers.Count)], spawnPos, Quaternion.identity);
+        Instantiate(transformers[Random.Range(0, transformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity);
     }
 
     void UpdatePlayerImages()
     {
-        foreach (Image image in playerImages) image.color = Color.white;
+        foreach (Image image in playerImages) {
+            image.color = Color.white;
+        }
+
         for (int i = 0; i < players.Count; i++) {
             playerImages[i].color = GetPlayerColor(players[i].ID);
         }

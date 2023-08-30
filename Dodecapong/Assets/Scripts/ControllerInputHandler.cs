@@ -34,7 +34,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void RightStick(InputAction.CallbackContext context)
     {
-        playerB.movementInput = context.ReadValue<Vector2>();
+        if (playerB) playerB.movementInput = context.ReadValue<Vector2>();
     }
     public void Dash(InputAction.CallbackContext context)
     {

@@ -13,7 +13,7 @@ public class BlackHoleSpawn : Transformer
     {
         if (!GameManager.instance.blackHoleActive) {
             GameManager.instance.blackHoleActive = true;
-            BlackHole spawn = Instantiate(blackHolePrefab, transform.position, Quaternion.identity);
+            BlackHole spawn = Instantiate(blackHolePrefab, GameManager.instance.GetRandomTransformerSpawnPoint(), Quaternion.identity);
             spawn.duration = duration;
             spawn.gravityStrength = gravityStrength;
             spawn.destroyTime = destroyTime;
