@@ -8,7 +8,6 @@ public class Ball : MonoBehaviour
     public Map map;
 
     public float constantVel;
-    float ballRadius;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
@@ -18,9 +17,8 @@ public class Ball : MonoBehaviour
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
     public float radius {
         get {
-            return ballRadius;
+            return collider.radius;
         } set {
-            ballRadius = value;
             collider.radius = value;
             transform.localScale = new Vector3(value, value, value);
         }
@@ -126,7 +124,7 @@ public class Ball : MonoBehaviour
 
     private void CheckIfHitBounds()
     {
-        if (distFromCenter + ballRadius > map.mapRadius)
+        if (distFromCenter + radius > map.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
 
@@ -135,7 +133,7 @@ public class Ball : MonoBehaviour
             if (!GameManager.instance.OnSheildHit(alivePlayerID))
             {
                 BounceOnBounds();
-                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
+                transform.position = transform.position.normalized * (map.mapRadius - radius);
             }
         }
     }
