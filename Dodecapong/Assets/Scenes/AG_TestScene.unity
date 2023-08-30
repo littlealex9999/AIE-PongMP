@@ -897,7 +897,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!64 &928227647
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -7233,7 +7233,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 2147483647
+    m_Bits: 247
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -7399,7 +7399,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5141576805790278924, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
       propertyPath: m_RootOrder
@@ -7966,6 +7966,7 @@ MonoBehaviour:
   - {fileID: 7235906791884781308, guid: 1beffdf7f3b2de84b9a1639ed4ceba65, type: 3}
   transformerSpawnRadius: 2
   transformerSpawnTime: 10
+  spawnedTransformers: []
   activeTransformers: []
   playerImages:
   - {fileID: 1538804592}
@@ -7982,7 +7983,7 @@ MonoBehaviour:
   gameState: 0
   alivePlayers: []
   players: []
-  blackHoleActive: 0
+  blackHole: {fileID: 0}
 --- !u!4 &6311386383622038525
 Transform:
   m_ObjectHideFlags: 0

@@ -11,9 +11,9 @@ public class BlackHoleSpawn : Transformer
 
     public override void ApplyModifier()
     {
-        if (!GameManager.instance.blackHoleActive) {
-            GameManager.instance.blackHoleActive = true;
+        if (!GameManager.instance.blackHole) {
             BlackHole spawn = Instantiate(blackHolePrefab, GameManager.instance.GetRandomTransformerSpawnPoint(), Quaternion.identity);
+            GameManager.instance.blackHole = spawn;
             spawn.duration = duration;
             spawn.gravityStrength = gravityStrength;
             spawn.destroyTime = destroyTime;

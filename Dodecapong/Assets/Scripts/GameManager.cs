@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     public float transformerSpawnRadius = 2.0f;
     public float transformerSpawnTime = 10.0f;
     float transformerSpawnTimer;
+    public List<Transformer> spawnedTransformers = new List<Transformer>();
     public List<Transformer> activeTransformers = new List<Transformer>();
     #endregion
 
@@ -86,7 +87,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<Player> alivePlayers;
     [HideInInspector] public List<Player> players;
 
-    [HideInInspector] public bool blackHoleActive = false;
+    [HideInInspector] public BlackHole blackHole;
     #endregion
     #endregion
 
@@ -208,8 +209,7 @@ public class GameManager : MonoBehaviour
     {
         if (alivePlayers.Count <= 2)
         {
-            inGame = false;
-            UpdateGameState(GameState.GAMEOVER);
+            EndGame();
             return;
         }
         int index = alivePlayers.IndexOf(player);
@@ -237,6 +237,27 @@ public class GameManager : MonoBehaviour
         SetupMap();
         ball.ResetBall();
         UpdateShieldText();
+    }
+
+    void EndGame()
+    {
+        inGame = false;
+        for (int i = 0; i < players.Count; i++) {
+            players[i].gameObject.SetActive(false);
+        }
+
+        ball.gameObject.SetActive(false);
+
+        for (int i = 0; i < spawnedTransformers.Count; i++) {
+            Destroy(spawnedTransformers[i].gameObject);
+        }
+        spawnedTransformers.Clear();
+        activeTransformers.Clear();
+
+        Destroy(blackHole.gameObject);
+        blackHole = null;
+
+        UpdateGameState(GameState.GAMEOVER);
     }
 
     void SetupPlayers()
@@ -281,6 +302,8 @@ public class GameManager : MonoBehaviour
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
         ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
         //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+
+        ball.gameObject.SetActive(true);
     }
 
     void SetupPillars()
@@ -313,18 +336,6 @@ public class GameManager : MonoBehaviour
         }
         arcTanShaderHelper.CreateTexture();
     }
-
-    void BuildGameBoard()
-    {
-        ball.constantVel = gameVariables.ballSpeed;
-        ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
-        ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
-        //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
-
-        gameEndTimer = gameVariables.timeInSeconds;
-
-        UpdateShieldText();
-    }
     #endregion
 
     #region GAMEPLAY
@@ -356,7 +367,7 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        Instantiate(transformers[Random.Range(0, transformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity);
+        spawnedTransformers.Add(Instantiate(transformers[Random.Range(0, transformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
     }
 
     void UpdatePlayerImages()

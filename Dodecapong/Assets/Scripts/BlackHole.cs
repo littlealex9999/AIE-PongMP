@@ -62,7 +62,7 @@ public class BlackHole : MonoBehaviour
         if (enableOnEnd) enableOnEnd.SetActive(true);
 
         // we make the assumption that this is true, as only one black hole should be able to spawn at a time
-        GameManager.instance.blackHoleActive = false;
+        GameManager.instance.blackHole = this;
         Destroy(gameObject);
         yield break;
     }
