@@ -7,8 +7,6 @@ public class ControllerInputHandler : MonoBehaviour
 {
     PlayerInputManager playerInputManager;
 
-    public InputActionAsset UIMasterInputActionAsset;
-
     PlayerInput playerInput;
 
     Player playerA;
@@ -16,7 +14,6 @@ public class ControllerInputHandler : MonoBehaviour
 
     bool splitControls = false;
 
-    int controllerID;
     private void OnDestroy()
     {
         instance.RemovePlayer(playerA);
@@ -27,49 +24,37 @@ public class ControllerInputHandler : MonoBehaviour
     {
         playerInputManager = FindObjectOfType<PlayerInputManager>();
         playerInput = GetComponent<PlayerInput>();
-        controllerID = playerInput.playerIndex;
         playerA = instance.GetNewPlayer();
-        if (playerA.ID == 0) playerInput.actions = UIMasterInputActionAsset;
+        if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
     }
 
     public void LeftStick(InputAction.CallbackContext context)
     {
-        if (instance.gameState != GameState.GAMEPLAY) return;
-
         playerA.movementInput = context.ReadValue<Vector2>();
     }
     public void RightStick(InputAction.CallbackContext context)
     {
-
-            if (instance.gameState != GameState.GAMEPLAY) return;
-
-        if (splitControls) playerB.movementInput = context.ReadValue<Vector2>();
+        if (playerB) playerB.movementInput = context.ReadValue<Vector2>();
     }
-    public void ButtonSouth(InputAction.CallbackContext context)
+    public void Dash(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
-            if (instance.gameState != GameState.GAMEPLAY) return;
-
             if (splitControls) playerB.Dash();
             else playerA.Dash();
         }
     }
-    public void DPadDown(InputAction.CallbackContext context)
+    public void SplitDash(InputAction.CallbackContext context)
     {
-        if (context.started)
+        if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
-            if (instance.gameState != GameState.GAMEPLAY) return;
-
             if (splitControls) playerA.Dash();
         }
     }
     public void SwapControllerScheme(InputAction.CallbackContext context)
     {
-        if (context.canceled)
+        if (context.canceled && instance.gameState == GameState.JOINMENU)
         {
-            if (instance.gameState != GameState.JOINMENU) return;
-
             if (splitControls)
             {
                 instance.RemovePlayer(playerB);
@@ -80,18 +65,55 @@ public class ControllerInputHandler : MonoBehaviour
                 playerB = instance.GetNewPlayer();
                 splitControls = true;
             }
-            Debug.Log(playerInputManager.playerCount);
         }
     }
-    public void ButtonEast(InputAction.CallbackContext context)
+    public void DisconnectController(InputAction.CallbackContext context)
     {
-        if (context.canceled)
+        if (context.canceled && instance.gameState == GameState.JOINMENU)
         {
-            if (instance.gameState != GameState.JOINMENU) return;
-
-            Debug.Log(playerInputManager.playerCount);
-
             Destroy(gameObject);
+        }
+    }
+    public void SplitHit(InputAction.CallbackContext context)
+    {
+        if (context.started && instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls) playerA.Hit();
+        }
+    }
+    public void Hit(InputAction.CallbackContext context)
+    {
+        if (instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls)
+            {
+                playerB.Hit();
+            }
+            else
+            {
+                playerA.Hit();
+            }
+        }
+    }
+    public void Grab(InputAction.CallbackContext context)
+    {
+        if (instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls)
+            {
+                playerB.Grab(context);
+            }
+            else
+            {
+                playerA.Grab(context);
+            }
+        }
+    }
+    public void SplitGrab(InputAction.CallbackContext context)
+    {
+        if (instance.gameState == GameState.GAMEPLAY)
+        {
+            if (splitControls) playerA.Grab(context);
         }
     }
 }

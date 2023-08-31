@@ -13,18 +13,26 @@ MonoBehaviour:
   m_Name: TestVars
   m_EditorClassIdentifier: 
   playerSpeed: 90
-  playerSize: {x: 1.5, y: 0.25}
-  playerStickiness: 0
-  playerBounceTowardsCenterBias: 0
+  playerSize: {x: 0.03, y: 0.03, z: 0.03}
+  playerRotationalForce: 2
+  playerNormalBending: 2
   dashEnabled: 1
-  dashDuration: 0.2
-  dashCooldown: 1
+  dashDuration: 0.25
+  dashCooldown: 0.5
+  hitEnabled: 1
+  hitDuration: 0.1
+  hitCooldown: 0.5
+  hitStrength: 0.5
+  grabEnabled: 1
+  grabDuration: 1
+  grabCooldown: 1
   ballCount: 1
-  ballSpeed: 5
+  ballSpeed: 4
+  ballSpeedDamp: 1.2
   ballSpeedPerHit: 0
   ballSize: 0.5
-  shieldLives: 2
-  shieldBounceTowardsCenterBias: 0
+  shieldBounceTowardsCenterBias: 0.3
+  shieldLives: 5
   obstacleFrequency: 0
   blackHoleEnabled: 0
   powerupFrequency: 0

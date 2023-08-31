@@ -1,70 +1,118 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-    Rigidbody2D rb;
+    new public PongCircleCollider collider;
 
     public Map map;
-    
+
     public float constantVel;
-    public float ballRadius;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float paddleBounceTowardsCenterBias;
 
-    Ball(float constantVel, float ballRadius, float dampStrength, float shieldBounceTowardsCenterBias, float paddleBounceTowardsCenterBias)
-    {
-        this.constantVel = constantVel;
-        this.ballRadius = ballRadius;
-        this.dampStrength = dampStrength;
-        this.shieldBounceTowardsCenterBias = shieldBounceTowardsCenterBias;
-        this.paddleBounceTowardsCenterBias = paddleBounceTowardsCenterBias;
-    }
-
-    float distFromCenter
-    {
-        get
-        { 
-            return Vector2.Distance(rb.position, Vector2.zero);
+    float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
+    public float radius {
+        get {
+            return collider.radius;
+        } set {
+            collider.radius = value;
+            transform.localScale = new Vector3(value, value, value);
         }
     }
 
-    private void OnValidate()
-    {
-        transform.localScale = new Vector3(ballRadius, ballRadius, ballRadius);
-    }
+    public float countdownTimer;
+    float currentCountdownTime;
+    bool reset;
 
-    // Start is called before the first frame update
+    bool held;
+
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        GameManager.instance.gameStateChanged.AddListener(OnGameStateChanged);
+        collider = GetComponent<PongCircleCollider>();
+        collider.OnPaddleCollision += OnPaddleCollision;
+        GameManager.instance.OnGameStateChange += OnGameStateChanged;
+    }
+
+    private void OnPaddleCollision(PongCollider other)
+    {
+        if (other.gameObject.TryGetComponent(out Player player))
+        {
+            if (player.grabbing)
+            {
+                StartCoroutine(player.GrabRoutine());
+                player.heldBall = this;
+                transform.parent = player.transform;
+                held = true;
+            }
+            else if (player.hitting)
+            {
+                EventManager.instance.ballHitEvent.Invoke();
+            }
+            else
+            {
+                EventManager.instance.ballBounceEvent.Invoke();
+            }
+        }
     }
 
     private void OnGameStateChanged()
     {
-        if (GameManager.instance.gameState == GameManager.GameState.MAINMENU)
-        {
-            rb.velocity = rb.transform.forward * constantVel;
-        }
-    }
-    private void Bounce(float centerBias, Vector2 bounceNormal)
-    {
-        Vector2 forward = rb.velocity.normalized;
-        Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
-        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        rb.velocity = finalBounceDir * constantVel;
-        rb.position += bounceNormal * 0.1f;
+        
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void Bounce(float centerBias, Vector2 bounceNormal)
     {
-        Paddle paddle;
-        if (collision.gameObject.TryGetComponent(out paddle))
+        Vector2 forward = collider.velocity.normalized;
+        Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
+        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
+        collider.velocity = finalBounceDir * constantVel;
+        transform.position = (map.transform.position - (Vector3)bounceNormal) * (map.mapRadius - radius);
+    }
+
+    private void FixedUpdate()
+    {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held)
         {
-            Bounce(paddleBounceTowardsCenterBias, paddle.BounceNormal());
+            collider.velocity = Vector2.zero;
+            return;
+        }
+
+        if (currentCountdownTime > 0)
+        {
+            currentCountdownTime -= Time.fixedDeltaTime;
+            return;
+        }
+        else if (reset)
+        {
+            int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
+
+            Vector2 dir = (GameManager.instance.alivePlayers[player].transform.position - transform.position).normalized;
+
+            collider.velocity = dir * constantVel;
+
+            reset = false;
+        }
+
+        DampVelocity();
+
+        CheckIfHitBounds();
+
+        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
+    }
+
+    private void DampVelocity()
+    {
+        if (collider.velocity.sqrMagnitude > constantVel * constantVel)
+        {
+            collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
+        }
+        else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
+        {
+            collider.velocity = collider.velocity.normalized * constantVel;
         }
     }
 
@@ -73,56 +121,55 @@ public class Ball : MonoBehaviour
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
     }
-    public void ResetBall()
+
+    private void CheckIfHitBounds()
     {
-        transform.position = Vector2.zero;
-
-        int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
-
-        Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
-
-        rb.velocity = dir * constantVel;
-    }
-
-    public void AddVelocity(Vector2 velocity)
-    {
-        rb.velocity += velocity;
-    }
-
-    private void FixedUpdate()
-    {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay) {
-            rb.velocity = Vector2.zero;
-            return;
-        }
-
-        if (rb.velocity.magnitude > constantVel)
-        {
-            rb.velocity -= Vector2.one * dampStrength * Time.fixedDeltaTime;
-        }
-        else if (rb.velocity.magnitude < constantVel)
-        {
-            rb.velocity = Vector2.one * constantVel;
-        }
-        if (distFromCenter + ballRadius > map.mapRadius)
+        if (distFromCenter + radius > map.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
-            
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) BounceOnBounds();
+
+            if (!GameManager.instance.OnSheildHit(alivePlayerID))
+            {
+                BounceOnBounds();
+                transform.position = transform.position.normalized * (map.mapRadius - radius);
+            }
         }
     }
+
+    public void ResetBall()
+    {
+        EventManager.instance.ballCountdownEvent.Invoke();
+
+        currentCountdownTime = countdownTimer;
+
+        transform.position = Vector2.zero;
+
+        reset = true;
+    }
+
+    public void Release()
+    {
+        if (!held) return;
+        held = false;
+        transform.parent = null;
+        Vector2 dir = (Vector3.zero - transform.position).normalized;
+        collider.velocity = dir * constantVel;
+    }
+
+    public void AddVelocity(Vector2 velocity)
+    {
+        collider.velocity += velocity;
+    }
+
     public static float Angle(Vector2 vector2)
     {
         float ret;
 
-        if (vector2.x < 0)
-        {
-            ret = 360 - (Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg * -1 );
-        }
-        else
-        {
+        if (vector2.x < 0) {
+            ret = 360 - (Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg * -1);
+        } else {
             ret = Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg;
         }
 

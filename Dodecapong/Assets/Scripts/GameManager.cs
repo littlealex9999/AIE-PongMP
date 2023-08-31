@@ -5,42 +5,93 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
+    #region Variables
     public static GameManager instance;
 
-    List<GameObject> pillars = new List<GameObject>();
-
+    #region Game Objects
+    [Header("Game Objects")]
     public Map map;
     public Ball ball;
-    public ArcTanShaderHelper arcTanShader;
 
-    public GameObject pillarObject;
-
-    public AnimationCurve pillarCurve;
-    public float pillarSmashTime = 2.0f;
+    public GameObject pillarPrefab;
+    public GameObject playerPrefab;
+    List<GameObject> pillars = new List<GameObject>();
 
     public GameVariables defaultGameVariables;
     GameVariables gameVariables;
 
-    [Range(0, 360)] public float mapRotationOffset = 0.0f;
+    public ArcTanShaderHelper arcTanShaderHelper;
+    #endregion
 
-    [ColorUsage(true, true), SerializeField] List<Color> playerEmissives = new List<Color>();
+    #region Map Settings
+    [Header("Map Settings")]
+    public AnimationCurve elimSpeedCurve;
+    public float playerElimTime = 2.0f;
 
+    [Range(0, 360)]
+    public float mapRotationOffset = 0.0f;
     public float playerDistance = 4.0f;
-    float gameEndTimer;
 
+    [ColorUsage(true, true), SerializeField]
+    List<Color> playerEmissives = new List<Color>();
+    #endregion
+
+    #region Transformers
+    [Header("Transformers")]
+    public List<Transformer> transformers = new List<Transformer>();
+    public float transformerSpawnRadius = 2.0f;
+    public float transformerSpawnTime = 10.0f;
+    float transformerSpawnTimer;
+    public List<Transformer> activeTransformers = new List<Transformer>();
+    #endregion
+
+    #region UI
+    [Header("UI")]
     public List<Image> playerImages;
 
     public GameObject shieldTextObj;
     public Transform shieldTextParent;
     public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
 
+
+    public delegate void GameStateChange();
+    public GameStateChange OnGameStateChange;
+
+    public GameState gameState = GameState.MAINMENU;
+
+    public enum GameState
+    {
+        MAINMENU,
+        JOINMENU,
+        SETTINGSMENU,
+        GAMEPLAY,
+        GAMEPAUSED,
+        GAMEOVER,
+    }
+    #endregion
+
+    #region Pause
     bool inGame;
     public bool holdGameplay { get { return smashingPillars; } }
     bool smashingPillars = false;
+    #endregion
 
+    #region Gameplay Settings
+    float gameEndTimer;
+    [HideInInspector] public List<Player> alivePlayers;
+    [HideInInspector] public List<Player> players;
+
+    [HideInInspector] public bool blackHoleActive = false;
+    #endregion
+    #endregion
+
+    #region Functions
+    #region Unity
     void Awake()
     {
         if (!instance) instance = this;
@@ -49,9 +100,7 @@ public class GameManager : MonoBehaviour
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
         else gameVariables = new GameVariables();
 
-        if (gameStateChanged == null) gameStateChanged = new UnityEvent();
-
-        gameStateChanged.AddListener(OnGameStateChanged);
+        OnGameStateChange += OnGameStateChanged;
 
         UpdateGameState(GameState.MAINMENU);
     }
@@ -64,111 +113,97 @@ public class GameManager : MonoBehaviour
                 if (!holdGameplay)
                  {
                     gameEndTimer -= Time.deltaTime;
-                    if (gameEndTimer <= 0)
+                    if (gameVariables.useTimer && gameEndTimer <= 0)
                     {
-                        // end game
+                        // UpdateGameState(GameState.GAMEOVER);
                     }
+
+                    TransformerUpdate(Time.deltaTime);
                 }
                 break;
             default:
                 break;
         }
     }
+    #endregion
 
-    //
-    // GameState
-    //
-    public UnityEvent gameStateChanged;
-    public GameState gameState { get; private set; }
-    public enum GameState
+    #region HELPER
+    public Color GetPlayerColor(int index)
     {
-        MAINMENU,
-        JOINMENU,
-        SETTINGSMENU,
-        GAMEPLAY,
-        GAMEPAUSED,
-        GAMEOVER,
+        if (index < playerEmissives.Count) return playerEmissives[index];
+        else return playerEmissives[playerEmissives.Count - 1];
     }
+    #endregion
+
+    #region GAMESTATE
     public void UpdateGameState(GameState state)
     {
+        if (state == GameState.GAMEPLAY && players.Count < 2) return;
         gameState = state;
-        gameStateChanged.Invoke();
+        OnGameStateChange.Invoke();
     }
 
-    void OnGameStateChanged()
+    private void OnGameStateChanged()
     {
         switch (gameState) {
             case GameState.MAINMENU:
-                EventManager.instance?.mainMenu?.Invoke();
+                EventManager.instance?.mainMenuEvent?.Invoke();
                 break;
             case GameState.JOINMENU:
-                EventManager.instance?.joinMenu?.Invoke();
+                EventManager.instance?.joinMenuEvent?.Invoke();
                 break;
             case GameState.SETTINGSMENU:
-                EventManager.instance?.settingsMenu?.Invoke();
+                EventManager.instance?.settingsMenuEvent?.Invoke();
                 break;
             case GameState.GAMEPLAY:
-                EventManager.instance?.gameplay?.Invoke();
+                EventManager.instance?.gameplayEvent?.Invoke();
                 if (!inGame)
                 {
-                    StartGame(); 
+                    StartGame();
                 }
                 else
                 {
-                    BuildGameBoard();
+                    UpdateShieldText();
                 }
                 break;
             case GameState.GAMEPAUSED:
-                EventManager.instance?.gamePaused?.Invoke();
+                EventManager.instance?.gamePausedEvent?.Invoke();
 
                 break;
             case GameState.GAMEOVER:
-                EventManager.instance?.gameOver?.Invoke();
+                EventManager.instance?.gameOverEvent?.Invoke();
                 break;
             default:
                 break;
         }
     }
+    #endregion
 
-    //
-    // Players
-    //
-    public GameObject playerPrefab;
-
-    public List<Player> alivePlayers;
-    public List<Player> players;
-
+    #region PLAYERS
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
-        GameObject playerObject = Instantiate(playerPrefab);
-        playerObject.transform.parent = transform;
-        Player player = playerObject.GetComponent<Player>();
+        EventManager.instance.playerJoinEvent.Invoke();
+
+        Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.color = GetPlayerColor(players.Count);
         players.Add(player);
+
         UpdatePlayerImages();
         return player;
-    }
-
-    public void ResetPlayers()
-    {
-        alivePlayers.Clear();
-
-        foreach (Player player in players)
-        {
-            player.shieldHealth = gameVariables.shieldLives;
-            alivePlayers.Add(player);
-        }
-        UpdatePlayerImages();
     }
 
     public void RemovePlayer(Player playerToRemove)
     {
         if (playerToRemove == null) return;
+        EventManager.instance.playerLeaveEvent.Invoke();
+
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
+
         UpdatePlayerImages();
     }
+
     public void EliminatePlayer(Player player)
     {
         if (alivePlayers.Count <= 2)
@@ -178,95 +213,164 @@ public class GameManager : MonoBehaviour
             return;
         }
         int index = alivePlayers.IndexOf(player);
-        player.paddle.gameObject.SetActive(false);
         StartCoroutine(EliminatePlayerRoutine(index));
-
-        BuildGameBoard();
     }
 
-    //
-    // Gameplay
-    //
+    public Color[] GenerateLivingColors()
+    {
+        Color[] colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            colors[i] = alivePlayers[i].color;
+        }
 
+        return colors;
+    }
+    #endregion
+
+    #region GAMEPLAY MANAGEMENT
     void StartGame()
     {
-        foreach (Player player in players)
-        {
-            player.dashCooldown = gameVariables.dashCooldown;
-            player.dashDuration = gameVariables.dashDuration;
-        }
         inGame = true;
-        ResetPlayers();
-        UpdatePaddles();
-        map.SetupMap(alivePlayers);
+        SetupPlayers();
+        SetupBalls();
+        SetupPillars();
+        SetupMap();
         ball.ResetBall();
-        BuildGameBoard();
+        UpdateShieldText();
     }
 
-    void UpdatePlayerImages()
+    void SetupPlayers()
     {
-        foreach (Image image in playerImages) image.color = Color.white;
+        alivePlayers.Clear();
+        foreach (Player p in players) alivePlayers.Add(p);
+
         for (int i = 0; i < players.Count; i++)
         {
-            playerImages[i].color = GetPlayerColor(players[i].ID);
+            Player player = players[i];
+
+            player.gameObject.SetActive(true);
+
+            player.shieldHealth = gameVariables.shieldLives;
+
+            player.dashCooldown = gameVariables.dashCooldown;
+            player.dashDuration = gameVariables.dashDuration;
+
+            player.hitCooldown = gameVariables.hitCooldown;
+            player.hitDuration = gameVariables.hitDuration;
+            player.hitStrength = gameVariables.hitStrength;
+
+            player.grabCooldown = gameVariables.grabCooldown;
+            player.grabDuration = gameVariables.grabDuration;
+
+            player.rotationalForce = gameVariables.playerRotationalForce;
+            player.collider.normalBending = gameVariables.playerNormalBending;
+
+            player.transform.localScale = gameVariables.playerSize;
+            player.collider.scale = gameVariables.playerSize;
+            player.collider.RecalculateNormals();
+
+            player.CalculateLimits();
+            player.SetPosition(player.playerSectionMiddle);
         }
     }
 
+    void SetupBalls()
+    {
+        ball.dampStrength = gameVariables.ballSpeedDamp;
+        ball.constantVel = gameVariables.ballSpeed;
+        ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+        ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
+        //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+    }
+
+    void SetupPillars()
+    {
+        while (pillars.Count != players.Count) {
+            if (pillars.Count < players.Count) {
+                pillars.Add(Instantiate(pillarPrefab, map.transform));
+            } else {
+                Destroy(pillars[pillars.Count - 1]);
+                pillars.RemoveAt(pillars.Count - 1);
+            }
+        }
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            pillars[i].transform.SetPositionAndRotation(
+                map.GetTargetPointInCircle(360.0f / players.Count * i),
+                Quaternion.Euler(0, 0, 360.0f / players.Count * i));
+        }
+    }
+
+    public void SetupMap()
+    {
+        map.GenerateMap();
+        map.arcTangentShader.SetFloat("_Shrink", 0);
+        arcTanShaderHelper.colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            arcTanShaderHelper.colors[i] = alivePlayers[i].color;
+        }
+        arcTanShaderHelper.CreateTexture();
+    }
 
     void BuildGameBoard()
     {
         ball.constantVel = gameVariables.ballSpeed;
         ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
         ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
-        ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+        //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
 
         gameEndTimer = gameVariables.timeInSeconds;
-        
-        UpdateShields();
+
+        UpdateShieldText();
     }
+    #endregion
 
-    void UpdatePaddles()
+    #region GAMEPLAY
+    void TransformerUpdate(float delta)
     {
-        float segmentOffset = 180.0f / alivePlayers.Count;
+        transformerSpawnTimer += delta;
 
-        // pillars can now be accessed like alivePlayers
-        // ignore while holdGameplay because that likely means something special is happening like the pillar smash
-        if (!holdGameplay) {
-            while (alivePlayers.Count != pillars.Count) {
-                if (pillars.Count > alivePlayers.Count) {
-                    Destroy(pillars[pillars.Count - 1]);
-                    pillars.RemoveAt(pillars.Count - 1);
-                } else {
-                    pillars.Add(Instantiate(pillarObject, map.transform));
+        if (transformerSpawnTimer > transformerSpawnTime) {
+            SpawnTransformer();
+            transformerSpawnTimer = 0;
+        }
+
+        for (int i = 0; i < activeTransformers.Count; i++) {
+            if (activeTransformers[i].limitedTime) {
+                activeTransformers[i].duration -= delta;
+
+                if (activeTransformers[i].duration <= 0) {
+                    activeTransformers[i].EndModifier();
                 }
             }
         }
-
-        for (int i = 0; i < alivePlayers.Count; i++)
-        {
-            alivePlayers[i].paddle.gameObject.SetActive(true);
-            alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
-            alivePlayers[i].paddle.SetPosition(alivePlayers[i].paddle.playerSectionMiddle);
-
-            float playerMidPos = 360.0f / alivePlayers.Count * (i + 1) + mapRotationOffset - segmentOffset;    
-
-            pillars[i].transform.position = map.GetTargetPointInCircle(360.0f / alivePlayers.Count * i);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, 360.0f / alivePlayers.Count * i);
-        }
     }
 
-    void ResetGame()
+    public Vector2 GetRandomTransformerSpawnPoint()
     {
-        alivePlayers.Clear();
-        foreach (Player player in players)
-        {
-            player.paddle.gameObject.SetActive(false);
-            alivePlayers.Add(player);
-        }
-        BuildGameBoard();
+        return Random.insideUnitCircle * Random.Range(0, transformerSpawnRadius);
     }
 
-    private void UpdateShields()
+    [ContextMenu("Spawn Transformer")]
+    public void SpawnTransformer()
+    {
+        Instantiate(transformers[Random.Range(0, transformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity);
+    }
+
+    void UpdatePlayerImages()
+    {
+        foreach (Image image in playerImages) {
+            image.color = Color.white;
+        }
+
+        for (int i = 0; i < players.Count; i++) {
+            playerImages[i].color = GetPlayerColor(players[i].ID);
+        }
+    }
+
+    private void UpdateShieldText()
     {
         if (shieldText.Count == 0)
         {
@@ -284,20 +388,17 @@ public class GameManager : MonoBehaviour
                     shieldText.Add(proUGUI);
                 }
             }
-        } else {
-            foreach (TextMeshProUGUI proUGUI in shieldText) {
+        }
+        else 
+        {
+            foreach (TextMeshProUGUI proUGUI in shieldText)
+            {
                 Destroy(proUGUI.gameObject);
             }
             shieldText.Clear();
-            UpdateShields();
+            UpdateShieldText();
         }
 
-    }
-
-    public Color GetPlayerColor(int index)
-    {
-        if (index < playerEmissives.Count) return playerEmissives[index];
-        else return playerEmissives[playerEmissives.Count - 1];
     }
 
     /// <summary>
@@ -317,7 +418,10 @@ public class GameManager : MonoBehaviour
         } else
         {
             player.shieldHealth--;
-            UpdateShields();
+
+            if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
+            else EventManager.instance?.shieldHitEvent?.Invoke();
+            UpdateShieldText();
             return false;
         }
     }
@@ -331,89 +435,100 @@ public class GameManager : MonoBehaviour
     {
         if (smashingPillars) throw new Exception("Pillars are already being smashed");
 
+        EventManager.instance?.playerEliminatedEvent?.Invoke();
+        EventManager.instance?.towerMoveEvent?.Invoke();
+
         smashingPillars = true;
 
         index %= pillars.Count;
-        arcTanShader.SetTargetPlayer(index);
+        arcTanShaderHelper.SetTargetPlayer(index);
 
         float pillarSmashTimer = 0.0f;
 
-        float[] startAngles = new float[pillars.Count];
-        float[] targetAngles = new float[pillars.Count];
-        float[] playerStartAngles = new float[alivePlayers.Count - 1];
-        float[] playerTargetAngles = new float[alivePlayers.Count - 1];
+        float[] playerStartAngles = new float[alivePlayers.Count];
+        float[] playerTargetAngles = new float[alivePlayers.Count];
 
-        // calculate start and end angle for each pillar
-        for (int i = 0; i < pillars.Count; i++) {
-            startAngles[i] = 360.0f / pillars.Count * i;
-            targetAngles[i] = 360.0f / (pillars.Count - 1);
+        Vector3 elimPlayerStartScale = alivePlayers[index].transform.localScale;
 
-            if (i > index) {
-                targetAngles[i] *= i - 1;
+        // calculate start and end angle for each player
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            playerStartAngles[i] = Player.Angle(alivePlayers[i].transform.position);
+            int targetPlayerIndex = i;
+            if (i > index) --targetPlayerIndex;
+
+            if (i == index) {
+                // player being eliminated
+                playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             } else {
-                targetAngles[i] *= i;
+                playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
         }
 
-        // calculate start and end angle for each player
-        for (int i = 0; i < alivePlayers.Count - 1; i++) {
-            int targetPlayer;
-            if (i < index) targetPlayer = i;
-            else targetPlayer = i + 1;
-
-            playerStartAngles[i] = Paddle.Angle(alivePlayers[targetPlayer].paddle.transform.position);
-            playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * i;
-        }
-
         // move pillars over time & handle ArcTanShader shrinkage
-        while (pillarSmashTimer < pillarSmashTime) {
+        while (pillarSmashTimer < playerElimTime) {
             pillarSmashTimer += Time.deltaTime;
-            float playerRemovalPercentage = pillarCurve.Evaluate(pillarSmashTimer / pillarSmashTime);
-            arcTanShader.SetShrink(playerRemovalPercentage);
+            float playerRemovalPercentage = elimSpeedCurve.Evaluate(pillarSmashTimer / playerElimTime);
 
-            for (int i = 0; i < pillars.Count; i++) {
-                float targetAngle = Mathf.Lerp(startAngles[i], targetAngles[i], playerRemovalPercentage);
-                
+            float pseudoPlayerCount = alivePlayers.Count - playerRemovalPercentage;
+            for (int i = 0; i < alivePlayers.Count; i++) {
+                float targetAngle = 360.0f / pseudoPlayerCount * i;
+                if (i > index) {
+                    int countAfter = alivePlayers.Count - i;
+                    targetAngle = 360.0f / alivePlayers.Count * i - 360.0f / alivePlayers.Count / pseudoPlayerCount * playerRemovalPercentage * countAfter;
+                }
+
                 pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
 
-            for (int i = 0; i < alivePlayers.Count - 1; i++) {
-                int targetPlayer;
-                if (i < index) {
-                    targetPlayer = i;
-                } else if (i > index) {
-                    targetPlayer = i + 1;
-                } else {
-                    // player being eliminated
+            arcTanShaderHelper.SetTargetPlayer(index);
+            arcTanShaderHelper.SetShrink(playerRemovalPercentage);
 
-                    continue;
+            for (int i = 0; i < alivePlayers.Count; i++) {
+                if (i == index) {
+                    Vector3 targetScale = new Vector3(
+                        alivePlayers[i].transform.localScale.x,
+                        Mathf.Lerp(elimPlayerStartScale.y, 0, playerRemovalPercentage),
+                        Mathf.Lerp(elimPlayerStartScale.z, 0, playerRemovalPercentage)
+                        );
+                    alivePlayers[i].transform.localScale = targetScale;
                 }
 
-                alivePlayers[targetPlayer].paddle.SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
+                alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
             }
 
             yield return new WaitForEndOfFrame();
         }
 
-        // ensure each pillar is exactly where it was calculated to belong
-        for (int i = 0; i < pillars.Count; i++) {
-            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngles[i]);
-            pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngles[i]);
-        }
-
-        alivePlayers.RemoveAt(index);
-        for (int i = 0; i < alivePlayers.Count; i++) {
-            alivePlayers[i].paddle.CalculateLimits(i, alivePlayers.Count, mapRotationOffset);
-        }
-
         Destroy(pillars[index]);
         pillars.RemoveAt(index);
 
-        map.SetupMap(alivePlayers);
+        // ensure each pillar is exactly where it was calculated to belong
+        for (int i = 0; i < pillars.Count; i++) {
+            float targetAngle = 360.0f / (pillars.Count) * i;
+
+            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+            pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+        }
+
+        alivePlayers[index].gameObject.SetActive(false);
+        alivePlayers.RemoveAt(index);
+        for (int i = 0; i < alivePlayers.Count; i++) 
+        {
+            alivePlayers[i].CalculateLimits();
+        }
+
+        UpdateShieldText();
+        
+        arcTanShaderHelper.colors = GenerateLivingColors();
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
         ball.ResetBall();
 
         smashingPillars = false;
         yield break;
     }
+    #endregion
+    #endregion
 }
