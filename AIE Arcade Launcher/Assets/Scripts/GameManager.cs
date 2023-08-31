@@ -18,7 +18,8 @@ public class GameManager : MonoBehaviour
     public int targetGame = 0;
     public int displayedGame = -1;
     public float switchCooldown = 0.1f;
-    float switchTimer;
+    bool moving;
+
     public Color normalColor = Color.white;
     public Color runningColor = Color.green;
 
@@ -46,7 +47,10 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        if (gameData.Count > 0) UpdateAllSelectionText();
+        if (gameData.Count > 0) {
+            PickDisplayGame();
+            UpdateAllSelectionText();
+        }
     }
 
     private void OnApplicationQuit()
@@ -79,23 +83,10 @@ public class GameManager : MonoBehaviour
 
         float verticalInput = Input.GetAxis("Vertical");
 
-        switchTimer -= Time.deltaTime;
-        if (switchTimer <= 0) {
-            if (verticalInput > 0.5f) {
-                ++targetGame;
-                switchTimer = switchCooldown;
-            } else if (verticalInput < -0.5f) {
-                --targetGame;
-                switchTimer = switchCooldown;
-            }
-        }
-
-        if (targetGame != displayedGame) {
-            if (targetGame < 0) targetGame = gameData.Count - 1;
-            else if (targetGame >= gameData.Count) targetGame = 0;
-
-            displayedGame = targetGame;
-            UpdateAllSelectionText();
+        if (verticalInput > 0.5f) {
+            StartCoroutine(MoveBanners(1, switchCooldown));
+        } else if (verticalInput < -0.5f) {
+            StartCoroutine(MoveBanners(-1, switchCooldown));
         }
 
         // start running a game
@@ -112,6 +103,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Opens a choose file dialog and outputs the selected file path to the given input field
+    /// </summary>
+    /// <param name="inputField"></param>
     public void SelectFileDialog(TMP_InputField inputField)
     {
         string[] outs = FileManager.FileDialog();
@@ -149,6 +144,13 @@ public class GameManager : MonoBehaviour
         if (updateText) UpdateAllSelectionText();
     }
 
+    void PickDisplayGame()
+    {
+        if (targetGame < 0) targetGame = gameData.Count - 1;
+        else if (targetGame >= gameData.Count) targetGame = 0;
+        displayedGame = targetGame;
+    }
+
     void UpdateSelectionText(int index)
     {
         TextMeshProUGUI targetText = gamesList.GetListObject(index).GetComponentInChildren<TextMeshProUGUI>();
@@ -164,7 +166,7 @@ public class GameManager : MonoBehaviour
     {
         UpdateSelectionText(0);
 
-        for (int i = 1; i < gamesList.layers; i++) {
+        for (int i = 1; i < gamesList.layers + 1; i++) {
             UpdateSelectionText(i);
             UpdateSelectionText(-i);
         }
@@ -204,5 +206,66 @@ public class GameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    IEnumerator MoveBanners(int direction, float duration)
+    {
+        if (direction == 0 || moving) yield break;
+        if (direction < 0) direction = -1;
+        else direction = 1;
+
+        moving = true;
+
+        Vector3[] startingPositions = new Vector3[gamesList.banners.Count];
+        for (int i = 0; i < startingPositions.Length; i++) {
+            startingPositions[i] = gamesList.banners[i].transform.position;
+        }
+
+        int[] accessors = new int[startingPositions.Length - 2];
+        for (int i = 0; i < accessors.Length; i++) {
+            if (direction > 0) {
+                if (i % 2 == 0) {
+                    accessors[i] = i + 2;
+                } else {
+                    accessors[i] = i - 2;
+                    if (accessors[i] < 0) {
+                        accessors[i] = 0;
+                    }
+                }
+            } else {
+                if (i % 2 == 1) {
+                    accessors[i] = i + 2;
+                } else {
+                    accessors[i] = i - 2;
+                    if (accessors[i] < 0) {
+                        accessors[i] = 1;
+                    }
+                }
+            }
+        }
+
+        float elapsedTime = 0.0f;
+        while (elapsedTime < duration) {
+            elapsedTime += Time.deltaTime;
+            float completionPercent = elapsedTime / duration;
+
+            for (int i = 0; i < accessors.Length; i++) {
+                gamesList.banners[i].transform.position = Vector3.Lerp(startingPositions[i], startingPositions[accessors[i]], completionPercent);
+            }
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        for (int i = 0; i < startingPositions.Length; i++) {
+            gamesList.banners[i].transform.position = startingPositions[i];
+        }
+
+        moving = false;
+        targetGame += direction;
+
+        PickDisplayGame();
+        UpdateAllSelectionText();
+
+        yield break;
     }
 }
