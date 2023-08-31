@@ -26,7 +26,7 @@ MonoBehaviour:
   grabEnabled: 1
   grabDuration: 1
   grabCooldown: 1
-  ballCount: 1
+  ballCount: 3
   ballSpeed: 4
   ballSpeedDamp: 1.2
   ballSpeedPerHit: 0
@@ -34,10 +34,8 @@ MonoBehaviour:
   shieldBounceTowardsCenterBias: 0.3
   shieldLives: 5
   obstacleFrequency: 0
-  blackHoleEnabled: 0
-  powerupFrequency: 0
-  speedPowerupEnabled: 0
-  sizePowerupEnabled: 0
+  transformerFrequency: 0
+  enabledTransformers: -1
   winType: 0
   useTimer: 1
   timeInSeconds: 20

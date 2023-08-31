@@ -16,7 +16,8 @@ public class GameManager : MonoBehaviour
     #region Game Objects
     [Header("Game Objects")]
     public Map map;
-    public Ball ball;
+    public Ball ballPrefab;
+    [HideInInspector] public List<Ball> balls = new List<Ball>();
 
     public GameObject pillarPrefab;
     public GameObject playerPrefab;
@@ -44,11 +45,12 @@ public class GameManager : MonoBehaviour
     #region Transformers
     [Header("Transformers")]
     public List<Transformer> transformers = new List<Transformer>();
+    List<Transformer> allowedTransformers = new List<Transformer>();
     public float transformerSpawnRadius = 2.0f;
     public float transformerSpawnTime = 10.0f;
     float transformerSpawnTimer;
-    public List<Transformer> spawnedTransformers = new List<Transformer>();
-    public List<Transformer> activeTransformers = new List<Transformer>();
+    [HideInInspector] public List<Transformer> spawnedTransformers = new List<Transformer>();
+    [HideInInspector] public List<Transformer> activeTransformers = new List<Transformer>();
     #endregion
 
     #region UI
@@ -78,8 +80,11 @@ public class GameManager : MonoBehaviour
 
     #region Pause
     bool inGame;
-    public bool holdGameplay { get { return smashingPillars; } }
+    public bool holdGameplay { get { return smashingPillars || countdownTimer > 0; } }
     bool smashingPillars = false;
+
+    float countdownTime = 3.0f;
+    float countdownTimer = 0.0f;
     #endregion
 
     #region Gameplay Settings
@@ -106,20 +111,19 @@ public class GameManager : MonoBehaviour
         UpdateGameState(GameState.MAINMENU);
     }
 
-   void Update()
+    void Update()
     {
-        switch (gameState)
-        {
+        switch (gameState) {
             case GameState.GAMEPLAY:
-                if (!holdGameplay)
-                 {
+                if (!holdGameplay) {
                     gameEndTimer -= Time.deltaTime;
-                    if (gameVariables.useTimer && gameEndTimer <= 0)
-                    {
+                    if (gameVariables.useTimer && gameEndTimer <= 0) {
                         // UpdateGameState(GameState.GAMEOVER);
                     }
 
                     TransformerUpdate(Time.deltaTime);
+                } else if (countdownTimer > 0) {
+                    countdownTimer -= Time.deltaTime;
                 }
                 break;
             default:
@@ -158,12 +162,9 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEPLAY:
                 EventManager.instance?.gameplayEvent?.Invoke();
-                if (!inGame)
-                {
+                if (!inGame) {
                     StartGame();
-                }
-                else
-                {
+                } else {
                     UpdateShieldText();
                 }
                 break;
@@ -207,8 +208,7 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        if (alivePlayers.Count <= 2)
-        {
+        if (alivePlayers.Count <= 2) {
             EndGame();
             return;
         }
@@ -235,8 +235,14 @@ public class GameManager : MonoBehaviour
         SetupBalls();
         SetupPillars();
         SetupMap();
-        ball.ResetBall();
+        ResetBalls();
         UpdateShieldText();
+
+        for (int i = 0; i < transformers.Count; i++) {
+            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
+                allowedTransformers.Add(transformers[i]);
+            }
+        }
     }
 
     void EndGame()
@@ -246,7 +252,10 @@ public class GameManager : MonoBehaviour
             players[i].gameObject.SetActive(false);
         }
 
-        ball.gameObject.SetActive(false);
+        for (int i = 0; i < balls.Count; i++) {
+            Destroy(balls[i].gameObject);
+        }
+        balls.Clear();
 
         for (int i = 0; i < spawnedTransformers.Count; i++) {
             Destroy(spawnedTransformers[i].gameObject);
@@ -254,8 +263,10 @@ public class GameManager : MonoBehaviour
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
-        Destroy(blackHole.gameObject);
-        blackHole = null;
+        if (blackHole) {
+            Destroy(blackHole.gameObject);
+            blackHole = null;
+        }
 
         UpdateGameState(GameState.GAMEOVER);
     }
@@ -265,8 +276,7 @@ public class GameManager : MonoBehaviour
         alivePlayers.Clear();
         foreach (Player p in players) alivePlayers.Add(p);
 
-        for (int i = 0; i < players.Count; i++)
-        {
+        for (int i = 0; i < players.Count; i++) {
             Player player = players[i];
 
             player.gameObject.SetActive(true);
@@ -297,13 +307,37 @@ public class GameManager : MonoBehaviour
 
     void SetupBalls()
     {
-        ball.dampStrength = gameVariables.ballSpeedDamp;
-        ball.constantVel = gameVariables.ballSpeed;
-        ball.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
-        ball.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
-        //ball.paddleBounceTowardsCenterBias = gameVariables.playerBounceTowardsCenterBias;
+        EventManager.instance.ballCountdownEvent.Invoke();
 
-        ball.gameObject.SetActive(true);
+        for (int i = 0; i < gameVariables.ballCount; i++) {
+            Ball b = Instantiate(ballPrefab, map.transform);
+
+            b.transform.position = Vector2.zero;
+            b.dampStrength = gameVariables.ballSpeedDamp;
+            b.constantVel = gameVariables.ballSpeed;
+            b.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+            b.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
+            balls.Add(b);
+        }
+    }
+
+    void ResetBalls()
+    {
+        EventManager.instance.ballCountdownEvent.Invoke();
+        countdownTimer = countdownTime;
+
+        for (int i = balls.Count - 1; i > gameVariables.ballCount; i--) {
+            Destroy(balls[i]);
+            balls.RemoveAt(i);
+        }
+
+        int player = Random.Range(0, alivePlayers.Count);
+        Vector2 dir = (alivePlayers[player].transform.position - Vector3.zero).normalized;
+        for (int i = 0; i < balls.Count; i++) {
+            balls[i].collider.immovable = true;
+            balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantVel;
+            balls[i].transform.position = Vector2.zero;
+        }
     }
 
     void SetupPillars()
@@ -317,8 +351,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < players.Count; i++)
-        {
+        for (int i = 0; i < players.Count; i++) {
             pillars[i].transform.SetPositionAndRotation(
                 map.GetTargetPointInCircle(360.0f / players.Count * i),
                 Quaternion.Euler(0, 0, 360.0f / players.Count * i));
@@ -330,8 +363,7 @@ public class GameManager : MonoBehaviour
         map.GenerateMap();
         map.arcTangentShader.SetFloat("_Shrink", 0);
         arcTanShaderHelper.colors = new Color[alivePlayers.Count];
-        for (int i = 0; i < alivePlayers.Count; i++)
-        {
+        for (int i = 0; i < alivePlayers.Count; i++) {
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
         }
         arcTanShaderHelper.CreateTexture();
@@ -367,7 +399,7 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        spawnedTransformers.Add(Instantiate(transformers[Random.Range(0, transformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
+        spawnedTransformers.Add(Instantiate(allowedTransformers[Random.Range(0, allowedTransformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
     }
 
     void UpdatePlayerImages()
@@ -383,27 +415,21 @@ public class GameManager : MonoBehaviour
 
     private void UpdateShieldText()
     {
-        if (shieldText.Count == 0)
-        {
+        if (shieldText.Count == 0) {
             Vector3 nextPos = Vector3.zero;
 
-            for (int i = 0; i < alivePlayers.Count; i++)
-            {
+            for (int i = 0; i < alivePlayers.Count; i++) {
                 TextMeshProUGUI proUGUI;
                 nextPos.y = i * -50;
                 Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
-                if (proUGUI != null)
-                {
+                if (proUGUI != null) {
                     proUGUI.transform.SetParent(shieldTextParent, false);
                     proUGUI.text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
                     shieldText.Add(proUGUI);
                 }
             }
-        }
-        else 
-        {
-            foreach (TextMeshProUGUI proUGUI in shieldText)
-            {
+        } else {
+            foreach (TextMeshProUGUI proUGUI in shieldText) {
                 Destroy(proUGUI.gameObject);
             }
             shieldText.Clear();
@@ -422,12 +448,10 @@ public class GameManager : MonoBehaviour
         if (alivePlayerID >= alivePlayers.Count) return false;
 
         Player player = alivePlayers[alivePlayerID];
-        if (player.shieldHealth <= 0)
-        {
+        if (player.shieldHealth <= 0) {
             EliminatePlayer(player);
             return true;
-        } else
-        {
+        } else {
             player.shieldHealth--;
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
@@ -524,18 +548,17 @@ public class GameManager : MonoBehaviour
 
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
-        for (int i = 0; i < alivePlayers.Count; i++) 
-        {
+        for (int i = 0; i < alivePlayers.Count; i++) {
             alivePlayers[i].CalculateLimits();
         }
 
         UpdateShieldText();
-        
+
         arcTanShaderHelper.colors = GenerateLivingColors();
         arcTanShaderHelper.CreateTexture();
         arcTanShaderHelper.SetShrink(0.0f);
 
-        ball.ResetBall();
+        ResetBalls();
 
         smashingPillars = false;
         yield break;

@@ -27,9 +27,11 @@ public class BlackHole : MonoBehaviour
         }
 
         if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
-            Vector2 deltaPos = transform.position - GameManager.instance.ball.transform.position;
-            Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.ball.collider.mass * collider.mass / deltaPos.sqrMagnitude);
-            GameManager.instance.ball.collider.velocity += gravity * gravityStrength;
+            for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+                Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
+                Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
+                GameManager.instance.balls[i].collider.velocity += gravity * gravityStrength;
+            }
         }
     }
 
@@ -40,7 +42,7 @@ public class BlackHole : MonoBehaviour
 
             other.gameObject.SetActive(false);
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
-            other.velocity = Random.insideUnitCircle * GameManager.instance.ball.constantVel;
+            other.velocity = Random.insideUnitCircle * GameManager.instance.ballPrefab.constantVel;
 
             StartCoroutine(DestroyHole(other.gameObject));
         }

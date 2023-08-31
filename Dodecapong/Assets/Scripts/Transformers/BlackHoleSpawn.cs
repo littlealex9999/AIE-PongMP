@@ -9,6 +9,11 @@ public class BlackHoleSpawn : Transformer
     float destroyTime = 2.0f;
     public BlackHole blackHolePrefab;
 
+    public override TransformerTypes GetTransformerType()
+    {
+        return TransformerTypes.BLACKHOLE;
+    }
+
     public override void ApplyModifier()
     {
         if (!GameManager.instance.blackHole) {

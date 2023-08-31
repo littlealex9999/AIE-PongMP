@@ -6,13 +6,18 @@ public class BallSpeed : Transformer
 {
     public float speedMod = 1.0f;
 
+    public override TransformerTypes GetTransformerType()
+    {
+        return TransformerTypes.BALLSPEED;
+    }
+
     public override void ApplyModifier()
     {
-        GameManager.instance.ball.constantVel += speedMod;
+        GameManager.instance.ballPrefab.constantVel += speedMod;
     }
 
     protected override void RemoveModifier()
     {
-        GameManager.instance.ball.constantVel -= speedMod;
+        GameManager.instance.ballPrefab.constantVel -= speedMod;
     }
 }

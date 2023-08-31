@@ -7,6 +7,18 @@ public abstract class Transformer : MonoBehaviour
     public bool limitedTime = true;
     public float duration = 20.0f;
 
+    [System.Flags]
+    public enum TransformerTypes
+    {
+        BALLSPEED       = 1 << 0,
+        PLAYERSPEED     = 1 << 1,
+        BALLSIZE        = 1 << 2,
+        SHIELDHEALTH    = 1 << 3,
+        BLACKHOLE       = 1 << 4,
+        DASHCOOLDOWN    = 1 << 5,
+    }
+
+    public abstract TransformerTypes GetTransformerType();
     public abstract void ApplyModifier();
     protected abstract void RemoveModifier();
 
