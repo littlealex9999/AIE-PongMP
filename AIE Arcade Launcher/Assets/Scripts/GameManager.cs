@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
     List<AppHelper> runningApps = new List<AppHelper>();
 
     public GamesList gamesList;
+    public GameObject uploadScreen;
 
     [Header("Debug")]
     public int targetGame = 0;
@@ -89,38 +90,49 @@ public class GameManager : MonoBehaviour
     /// </summary>
     void GamesFoundUpdate()
     {
-        for (int i = 0; i < runningApps.Count; ++i) {
-            if (runningApps[i] != null) {
-                if (runningApps[i].hasExited) {
-                    runningApps.RemoveAt(i);
-                    --i;
+        if (!uploadScreen.active) {
+            for (int i = 0; i < runningApps.Count; ++i) {
+                if (runningApps[i] != null) {
+                    if (runningApps[i].hasExited) {
+                        runningApps.RemoveAt(i);
+                        --i;
 
-                    // in case the game being played was currently selected
-                    UpdateAllSelectionText();
+                        // in case the game being played was currently selected
+                        UpdateAllSelectionText();
+                    }
                 }
             }
-        }
 
-        float verticalInput = Input.GetAxis("Vertical");
+            float verticalInput = Input.GetAxis("Vertical");
 
-        if (verticalInput > 0.5f) {
-            StartCoroutine(MoveBanners(1, switchCooldown));
-        } else if (verticalInput < -0.5f) {
-            StartCoroutine(MoveBanners(-1, switchCooldown));
-        }
-
-        // start running a game
-        if (Input.GetButtonDown("Select")) {
-            AppHelper targetApp = GetAppIfRunning(gameData[displayedGame]);
-
-            if (targetApp != null) {
-                targetApp.KillApp();
-            } else {
-                runningApps.Add(new AppHelper(gameData[displayedGame]));
+            if (verticalInput > 0.5f) {
+                StartCoroutine(MoveBanners(1, switchCooldown));
+            } else if (verticalInput < -0.5f) {
+                StartCoroutine(MoveBanners(-1, switchCooldown));
             }
 
-            UpdateAllSelectionText();
+            // start running a game
+            if (Input.GetButtonDown("Select")) {
+                AppHelper targetApp = GetAppIfRunning(gameData[displayedGame]);
+
+                if (targetApp != null) {
+                    targetApp.KillApp();
+                } else {
+                    runningApps.Add(new AppHelper(gameData[displayedGame]));
+                }
+
+                UpdateAllSelectionText();
+            }
         }
+
+        if (Input.GetKeyDown(KeyCode.F12)) {
+            SetGameUploadScreenActive(!uploadScreen.active);
+        }
+    }
+
+    public void SetGameUploadScreenActive(bool active)
+    {
+        uploadScreen.SetActive(active);
     }
 
     /// <summary>
