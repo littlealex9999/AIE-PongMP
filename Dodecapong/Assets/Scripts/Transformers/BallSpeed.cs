@@ -13,11 +13,15 @@ public class BallSpeed : Transformer
 
     public override void ApplyModifier()
     {
-        GameManager.instance.ballPrefab.constantVel += speedMod;
+        for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+            GameManager.instance.balls[i].constantVel += speedMod;
+        }
     }
 
     protected override void RemoveModifier()
     {
-        GameManager.instance.ballPrefab.constantVel -= speedMod;
+        for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+            GameManager.instance.balls[i].constantVel -= speedMod;
+        }
     }
 }

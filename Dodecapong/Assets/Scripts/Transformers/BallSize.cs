@@ -13,11 +13,15 @@ public class BallSize : Transformer
 
     public override void ApplyModifier()
     {
-        GameManager.instance.ballPrefab.radius += sizeMod;
+        for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+            GameManager.instance.balls[i].radius += sizeMod;
+        }
     }
 
     protected override void RemoveModifier()
     {
-        GameManager.instance.ballPrefab.radius -= sizeMod;
+        for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+            GameManager.instance.balls[i].radius -= sizeMod;
+        }
     }
 }
