@@ -292,7 +292,7 @@ public class GameManager : MonoBehaviour
             player.collider.normalBending = gameVariables.playerNormalBending;
 
             player.transform.localScale = gameVariables.playerSize;
-            player.collider.scale = gameVariables.playerSize;
+            player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
             player.collider.RecalculateNormals();
 
             player.CalculateLimits();
