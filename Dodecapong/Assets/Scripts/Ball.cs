@@ -29,7 +29,7 @@ public class Ball : MonoBehaviour
         GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
-    private void OnPaddleCollision(PongCollider other)
+    private void OnPaddleCollision(PongCollider other, CollisionData data)
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
@@ -141,6 +141,4 @@ public class Ball : MonoBehaviour
 
         return 360 - ret;
     }
-
-    // pee
 }

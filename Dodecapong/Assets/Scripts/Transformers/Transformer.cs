@@ -27,7 +27,7 @@ public abstract class Transformer : MonoBehaviour
         GetComponent<PongCollider>().OnTrigger += CheckIfCollidingBall;
     }
 
-    void CheckIfCollidingBall(PongCollider other)
+    void CheckIfCollidingBall(PongCollider other, CollisionData data)
     {
         if (other.GetComponent<Ball>()) {
             ApplyModifier();
