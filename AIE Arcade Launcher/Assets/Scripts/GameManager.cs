@@ -83,6 +83,10 @@ public class GameManager : MonoBehaviour
         } else {
             GamesFoundUpdate();
         }
+
+        if (Input.GetKeyDown(KeyCode.F12)) {
+            SetGameUploadScreenActive(!uploadScreen.active);
+        }
     }
 
     /// <summary>
@@ -123,10 +127,6 @@ public class GameManager : MonoBehaviour
 
                 UpdateAllSelectionText();
             }
-        }
-
-        if (Input.GetKeyDown(KeyCode.F12)) {
-            SetGameUploadScreenActive(!uploadScreen.active);
         }
     }
 
