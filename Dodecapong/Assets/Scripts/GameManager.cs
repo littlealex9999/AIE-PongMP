@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     #region Pause
     bool inGame;
     public bool holdGameplay { get { return smashingPillars || countdownTimer > 0; } }
-    bool smashingPillars = false;
+    [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
     float countdownTimer = 0.0f;
@@ -237,12 +237,7 @@ public class GameManager : MonoBehaviour
         SetupMap();
         ResetBalls();
         UpdateShieldText();
-
-        for (int i = 0; i < transformers.Count; i++) {
-            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
-                allowedTransformers.Add(transformers[i]);
-            }
-        }
+        SetupTransformers();
     }
 
     void EndGame()
@@ -258,7 +253,7 @@ public class GameManager : MonoBehaviour
         balls.Clear();
 
         for (int i = 0; i < spawnedTransformers.Count; i++) {
-            Destroy(spawnedTransformers[i].gameObject);
+            if (spawnedTransformers[i] != null) Destroy(spawnedTransformers[i].gameObject);
         }
         spawnedTransformers.Clear();
         activeTransformers.Clear();
@@ -297,7 +292,7 @@ public class GameManager : MonoBehaviour
             player.collider.normalBending = gameVariables.playerNormalBending;
 
             player.transform.localScale = gameVariables.playerSize;
-            player.collider.scale = gameVariables.playerSize;
+            player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
             player.collider.RecalculateNormals();
 
             player.CalculateLimits();
@@ -367,6 +362,21 @@ public class GameManager : MonoBehaviour
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
         }
         arcTanShaderHelper.CreateTexture();
+    }
+
+    void SetupTransformers()
+    {
+        for (int i = 0; i < transformers.Count; i++) {
+            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
+                allowedTransformers.Add(transformers[i]);
+            }
+        }
+
+        for (int i = 0; i < spawnedTransformers.Count; i++) {
+            if (spawnedTransformers[i] != null) Destroy(spawnedTransformers[i].gameObject);
+        }
+        spawnedTransformers.Clear();
+        activeTransformers.Clear();
     }
     #endregion
 
