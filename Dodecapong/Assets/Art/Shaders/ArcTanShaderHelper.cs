@@ -11,7 +11,7 @@ public class ArcTanShaderHelper : MonoBehaviour
     public Color[] colors = new Color[8];
 
     [ContextMenu("Calculate Tex Array")]
-    public void CalculateTextureArray()
+    public void CreateTexture()
     {
         if (!mat) mat = GetComponent<MeshRenderer>().sharedMaterial;
 
@@ -29,7 +29,7 @@ public class ArcTanShaderHelper : MonoBehaviour
 
     private void OnValidate()
     {
-        CalculateTextureArray();
+        CreateTexture();
     }
 
     public void SetTargetPlayer(int index) { mat.SetFloat("_TargetPlayer", index); }

@@ -14,6 +14,9 @@
         },
         {
             "m_Id": "d773ccdbec184f5995dacfd7cf6088e0"
+        },
+        {
+            "m_Id": "dfa59954946b4e3fac7a87edbecf8f08"
         }
     ],
     "m_Keywords": [],
@@ -143,6 +146,9 @@
         },
         {
             "m_Id": "bde0d4cef1f74714a9c44b44f382f4fc"
+        },
+        {
+            "m_Id": "b5a963ad435e44aa80ab412c99c6af76"
         }
     ],
     "m_GroupDatas": [],
@@ -426,6 +432,20 @@
                     "m_Id": "d0ecccacf9f547cc9de7b7e65d7e85f3"
                 },
                 "m_SlotId": 0
+            }
+        },
+        {
+            "m_OutputSlot": {
+                "m_Node": {
+                    "m_Id": "b5a963ad435e44aa80ab412c99c6af76"
+                },
+                "m_SlotId": 0
+            },
+            "m_InputSlot": {
+                "m_Node": {
+                    "m_Id": "82cd4589cfb442b9b48ea25701d69d2b"
+                },
+                "m_SlotId": 1
             }
         },
         {
@@ -2939,6 +2959,19 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Texture2DMaterialSlot",
+    "m_ObjectId": "80da272aab6f498598290cda9fa2b477",
+    "m_Id": 0,
+    "m_DisplayName": "Render Texture",
+    "m_SlotType": 1,
+    "m_Hidden": false,
+    "m_ShaderOutputName": "Out",
+    "m_StageCapability": 3,
+    "m_BareResource": false
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector3MaterialSlot",
     "m_ObjectId": "814a835be3e54ea0be3d2b096571bdd8",
     "m_Id": 5,
@@ -3650,6 +3683,9 @@
             "m_Id": "f68a02de9f3943bf8ccb6a32e1424106"
         },
         {
+            "m_Id": "dfa59954946b4e3fac7a87edbecf8f08"
+        },
+        {
             "m_Id": "128e1db8b3d24ef797be708e983aab8b"
         },
         {
@@ -3938,6 +3974,41 @@
         "y": 0.0,
         "z": 0.0,
         "w": 0.0
+    }
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.PropertyNode",
+    "m_ObjectId": "b5a963ad435e44aa80ab412c99c6af76",
+    "m_Group": {
+        "m_Id": ""
+    },
+    "m_Name": "Property",
+    "m_DrawState": {
+        "m_Expanded": true,
+        "m_Position": {
+            "serializedVersion": "2",
+            "x": -1603.0,
+            "y": -133.0,
+            "width": 139.0,
+            "height": 34.0
+        }
+    },
+    "m_Slots": [
+        {
+            "m_Id": "80da272aab6f498598290cda9fa2b477"
+        }
+    ],
+    "synonyms": [],
+    "m_Precision": 0,
+    "m_PreviewExpanded": true,
+    "m_PreviewMode": 0,
+    "m_CustomColors": {
+        "m_SerializableColors": []
+    },
+    "m_Property": {
+        "m_Id": "dfa59954946b4e3fac7a87edbecf8f08"
     }
 }
 
@@ -4681,6 +4752,35 @@
     "m_Value": 1.0,
     "m_DefaultValue": 1.0,
     "m_Labels": []
+}
+
+{
+    "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Texture2DShaderProperty",
+    "m_ObjectId": "dfa59954946b4e3fac7a87edbecf8f08",
+    "m_Guid": {
+        "m_GuidSerialized": "c3d50557-9047-43fd-96cf-27314641ff8c"
+    },
+    "m_Name": "Render Texture",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Render Texture",
+    "m_DefaultReferenceName": "_Render_Texture",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": {
+        "m_SerializedTexture": "{\"texture\":{\"fileID\":8400000,\"guid\":\"f61407b4ea774364c817b4a19252f3d0\",\"type\":2}}",
+        "m_Guid": ""
+    },
+    "isMainTexture": false,
+    "useTilingAndOffset": false,
+    "m_Modifiable": true,
+    "m_DefaultType": 0
 }
 
 {

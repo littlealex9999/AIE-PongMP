@@ -16,21 +16,23 @@ MonoBehaviour:
   playerSize: {x: 0.03, y: 0.03, z: 0.03}
   playerRotationalForce: 2
   playerNormalBending: 2
-  playerBounceTowardsCenterBias: 0
   dashEnabled: 1
-  dashDuration: 0.2
-  dashCooldown: 1
+  dashDuration: 0.25
+  dashCooldown: 0.5
   hitEnabled: 1
   hitDuration: 0.1
-  hitCooldown: 1
-  hitStrength: 4
+  hitCooldown: 0.5
+  hitStrength: 0.5
+  grabEnabled: 1
+  grabDuration: 1
+  grabCooldown: 1
   ballCount: 1
-  ballSpeed: 3
+  ballSpeed: 4
   ballSpeedDamp: 1.2
   ballSpeedPerHit: 0
   ballSize: 0.5
-  shieldBounceTowardsCenterBias: 0
-  shieldLives: 99
+  shieldBounceTowardsCenterBias: 0.3
+  shieldLives: 5
   obstacleFrequency: 0
   blackHoleEnabled: 0
   powerupFrequency: 0
