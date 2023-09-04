@@ -237,12 +237,7 @@ public class GameManager : MonoBehaviour
         SetupMap();
         ResetBalls();
         UpdateShieldText();
-
-        for (int i = 0; i < transformers.Count; i++) {
-            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
-                allowedTransformers.Add(transformers[i]);
-            }
-        }
+        SetupTransformers();
     }
 
     void EndGame()
@@ -258,7 +253,7 @@ public class GameManager : MonoBehaviour
         balls.Clear();
 
         for (int i = 0; i < spawnedTransformers.Count; i++) {
-            Destroy(spawnedTransformers[i].gameObject);
+            if (spawnedTransformers[i] != null) Destroy(spawnedTransformers[i].gameObject);
         }
         spawnedTransformers.Clear();
         activeTransformers.Clear();
@@ -367,6 +362,21 @@ public class GameManager : MonoBehaviour
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
         }
         arcTanShaderHelper.CreateTexture();
+    }
+
+    void SetupTransformers()
+    {
+        for (int i = 0; i < transformers.Count; i++) {
+            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
+                allowedTransformers.Add(transformers[i]);
+            }
+        }
+
+        for (int i = 0; i < spawnedTransformers.Count; i++) {
+            if (spawnedTransformers[i] != null) Destroy(spawnedTransformers[i].gameObject);
+        }
+        spawnedTransformers.Clear();
+        activeTransformers.Clear();
     }
     #endregion
 

@@ -11,35 +11,6 @@ public class Map : MonoBehaviour
     public GameObject ringMesh;
 
     public Material arcTangentShader;
-    public float removeSpeed = 1;
-
-    public void RemoveSegment(int index, List<Player> alivePlayers)
-    {
-        StartCoroutine(RemovalCoroutine(index, alivePlayers));
-    }
-
-    IEnumerator RemovalCoroutine(int index, List<Player> alivePlayers)
-    {
-        arcTangentShader.SetFloat("_TargetPlayer", index);
-
-        float value = 0;
-        float timeElapsed = 0;
-        float duration = 1;
-        while (timeElapsed < duration)
-        { 
-            value = Mathf.Lerp(0, 1, timeElapsed / duration);
-            timeElapsed += Time.deltaTime;
-
-            arcTangentShader.SetFloat("_Shrink", value);
-
-            yield return new WaitForEndOfFrame();
-        }
-
-        GameManager.instance.arcTanShaderHelper.CreateTexture();
-
-        yield break;
-    }
-
 
     public void GenerateMap()
     {
