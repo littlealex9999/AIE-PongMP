@@ -6,6 +6,7 @@ public class DataManager
 {
     public readonly string titlesFile = "gameNames.titles";
     public readonly string gameDataFileExtension = ".gamedata";
+    public readonly string textureFileExtension = ".png";
 
     public readonly string workingDirectory;
     public readonly string gameDataPath;
@@ -30,6 +31,21 @@ public class DataManager
     public void WriteGameData(GameData data)
     {
         FileManager.WriteGameData(gameDataPath, data.gameTitle + gameDataFileExtension, data);
+    }
+
+    public void DeleteGameData(GameData data)
+    {
+        FileManager.DeleteFile(gameDataPath + "/" + data.gameTitle + gameDataFileExtension);
+    }
+
+    public Texture2D ReadTexture(string title)
+    {
+        return FileManager.ReadTexture(gameDataPath, title + textureFileExtension);
+    }
+
+    public void WriteTexture(string title, Texture2D tex)
+    {
+        FileManager.WriteTexture(gameDataPath, title + textureFileExtension, tex);
     }
 
     public void WriteTitles(List<GameData> data)
