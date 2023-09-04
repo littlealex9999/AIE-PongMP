@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Input Data")]
     public TMP_InputField gameExecutableInputField;
-    public TMP_InputField gameImageInputField;
+    public InputFieldExtension gameImageInputField;
     public TMP_InputField gameTitleInputField;
     public TMP_InputField gameDescriptionInputField;
 
@@ -149,7 +149,7 @@ public class GameManager : MonoBehaviour
     /// Opens a choose file dialog and outputs the selected file path to the given input field
     /// </summary>
     /// <param name="inputField"></param>
-    public void SelectFileDialogImage(TMP_InputField inputField)
+    public void SelectFileDialogImage(InputFieldExtension inputField)
     {
         SFB.ExtensionFilter[] extensions = new SFB.ExtensionFilter[1];
         extensions[0] = new SFB.ExtensionFilter();
@@ -158,8 +158,8 @@ public class GameManager : MonoBehaviour
             "jpg",
         };
 
-        string[] outs = FileManager.FileDialog(extensions);
-        if (outs.Length > 0) inputField.text = outs[0];
+        string[] outs = FileManager.FileDialog(extensions, true);
+        if (outs.Length > 0) inputField.ApplyNewStrings(outs);
     }
 
     /// <summary>
@@ -173,8 +173,8 @@ public class GameManager : MonoBehaviour
         gameDescriptionInputField.text = "";
 
         // copies the given file and saves it as a png inside the launcher's working directory
-        dataManager.WriteTexture(data.gameTitle, FileManager.ReadTexture(gameImageInputField.text));
-        gameImageInputField.text = "";
+        dataManager.WriteTexture(data.gameTitle, FileManager.ReadTexture(gameImageInputField.GetStrings()[0]));
+        gameImageInputField.ApplyNewStrings(new string[0]);
 
         AddExistingGameData(data, true);
     }

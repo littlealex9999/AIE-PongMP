@@ -87,9 +87,9 @@ public static class FileManager
         return StandaloneFileBrowser.OpenFilePanel("Open File", "", "exe", false);
     }
 
-    public static string[] FileDialog(ExtensionFilter[] extensions)
+    public static string[] FileDialog(ExtensionFilter[] extensions, bool multipleSelection = false)
     {
-        return StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false);
+        return StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, multipleSelection);
     }
 
     public static bool CheckIfFileExists(string path)
