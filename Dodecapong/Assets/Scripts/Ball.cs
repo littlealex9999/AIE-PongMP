@@ -1,39 +1,47 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Ball : MonoBehaviour
 {
-
-    new PongCollider collider;
-
-    public Map map;
+    new public PongCircleCollider collider;
 
     public float constantVel;
-    public float ballRadius;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
-    [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
-    public float paddleBounceTowardsCenterBias;
 
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
+    public float radius {
+        get {
+            return collider.radius;
+        } set {
+            collider.radius = value;
+            transform.localScale = new Vector3(value, value, value);
+        }
+    }
 
-    public float countdownTimer;
-    float currentCountdownTime;
     bool reset;
+    bool held;
 
-    // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
-        collider = GetComponent<PongCollider>();
+        collider = GetComponent<PongCircleCollider>();
         collider.OnPaddleCollision += OnPaddleCollision;
         GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
     private void OnPaddleCollision(PongCollider other)
     {
-        if (other.gameObject.TryGetComponent(out Paddle paddle))
+        if (other.gameObject.TryGetComponent(out Player player))
         {
-            if (paddle.hitting)
+            if (player.grabbing)
+            {
+                StartCoroutine(player.GrabRoutine());
+                player.heldBall = this;
+                transform.parent = player.transform;
+                held = true;
+            }
+            else if (player.hitting)
             {
                 EventManager.instance.ballHitEvent.Invoke();
             }
@@ -55,54 +63,35 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         collider.velocity = finalBounceDir * constantVel;
-        transform.position += (Vector3)(bounceNormal * 0.1f);
+        transform.position = (GameManager.instance.map.transform.position - (Vector3)bounceNormal) * (GameManager.instance.map.mapRadius - radius);
     }
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay)
-        {
-            collider.velocity = Vector2.zero;
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held) {
+            collider.immovable = true;
             return;
+        } else if (collider.immovable) {
+            collider.immovable = false;
         }
 
-        if (currentCountdownTime > 0)
-        {
-            currentCountdownTime -= Time.fixedDeltaTime;
-            return;
-        }
-        else if (reset)
-        {
-            int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
+        DampVelocity();
 
-            Vector2 dir = (GameManager.instance.alivePlayers[player].paddle.transform.position - transform.position).normalized;
+        CheckIfHitBounds();
 
-            collider.velocity = dir * constantVel;
+        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
+    }
 
-            reset = false;
-        }
-
+    private void DampVelocity()
+    {
         if (collider.velocity.sqrMagnitude > constantVel * constantVel)
         {
             collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
-        } 
+        }
         else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
         {
             collider.velocity = collider.velocity.normalized * constantVel;
         }
-
-        if (distFromCenter + ballRadius > map.mapRadius) {
-            float angle = Angle(transform.position.normalized);
-
-            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
-
-            if (!GameManager.instance.OnSheildHit(alivePlayerID)) {
-                BounceOnBounds();
-                transform.position = transform.position.normalized * (map.mapRadius - ballRadius);
-            }
-        }
-
-        transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
     }
 
     private void BounceOnBounds()
@@ -111,15 +100,34 @@ public class Ball : MonoBehaviour
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
     }
 
+    private void CheckIfHitBounds()
+    {
+        if (distFromCenter + radius > GameManager.instance.map.mapRadius)
+        {
+            float angle = Angle(transform.position.normalized);
+
+            int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
+
+            if (!GameManager.instance.OnSheildHit(alivePlayerID))
+            {
+                BounceOnBounds();
+                transform.position = transform.position.normalized * (GameManager.instance.map.mapRadius - radius);
+            }
+        }
+    }
+
     public void ResetBall()
     {
-        EventManager.instance.ballCountdownEvent.Invoke();
-
-        currentCountdownTime = countdownTimer;
-
-        transform.position = Vector2.zero;
-
         reset = true;
+    }
+
+    public void Release()
+    {
+        if (!held) return;
+        held = false;
+        transform.parent = null;
+        Vector2 dir = (Vector3.zero - transform.position).normalized;
+        collider.velocity = dir * constantVel;
     }
 
     public void AddVelocity(Vector2 velocity)

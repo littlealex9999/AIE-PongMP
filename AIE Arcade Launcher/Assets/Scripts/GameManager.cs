@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,20 +11,30 @@ public class GameManager : MonoBehaviour
 
     List<AppHelper> runningApps = new List<AppHelper>();
 
-    public TextMeshProUGUI text;
     public GamesList gamesList;
-    public List<GameObject> gamesListingObjects = new List<GameObject>();
+    public GameObject uploadScreen;
 
+    [Header("Debug")]
     public int targetGame = 0;
     public int displayedGame = -1;
+
+    [Header("Selection Settings")]
     public float switchCooldown = 0.1f;
-    float switchTimer;
+    bool moving;
+
     public Color normalColor = Color.white;
     public Color runningColor = Color.green;
 
+    [Header("Input Data")]
     public TMP_InputField gameExecutableInputField;
+    public TMP_InputField gameImageInputField;
     public TMP_InputField gameTitleInputField;
     public TMP_InputField gameDescriptionInputField;
+
+    [Header("Preview Data")]
+    public RawImage gamePreviewImage;
+    public TextMeshProUGUI gamePreviewTitle;
+    public TextMeshProUGUI gamePreviewDescription;
 
     DataManager dataManager;
     List<GameData> gameData = new List<GameData>();
@@ -43,10 +53,22 @@ public class GameManager : MonoBehaviour
                 gameData.RemoveAt(i);
                 dataManager.gameTitles.RemoveAt(i);
                 --i;
+                continue;
+            }
+
+            if (!FileManager.CheckIfFileExists(gameData[i].exePath)) {
+                dataManager.DeleteGameData(gameData[i]);
+                gameData.RemoveAt(i);
+                dataManager.gameTitles.RemoveAt(i);
+                --i;
+                continue;
             }
         }
 
-        if (gameData.Count > 0) UpdateAllSelectionText();
+        if (gameData.Count > 0) {
+            PickDisplayGame();
+            UpdateAllSelectionText();
+        }
     }
 
     private void OnApplicationQuit()
@@ -63,58 +85,80 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The regular update loop assuming at least one game has been uploaded
+    /// </summary>
     void GamesFoundUpdate()
     {
-        for (int i = 0; i < runningApps.Count; ++i) {
-            if (runningApps[i] != null) {
-                if (runningApps[i].hasExited) {
-                    runningApps.RemoveAt(i);
-                    --i;
+        if (!uploadScreen.active) {
+            for (int i = 0; i < runningApps.Count; ++i) {
+                if (runningApps[i] != null) {
+                    if (runningApps[i].hasExited) {
+                        runningApps.RemoveAt(i);
+                        --i;
 
-                    // in case the game being played was currently selected
-                    UpdateAllSelectionText();
+                        // in case the game being played was currently selected
+                        UpdateAllSelectionText();
+                    }
                 }
             }
-        }
 
-        float verticalInput = Input.GetAxis("Vertical");
+            float verticalInput = Input.GetAxis("Vertical");
 
-        switchTimer -= Time.deltaTime;
-        if (switchTimer <= 0) {
             if (verticalInput > 0.5f) {
-                ++targetGame;
-                switchTimer = switchCooldown;
+                StartCoroutine(MoveBanners(1, switchCooldown));
             } else if (verticalInput < -0.5f) {
-                --targetGame;
-                switchTimer = switchCooldown;
+                StartCoroutine(MoveBanners(-1, switchCooldown));
+            }
+
+            // start running a game
+            if (Input.GetButtonDown("Select")) {
+                AppHelper targetApp = GetAppIfRunning(gameData[displayedGame]);
+
+                if (targetApp != null) {
+                    targetApp.KillApp();
+                } else {
+                    runningApps.Add(new AppHelper(gameData[displayedGame]));
+                }
+
+                UpdateAllSelectionText();
             }
         }
 
-        if (targetGame != displayedGame) {
-            if (targetGame < 0) targetGame = gameData.Count - 1;
-            else if (targetGame >= gameData.Count) targetGame = 0;
-
-            displayedGame = targetGame;
-            UpdateAllSelectionText();
-        }
-
-        // start running a game
-        if (Input.GetButtonDown("Select")) {
-            AppHelper targetApp = GetAppIfRunning(gameData[displayedGame]);
-
-            if (targetApp != null) {
-                targetApp.KillApp();
-            } else {
-                runningApps.Add(new AppHelper(gameData[displayedGame]));
-            }
-
-            UpdateAllSelectionText();
+        if (Input.GetKeyDown(KeyCode.F12)) {
+            SetGameUploadScreenActive(!uploadScreen.active);
         }
     }
 
-    public void SelectFileDialog(TMP_InputField inputField)
+    public void SetGameUploadScreenActive(bool active)
+    {
+        uploadScreen.SetActive(active);
+    }
+
+    /// <summary>
+    /// Opens a choose file dialog and outputs the selected file path to the given input field
+    /// </summary>
+    /// <param name="inputField"></param>
+    public void SelectFileDialogExe(TMP_InputField inputField)
     {
         string[] outs = FileManager.FileDialog();
+        if (outs.Length > 0) inputField.text = outs[0];
+    }
+
+    /// <summary>
+    /// Opens a choose file dialog and outputs the selected file path to the given input field
+    /// </summary>
+    /// <param name="inputField"></param>
+    public void SelectFileDialogImage(TMP_InputField inputField)
+    {
+        SFB.ExtensionFilter[] extensions = new SFB.ExtensionFilter[1];
+        extensions[0] = new SFB.ExtensionFilter();
+        extensions[0].Extensions = new string[] {
+            "png",
+            "jpg",
+        };
+
+        string[] outs = FileManager.FileDialog(extensions);
         if (outs.Length > 0) inputField.text = outs[0];
     }
 
@@ -124,6 +168,14 @@ public class GameManager : MonoBehaviour
     public void CreateNewGameData()
     {
         GameData data = new GameData(gameExecutableInputField.text, gameTitleInputField.text, gameDescriptionInputField.text);
+        gameExecutableInputField.text = "";
+        gameTitleInputField.text = "";
+        gameDescriptionInputField.text = "";
+
+        // copies the given file and saves it as a png inside the launcher's working directory
+        dataManager.WriteTexture(data.gameTitle, FileManager.ReadTexture(gameImageInputField.text));
+        gameImageInputField.text = "";
+
         AddExistingGameData(data, true);
     }
 
@@ -149,6 +201,20 @@ public class GameManager : MonoBehaviour
         if (updateText) UpdateAllSelectionText();
     }
 
+    /// <summary>
+    /// Sets displayedGame to targetGame, but accounts for going above max gameData, or below 0
+    /// </summary>
+    void PickDisplayGame()
+    {
+        if (targetGame < 0) targetGame = gameData.Count - 1;
+        else if (targetGame >= gameData.Count) targetGame = 0;
+        displayedGame = targetGame;
+    }
+
+    /// <summary>
+    /// Updates the banner with the relative index to the middle to have the correct text
+    /// </summary>
+    /// <param name="index"></param>
     void UpdateSelectionText(int index)
     {
         TextMeshProUGUI targetText = gamesList.GetListObject(index).GetComponentInChildren<TextMeshProUGUI>();
@@ -160,16 +226,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Updates all banners and the preview data to be correct
+    /// </summary>
     void UpdateAllSelectionText()
     {
         UpdateSelectionText(0);
 
-        for (int i = 1; i < gamesList.layers; i++) {
+        for (int i = 1; i < gamesList.layers + 1; i++) {
             UpdateSelectionText(i);
             UpdateSelectionText(-i);
         }
+
+        UpdatePreviewData();
     }
 
+    /// <summary>
+    /// Forces all banners to have the set text
+    /// </summary>
+    /// <param name="txt"></param>
     void UpdateAllSelectionTextCustom(string txt)
     {
         for (int i = -gamesList.layers + 1; i < gamesList.layers; i++) {
@@ -177,6 +252,23 @@ public class GameManager : MonoBehaviour
         } 
     }
 
+    /// <summary>
+    /// Updates the game preview to display the correct data
+    /// </summary>
+    void UpdatePreviewData()
+    {
+        GameData game = SafeGetGameData(displayedGame);
+        gamePreviewTitle.text = game.gameTitle;
+        gamePreviewDescription.text = game.gameDescription;
+
+        gamePreviewImage.texture = dataManager.ReadTexture(game.gameTitle);
+    }
+
+    /// <summary>
+    /// Returns gameData[index] accounting for going over gameData.Count or under 0
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
     GameData SafeGetGameData(int index)
     {
         if (index >= gameData.Count) {
@@ -188,6 +280,11 @@ public class GameManager : MonoBehaviour
         return gameData[index];
     }
 
+    /// <summary>
+    /// Returns true if the app tied to the given data is currently running
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     bool CheckAppRunning(GameData data)
     {
         for (int i = 0; i < runningApps.Count; ++i) {
@@ -197,6 +294,11 @@ public class GameManager : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Returns the AppHelper of the given data if it is currently running
+    /// </summary>
+    /// <param name="data"></param>
+    /// <returns></returns>
     AppHelper GetAppIfRunning(GameData data)
     {
         for (int i = 0; i < runningApps.Count; ++i) {
@@ -204,5 +306,72 @@ public class GameManager : MonoBehaviour
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Moves the banners in the given direction over a set duration. Updates all displays and the selected game after the move is complete
+    /// </summary>
+    /// <param name="direction"></param>
+    /// <param name="duration"></param>
+    /// <returns></returns>
+    IEnumerator MoveBanners(int direction, float duration)
+    {
+        if (direction == 0 || moving) yield break;
+        if (direction < 0) direction = -1;
+        else direction = 1;
+
+        moving = true;
+
+        Vector3[] startingPositions = new Vector3[gamesList.banners.Count];
+        for (int i = 0; i < startingPositions.Length; i++) {
+            startingPositions[i] = gamesList.banners[i].transform.position;
+        }
+
+        int[] accessors = new int[startingPositions.Length - 2];
+        for (int i = 0; i < accessors.Length; i++) {
+            if (direction > 0) {
+                if (i % 2 == 0) {
+                    accessors[i] = i + 2;
+                } else {
+                    accessors[i] = i - 2;
+                    if (accessors[i] < 0) {
+                        accessors[i] = 0;
+                    }
+                }
+            } else {
+                if (i % 2 == 1) {
+                    accessors[i] = i + 2;
+                } else {
+                    accessors[i] = i - 2;
+                    if (accessors[i] < 0) {
+                        accessors[i] = 1;
+                    }
+                }
+            }
+        }
+
+        float elapsedTime = 0.0f;
+        while (elapsedTime < duration) {
+            elapsedTime += Time.deltaTime;
+            float completionPercent = elapsedTime / duration;
+
+            for (int i = 0; i < accessors.Length; i++) {
+                gamesList.banners[i].transform.position = Vector3.Lerp(startingPositions[i], startingPositions[accessors[i]], completionPercent);
+            }
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        for (int i = 0; i < startingPositions.Length; i++) {
+            gamesList.banners[i].transform.position = startingPositions[i];
+        }
+
+        moving = false;
+        targetGame -= direction; // moving upwards gets us a "lower" game in the gameData list
+
+        PickDisplayGame();
+        UpdateAllSelectionText();
+
+        yield break;
     }
 }

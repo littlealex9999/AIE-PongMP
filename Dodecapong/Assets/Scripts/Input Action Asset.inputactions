@@ -61,21 +61,21 @@
                 },
                 {
                     "name": "Grab",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "1e015155-4827-43dd-9c59-4b01bb32f1c4",
-                    "expectedControlType": "Analog",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "SplitGrab",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "34264beb-6d97-436f-9d49-d2400866f876",
-                    "expectedControlType": "Analog",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": true
+                    "initialStateCheck": false
                 },
                 {
                     "name": "SwapControllerScheme",
@@ -111,7 +111,7 @@
                 {
                     "name": "",
                     "id": "467e3819-d425-48cd-9bcd-ee579a50ec15",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/rightStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -133,7 +133,7 @@
                 {
                     "name": "",
                     "id": "c87a170b-af00-4bed-b932-c58cc5912da0",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/leftStickPress",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -144,7 +144,7 @@
                 {
                     "name": "",
                     "id": "61b4a197-3825-4e56-9fa4-a5aae40513ac",
-                    "path": "<Gamepad>/leftTrigger",
+                    "path": "<Gamepad>/leftShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -155,7 +155,7 @@
                 {
                     "name": "",
                     "id": "e66cd4e5-e8d6-4519-968d-b7041996a383",
-                    "path": "<Gamepad>/rightTrigger",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
