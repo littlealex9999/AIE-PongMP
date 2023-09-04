@@ -40,8 +40,9 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
+    public GameObject dashTrailObj;
+    private TrailRenderer dashTrail;
     public AnimationCurve dashAnimationCurve;
-
     [HideInInspector] public bool dashing = false;
 
     public AnimationCurve hitAnimationCurve;
@@ -53,6 +54,11 @@ public class Player : MonoBehaviour
     #endregion
 
     #region UnityMessages
+    private void Awake()
+    {
+        dashTrail = dashTrailObj.GetComponentInChildren<TrailRenderer>();
+        if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object."); 
+    }
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -95,7 +101,7 @@ public class Player : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (input == Vector2.zero) return;
+        if (input == Vector2.zero || GameManager.instance.smashingPillars) return;
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -105,8 +111,10 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float maxDev = playerMidPoint + angleDeviance;
-        float minDev = playerMidPoint - angleDeviance;
+        float limit = 6;
+
+        float maxDev = playerMidPoint + angleDeviance - limit;
+        float minDev = playerMidPoint - angleDeviance + limit;
         float angle = Angle(transform.position);
 
         if (angle > maxDev || angle < minDev)
@@ -224,6 +232,11 @@ public class Player : MonoBehaviour
         readyToDash = false;
         dashing = true;
 
+        dashTrail.enabled = false;
+        dashTrailObj.transform.parent = transform;
+        dashTrailObj.transform.localPosition = Vector3.zero;
+        dashTrail.enabled = true;
+
         float value;
         float timeElapsed = 0;
 
@@ -238,6 +251,8 @@ public class Player : MonoBehaviour
         }
 
         dashing = false;
+
+        dashTrailObj.transform.parent = null;
 
         yield return new WaitForSeconds(dashCooldown);
 

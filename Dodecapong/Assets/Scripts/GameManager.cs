@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     #region Pause
     bool inGame;
     public bool holdGameplay { get { return smashingPillars || countdownTimer > 0; } }
-    bool smashingPillars = false;
+    [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
     float countdownTimer = 0.0f;
@@ -292,7 +292,7 @@ public class GameManager : MonoBehaviour
             player.collider.normalBending = gameVariables.playerNormalBending;
 
             player.transform.localScale = gameVariables.playerSize;
-            player.collider.scale = gameVariables.playerSize;
+            player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
             player.collider.RecalculateNormals();
 
             player.CalculateLimits();

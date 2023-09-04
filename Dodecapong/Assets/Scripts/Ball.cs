@@ -22,6 +22,8 @@ public class Ball : MonoBehaviour
 
     bool held;
 
+    public ParticleSystem collisionEffect; 
+
     void Awake()
     {
         collider = GetComponent<PongCircleCollider>();
@@ -29,10 +31,11 @@ public class Ball : MonoBehaviour
         GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
-    private void OnPaddleCollision(PongCollider other)
+    private void OnPaddleCollision(PongCollider other, CollisionData data)
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
+            collisionEffect.Play();
             if (player.grabbing)
             {
                 StartCoroutine(player.GrabRoutine());
@@ -95,6 +98,7 @@ public class Ball : MonoBehaviour
 
     private void BounceOnBounds()
     {
+        collisionEffect.Play();
         Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
         Bounce(shieldBounceTowardsCenterBias, shieldNormal);
     }
@@ -141,6 +145,4 @@ public class Ball : MonoBehaviour
 
         return 360 - ret;
     }
-
-    // pee
 }

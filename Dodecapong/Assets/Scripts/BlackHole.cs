@@ -35,7 +35,7 @@ public class BlackHole : MonoBehaviour
         }
     }
 
-    void CheckCollisionBall(PongCollider other)
+    void CheckCollisionBall(PongCollider other, CollisionData data)
     {
         if (other.GetComponent<Ball>()) {
             pullEnabled = false;
