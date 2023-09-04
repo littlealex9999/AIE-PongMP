@@ -37,16 +37,16 @@ public class CollisionSystem : MonoBehaviour
                         if (data != null && data.isColliding) {
                             if (colliders[i].trigger || colliders[j].trigger) {
                                 if (colliders[i].OnTrigger != null)
-                                    colliders[i].OnTrigger.Invoke(colliders[j]);
+                                    colliders[i].OnTrigger.Invoke(colliders[j], data);
                                 if (colliders[j].OnTrigger != null)
-                                    colliders[j].OnTrigger.Invoke(colliders[i]);
+                                    colliders[j].OnTrigger.Invoke(colliders[i], data);
                             } else {
                                 data.ResolveCollision();
 
                                 if (colliders[i].OnCollision != null)
-                                    colliders[i].OnCollision.Invoke(colliders[j]);
+                                    colliders[i].OnCollision.Invoke(colliders[j], data);
                                 if (colliders[j].OnCollision != null)
-                                    colliders[j].OnCollision.Invoke(colliders[i]);
+                                    colliders[j].OnCollision.Invoke(colliders[i], data);
                             }
                         }
                     }
@@ -59,15 +59,15 @@ public class CollisionSystem : MonoBehaviour
                         if (data != null && data.isColliding) {
                             if (colliders[i].trigger || paddleColliders[j].trigger) {
                                 if (colliders[i].OnPaddleTrigger != null)
-                                    colliders[i].OnPaddleTrigger.Invoke(paddleColliders[j]);
+                                    colliders[i].OnPaddleTrigger.Invoke(paddleColliders[j], data);
                                 if (paddleColliders[j].OnPaddleTrigger != null)
-                                    paddleColliders[j].OnPaddleTrigger.Invoke(colliders[i]);
+                                    paddleColliders[j].OnPaddleTrigger.Invoke(colliders[i], data);
                             } else {
                                 data.ResolveCollision();
                                 if (colliders[i].OnPaddleCollision != null)
-                                    colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
+                                    colliders[i].OnPaddleCollision.Invoke(paddleColliders[j], data);
                                 if (paddleColliders[j].OnPaddleCollision != null)
-                                    paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
+                                    paddleColliders[j].OnPaddleCollision.Invoke(colliders[i], data);
                             }
                         }
                     }

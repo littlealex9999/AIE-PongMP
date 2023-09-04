@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     #region Pause
     bool inGame;
     public bool holdGameplay { get { return smashingPillars || countdownTimer > 0; } }
-    bool smashingPillars = false;
+    [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
     float countdownTimer = 0.0f;
