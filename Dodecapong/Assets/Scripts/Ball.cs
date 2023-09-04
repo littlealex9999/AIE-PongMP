@@ -20,7 +20,6 @@ public class Ball : MonoBehaviour
         }
     }
 
-    bool reset;
     bool held;
 
     void Awake()
@@ -114,11 +113,6 @@ public class Ball : MonoBehaviour
                 transform.position = transform.position.normalized * (GameManager.instance.map.mapRadius - radius);
             }
         }
-    }
-
-    public void ResetBall()
-    {
-        reset = true;
     }
 
     public void Release()
