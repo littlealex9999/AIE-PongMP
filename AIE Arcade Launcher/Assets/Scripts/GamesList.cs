@@ -29,24 +29,28 @@ public class GamesList : MonoBehaviour
 
         for (int i = 1; i < layers; i++) {
             GameObject workingObject = CreateSingleBanner(new Vector2(horizontalShrinkage * i, -verticalSeparation * i));
+            workingObject.transform.SetAsFirstSibling();
             workingObject.name = "Down " + i;
 
             banners.Add(workingObject);
 
 
             workingObject = CreateSingleBanner(new Vector2(horizontalShrinkage * i, verticalSeparation * i));
+            workingObject.transform.SetAsFirstSibling();
             workingObject.name = "Up " + i;
 
             banners.Add(workingObject);
         }
 
         GameObject hiddenBanner = CreateSingleBanner(new Vector2(horizontalShrinkage * (layers - 1), -verticalSeparation * (layers - 1)));
+        hiddenBanner.transform.SetAsFirstSibling();
         hiddenBanner.name = "Down Hidden";
 
         banners.Add(hiddenBanner);
 
 
         hiddenBanner = CreateSingleBanner(new Vector2(horizontalShrinkage * (layers - 1), verticalSeparation * (layers - 1)));
+        hiddenBanner.transform.SetAsFirstSibling();
         hiddenBanner.name = "Up Hidden";
 
         banners.Add(hiddenBanner);
@@ -61,29 +65,6 @@ public class GamesList : MonoBehaviour
         return workingObject;
     }
 
-    public void MoveBannersUp()
-    {
-        if (layers < 2) return;
-
-        List<Vector3> bannerPositions = new List<Vector3>();
-        for (int i = 0; i < banners.Count; i++) {
-            bannerPositions.Add(banners[i].transform.position);
-        }
-
-        MoveTo(banners[0], banners[2].transform.position);
-
-        for (int i = 1; i < layers; i++) {
-            int target = i * 2;
-            MoveTo(banners[target - 1], banners[Mathf.Clamp(target - 2, 0, banners.Count -  1)].transform.position);
-            MoveTo(banners[target], banners[Mathf.Clamp(target + 2, 0, banners.Count - 1)].transform.position);
-        }
-    }
-
-    public void MoveTo(GameObject movingObject, Vector3 position)
-    {
-        movingObject.transform.position = position;
-    }
-
     /// <summary>
     /// Gets the GameObject visually representing the list, with 0 being the middle, -1 being visually down, and 1 being visually up.
     /// </summary>
@@ -91,15 +72,22 @@ public class GamesList : MonoBehaviour
     /// <returns></returns>
     public GameObject GetListObject(int index)
     {
-        if (index == 0) {
-            return banners[0];
-        } else if (index > 0) {
-            return banners[index * 2];
-        } else if (index < 0) {
-            return banners[index * -2 - 1];
-        }
+        return banners[GetListIndex(index)];
+    }
 
-        // shouldn't be possible to reach here
-        return null;
+    /// <summary>
+    /// Returns an index that transforms a relative amount from the middle into an accessor for the banners list. -1 is down from the middle, while 1 is up.
+    /// </summary>
+    /// <param name="index"></param>
+    /// <returns></returns>
+    public int GetListIndex(int index)
+    {
+        if (index > 0) {
+            return index * 2;
+        } else if (index < 0) {
+            return index * -2 - 1;
+        } else {
+            return 0;
+        }
     }
 }

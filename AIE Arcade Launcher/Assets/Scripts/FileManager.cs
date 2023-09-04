@@ -86,6 +86,16 @@ public static class FileManager
     {
         return StandaloneFileBrowser.OpenFilePanel("Open File", "", "exe", false);
     }
+
+    public static string[] FileDialog(ExtensionFilter[] extensions)
+    {
+        return StandaloneFileBrowser.OpenFilePanel("Open File", "", extensions, false);
+    }
+
+    public static bool CheckIfFileExists(string path)
+    {
+        return File.Exists(path);
+    }
     #endregion
 
     #region String Lists
@@ -145,6 +155,37 @@ public static class FileManager
         writer.Write(data.gameDescription);
 
         CloseFile(writer, stream);
+    }
+    #endregion
+
+    #region Texture
+    public static Texture2D ReadTexture(string path)
+    {
+        Texture2D tex = null;
+        byte[] data;
+
+        if (File.Exists(path)) {
+            data = File.ReadAllBytes(path);
+            tex = new Texture2D(1, 1);
+            tex.LoadImage(data);
+        }
+
+        return tex;
+    }
+
+    public static Texture2D ReadTexture(string path, string filename)
+    {
+        return ReadTexture(path + "/" + filename);
+    }
+
+    public static void WriteTexture(string path, string filename, Texture tex)
+    {
+        File.WriteAllBytes(path + "/" + filename, ImageConversion.EncodeToPNG((Texture2D)tex));
+    }
+
+    public static void WriteTexture(string path, string filename, Texture2D tex)
+    {
+        File.WriteAllBytes(path + "/" + filename, ImageConversion.EncodeToPNG(tex));
     }
     #endregion
 }
