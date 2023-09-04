@@ -5,14 +5,10 @@ public class Ball : MonoBehaviour
 {
     new public PongCircleCollider collider;
 
-    public Map map;
-
     public float constantVel;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
-    [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
-    public float paddleBounceTowardsCenterBias;
 
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
     public float radius {
@@ -24,13 +20,10 @@ public class Ball : MonoBehaviour
         }
     }
 
-    public float countdownTimer;
-    float currentCountdownTime;
     bool reset;
-
     bool held;
 
-    void Start()
+    void Awake()
     {
         collider = GetComponent<PongCircleCollider>();
         collider.OnPaddleCollision += OnPaddleCollision;
@@ -70,31 +63,16 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         collider.velocity = finalBounceDir * constantVel;
-        transform.position = (map.transform.position - (Vector3)bounceNormal) * (map.mapRadius - radius);
+        transform.position = (GameManager.instance.map.transform.position - (Vector3)bounceNormal) * (GameManager.instance.map.mapRadius - radius);
     }
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held)
-        {
-            collider.velocity = Vector2.zero;
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held) {
+            collider.immovable = true;
             return;
-        }
-
-        if (currentCountdownTime > 0)
-        {
-            currentCountdownTime -= Time.fixedDeltaTime;
-            return;
-        }
-        else if (reset)
-        {
-            int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
-
-            Vector2 dir = (GameManager.instance.alivePlayers[player].transform.position - transform.position).normalized;
-
-            collider.velocity = dir * constantVel;
-
-            reset = false;
+        } else if (collider.immovable) {
+            collider.immovable = false;
         }
 
         DampVelocity();
@@ -124,7 +102,7 @@ public class Ball : MonoBehaviour
 
     private void CheckIfHitBounds()
     {
-        if (distFromCenter + radius > map.mapRadius)
+        if (distFromCenter + radius > GameManager.instance.map.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
 
@@ -133,19 +111,13 @@ public class Ball : MonoBehaviour
             if (!GameManager.instance.OnSheildHit(alivePlayerID))
             {
                 BounceOnBounds();
-                transform.position = transform.position.normalized * (map.mapRadius - radius);
+                transform.position = transform.position.normalized * (GameManager.instance.map.mapRadius - radius);
             }
         }
     }
 
     public void ResetBall()
     {
-        EventManager.instance.ballCountdownEvent.Invoke();
-
-        currentCountdownTime = countdownTimer;
-
-        transform.position = Vector2.zero;
-
         reset = true;
     }
 

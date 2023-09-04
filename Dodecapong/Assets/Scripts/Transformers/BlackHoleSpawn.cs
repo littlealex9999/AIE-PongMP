@@ -9,11 +9,16 @@ public class BlackHoleSpawn : Transformer
     float destroyTime = 2.0f;
     public BlackHole blackHolePrefab;
 
+    public override TransformerTypes GetTransformerType()
+    {
+        return TransformerTypes.BLACKHOLE;
+    }
+
     public override void ApplyModifier()
     {
-        if (!GameManager.instance.blackHoleActive) {
-            GameManager.instance.blackHoleActive = true;
+        if (!GameManager.instance.blackHole) {
             BlackHole spawn = Instantiate(blackHolePrefab, GameManager.instance.GetRandomTransformerSpawnPoint(), Quaternion.identity);
+            GameManager.instance.blackHole = spawn;
             spawn.duration = duration;
             spawn.gravityStrength = gravityStrength;
             spawn.destroyTime = destroyTime;
