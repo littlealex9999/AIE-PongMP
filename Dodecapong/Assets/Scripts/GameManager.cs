@@ -382,12 +382,18 @@ public class GameManager : MonoBehaviour
 
     void CleanTransformers()
     {
+        for (int i = 0; i < activeTransformers.Count; i++) {
+            if (activeTransformers[i] != null) {
+                activeTransformers[i].EndModifier();
+            }
+        }
+
         for (int i = 0; i < spawnedTransformers.Count; i++) {
             if (spawnedTransformers[i] != null) {
-                spawnedTransformers[i].EndModifier();
                 Destroy(spawnedTransformers[i].gameObject);
             }
         }
+
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
@@ -421,7 +427,18 @@ public class GameManager : MonoBehaviour
 
     public Vector2 GetRandomTransformerSpawnPoint()
     {
-        return Random.insideUnitCircle * Random.Range(0, transformerSpawnRadius);
+        Vector2 ret = Vector2.zero;
+
+        for (int i = 0; i < balls.Count; i++) {
+            Vector2 movementPlaneNorm = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x).normalized;
+            if (Vector2.Dot(movementPlaneNorm, balls[i].transform.position) > 0) movementPlaneNorm *= -1;
+
+            ret += movementPlaneNorm * transformerSpawnRadius;
+        }
+
+        ret /= balls.Count;
+
+        return ret;
     }
 
     [ContextMenu("Spawn Transformer")]
