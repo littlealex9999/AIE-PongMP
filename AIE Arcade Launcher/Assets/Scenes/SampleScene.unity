@@ -306,7 +306,7 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   runningColor: {r: 0, g: 1, b: 0, a: 1}
   gameExecutableInputField: {fileID: 1690729013}
-  gameImageInputField: {fileID: 2092373291}
+  gameImageInputField: {fileID: 0}
   gameTitleInputField: {fileID: 2050972193}
   gameDescriptionInputField: {fileID: 2021918167}
   gamePreviewImage: {fileID: 650491213}
@@ -1345,8 +1345,8 @@ MonoBehaviour:
         m_MethodName: SelectFileDialogImage
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 2092373291}
-          m_ObjectArgumentAssemblyTypeName: TMPro.TMP_InputField, Unity.TextMeshPro
+          m_ObjectArgument: {fileID: 2092373295}
+          m_ObjectArgumentAssemblyTypeName: InputFieldExtension, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -2846,8 +2846,8 @@ MonoBehaviour:
   m_enableKerning: 1
   m_enableExtraPadding: 1
   checkPaddingRequired: 0
-  m_isRichText: 1
-  m_parseCtrlCharacters: 1
+  m_isRichText: 0
+  m_parseCtrlCharacters: 0
   m_isOrthographic: 1
   m_isCullingEnabled: 0
   m_horizontalMapping: 0
@@ -5421,6 +5421,7 @@ GameObject:
   - component: {fileID: 2092373293}
   - component: {fileID: 2092373292}
   - component: {fileID: 2092373291}
+  - component: {fileID: 2092373295}
   m_Layer: 5
   m_Name: pngInputField
   m_TagString: Untagged
@@ -5585,6 +5586,19 @@ RectTransform:
   m_AnchoredPosition: {x: -51.242554, y: 53.000046}
   m_SizeDelta: {x: 659.3, y: 52.29}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2092373295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2092373290}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d68e9e6d42fd3ae49b32dbe8d0220560, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputField: {fileID: 2092373291}
 --- !u!1 &2130439994
 GameObject:
   m_ObjectHideFlags: 0

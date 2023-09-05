@@ -299,7 +299,7 @@ Transform:
   - {fileID: 988690311}
   - {fileID: 928227650}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &338216256 stripped
 Transform:
@@ -6910,7 +6910,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1538804592 stripped
 MonoBehaviour:
@@ -7088,7 +7088,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2059096375
 GameObject:
@@ -7174,7 +7174,7 @@ Transform:
   m_Children:
   - {fileID: 1008321497}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2059096379
 MonoBehaviour:
@@ -7301,63 +7301,6 @@ MonoBehaviour:
       enableFptlForForwardOpaque: 0
       enableBigTilePrepass: 0
       isFptlEnabled: 0
---- !u!1001 &2074097438
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5141576805790278924, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_Name
-      value: Black Hole Transformer
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 1.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8856351250482960223, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
 --- !u!4 &465951450367280647
 Transform:
   m_ObjectHideFlags: 0
@@ -7812,7 +7755,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &6311386383622038524
 MonoBehaviour:
@@ -7871,6 +7814,7 @@ MonoBehaviour:
   - {r: 4.085757, g: 0, b: 5.3403134, a: 1}
   transformers:
   - {fileID: 7235906791884781308, guid: 1beffdf7f3b2de84b9a1639ed4ceba65, type: 3}
+  - {fileID: 8467739201826219457, guid: c5d8abacd79bcc442b444894149c1ad8, type: 3}
   transformerSpawnRadius: 2
   transformerSpawnTime: 10
   spawnedTransformers: []
