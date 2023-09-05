@@ -102,8 +102,12 @@ public class Player : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (input == Vector2.zero) return;
-        else if (GameManager.instance.holdGameplay) return;
+        if (input == Vector2.zero) {
+            collider.velocity = Vector2.zero;
+            return;
+        } else if (GameManager.instance.holdGameplay) {
+            return;
+        }
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -228,6 +232,8 @@ public class Player : MonoBehaviour
     {
         if (!readyToDash || dashing || movementInput == Vector2.zero) yield break;
 
+        Vector2 dashInput = movementInput;
+
         EventManager.instance.dashEvent.Invoke();
 
         readyToDash = false;
@@ -246,7 +252,7 @@ public class Player : MonoBehaviour
             value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
             timeElapsed += Time.fixedDeltaTime;
 
-            Move(movementInput * value, false);
+            Move(dashInput * value, false);
 
             yield return new WaitForFixedUpdate();
         }
