@@ -30,8 +30,8 @@ public abstract class Transformer : MonoBehaviour
     void CheckIfCollidingBall(PongCollider other, CollisionData data)
     {
         if (other.GetComponent<Ball>()) {
-            ApplyModifier();
             GameManager.instance.activeTransformers.Add(this);
+            ApplyModifier();
 
             gameObject.SetActive(false);
         }
@@ -39,8 +39,8 @@ public abstract class Transformer : MonoBehaviour
 
     public void EndModifier()
     {
-        RemoveModifier();
         GameManager.instance.activeTransformers.Remove(this);
+        RemoveModifier();
 
         Destroy(gameObject);
     }
