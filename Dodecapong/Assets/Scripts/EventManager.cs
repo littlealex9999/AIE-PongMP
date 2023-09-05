@@ -26,7 +26,6 @@ public class EventManager : MonoBehaviour
     [SerializeField] AudioClip ballHit;
     [SerializeField] AudioClip ballGrab;
     [SerializeField] AudioClip dash;
-    [SerializeField] AudioClip blackHole;
 
     [HideInInspector] public UnityEvent goalScoredEvent; //
     [HideInInspector] public UnityEvent playerEliminatedEvent; //
@@ -36,9 +35,8 @@ public class EventManager : MonoBehaviour
     [HideInInspector] public UnityEvent ballCountdownEvent; //
     [HideInInspector] public UnityEvent ballBounceEvent; //
     [HideInInspector] public UnityEvent ballHitEvent; //
-    [HideInInspector] public UnityEvent ballGrabEvent;
+    [HideInInspector] public UnityEvent ballGrabEvent; //
     [HideInInspector] public UnityEvent dashEvent; //
-    [HideInInspector] public UnityEvent blackHoleEvent;
 
     [Header("UI Clips")]
     [SerializeField] AudioClip selectUI;
@@ -78,7 +76,6 @@ public class EventManager : MonoBehaviour
         ballHitEvent ??= new UnityEvent();
         ballGrabEvent ??= new UnityEvent();
         dashEvent ??= new UnityEvent();
-        blackHoleEvent ??= new UnityEvent();
 
         selectUIEvent ??= new UnityEvent();
         hoverUIEvent ??= new UnityEvent();
@@ -102,7 +99,6 @@ public class EventManager : MonoBehaviour
         ballHitEvent.AddListener(BallHitCallback);
         ballGrabEvent.AddListener(BallGrabCallback);
         dashEvent.AddListener(DashCallback);
-        blackHoleEvent.AddListener(BlackHoleCallback);
 
         selectUIEvent.AddListener(SelectUICallback);
         hoverUIEvent.AddListener(HoverUICallback);
@@ -132,7 +128,6 @@ public class EventManager : MonoBehaviour
     void BallHitCallback() => SafePlayOneShot(audioSource, ballHit);
     void BallGrabCallback() => SafePlayOneShot(audioSource, ballGrab);
     void DashCallback() => SafePlayOneShot(audioSource, dash);
-    void BlackHoleCallback() => SafePlayOneShot(audioSource, blackHole);
 
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
     void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);

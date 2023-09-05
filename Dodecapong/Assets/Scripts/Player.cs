@@ -298,6 +298,8 @@ public class Player : MonoBehaviour
     {
         if (!readyToGrab) yield break;
 
+        EventManager.instance.ballGrabEvent.Invoke();
+
         readyToGrab = false;
 
         float timeElapsed = 0;
