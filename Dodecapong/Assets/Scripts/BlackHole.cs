@@ -44,6 +44,8 @@ public class BlackHole : MonoBehaviour
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
             other.velocity = Random.insideUnitCircle * GameManager.instance.ballPrefab.constantVel;
 
+            EventManager.instance.ballHitBlackHoleEvent.Invoke();
+
             StartCoroutine(DestroyHole(other.gameObject));
         }
     }
