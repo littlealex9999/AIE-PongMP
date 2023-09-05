@@ -427,7 +427,45 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        spawnedTransformers.Add(Instantiate(allowedTransformers[Random.Range(0, allowedTransformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
+        bool[] attempted = new bool[allowedTransformers.Count];
+
+        bool selecting = true;
+        while (selecting) {
+            int maxRand = 0;
+            for (int i = 0; i < attempted.Length; i++) {
+                if (!attempted[i]) ++maxRand;
+            }
+
+            if (maxRand <= 0) return;
+
+            int randSel = Random.Range(0, maxRand);
+            int hits = 0;
+            for (int i = 0; i < allowedTransformers.Count; i++) {
+                bool allowed = true;
+                if (allowedTransformers[i] is BlackHoleSpawn) {
+                    if (blackHole) {
+                        allowed = false;
+                    }
+
+                    for (int j = 0; j < spawnedTransformers.Count; j++) {
+                        if (spawnedTransformers[j] is BlackHoleSpawn) {
+                            allowed = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (allowed) {
+                    ++hits;
+                }
+
+                if (hits > randSel) {
+                    selecting = false;
+                    spawnedTransformers.Add(Instantiate(allowedTransformers[i], GetRandomTransformerSpawnPoint(), Quaternion.identity));
+                    return;
+                }
+            }
+        }
     }
 
     void UpdatePlayerImages()
