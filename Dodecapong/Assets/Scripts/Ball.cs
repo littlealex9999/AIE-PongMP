@@ -38,6 +38,7 @@ public class Ball : MonoBehaviour
             collisionEffect.Play();
             if (player.grabbing)
             {
+                EventManager.instance.ballGrabEvent.Invoke();
                 StartCoroutine(player.GrabRoutine());
                 player.heldBall = this;
                 transform.parent = player.transform;
