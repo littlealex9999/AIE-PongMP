@@ -463,26 +463,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -145
       objectReference: {fileID: 0}
-    - target: {fileID: 3788634554138036060, guid: 433e354f46839bf4e90463968ab00828, type: 3}
-      propertyPath: m_SortMode
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
-      propertyPath: ShapeModule.arc.mode
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
-      propertyPath: ShapeModule.arc.value
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
-      propertyPath: InitialModule.startSize.scalar
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
-      propertyPath: EmissionModule.rateOverTime.scalar
-      value: 108.47
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 433e354f46839bf4e90463968ab00828, type: 3}
 --- !u!4 &5641679211101581848 stripped

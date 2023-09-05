@@ -113,8 +113,10 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float maxDev = playerMidPoint + angleDeviance;
-        float minDev = playerMidPoint - angleDeviance;
+        float limit = 0;
+
+        float maxDev = playerMidPoint + angleDeviance - limit;
+        float minDev = playerMidPoint - angleDeviance + limit;
         float angle = Angle(transform.position);
 
         if (angle > maxDev || angle < minDev)
@@ -296,6 +298,8 @@ public class Player : MonoBehaviour
     public IEnumerator GrabRoutine()
     {
         if (!readyToGrab) yield break;
+
+        EventManager.instance.ballGrabEvent.Invoke();
 
         readyToGrab = false;
 
