@@ -188,6 +188,7 @@ public class GameManager : MonoBehaviour
         EventManager.instance.playerJoinEvent.Invoke();
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
+        player.gameObject.SetActive(false);
         player.color = GetPlayerColor(players.Count);
         players.Add(player);
 
@@ -414,8 +415,8 @@ public class GameManager : MonoBehaviour
 
     void UpdatePlayerImages()
     {
-        foreach (Image image in playerImages) {
-            image.color = Color.white;
+        for (int i = 0; i < playerImages.Count; i++) {
+            if (playerImages[i] != null) playerImages[i].color = Color.white;
         }
 
         for (int i = 0; i < players.Count; i++) {

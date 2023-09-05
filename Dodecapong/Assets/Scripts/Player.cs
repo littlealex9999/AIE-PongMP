@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     #region Variables
     [HideInInspector] public int ID { get { return GameManager.instance.players.IndexOf(this); } private set { } }
+    [HideInInspector] public int livingID { get { return GameManager.instance.alivePlayers.IndexOf(this); } private set { } }
 
     [HideInInspector] public Vector2 movementInput;
 
@@ -102,6 +103,7 @@ public class Player : MonoBehaviour
     public void Move(Vector2 input, bool clampSpeed = true)
     {
         if (input == Vector2.zero) return;
+        else if (GameManager.instance.holdGameplay) return;
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -171,13 +173,12 @@ public class Player : MonoBehaviour
 
         float segmentOffset = 180.0f / alivePlayerCount;
 
-        playerMidPoint = 360.0f / alivePlayerCount * (ID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
+        playerMidPoint = 360.0f / alivePlayerCount * (livingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
         angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
     }
-
     #endregion
 
     #region HelperFunctions

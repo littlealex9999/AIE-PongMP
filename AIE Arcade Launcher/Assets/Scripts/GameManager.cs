@@ -173,7 +173,8 @@ public class GameManager : MonoBehaviour
         gameDescriptionInputField.text = "";
 
         // copies the given file and saves it as a png inside the launcher's working directory
-        dataManager.WriteTexture(data.gameTitle, FileManager.ReadTexture(gameImageInputField.GetStrings()[0]));
+        string[] images = gameImageInputField.GetStrings();
+        dataManager.WriteTexture(data.gameTitle, FileManager.ReadTexture(images[0]));
         gameImageInputField.ApplyNewStrings(new string[0]);
 
         AddExistingGameData(data, true);
