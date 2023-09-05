@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-
-
 public class EventManager : MonoBehaviour
 {
     #region Instance setup
@@ -26,6 +24,8 @@ public class EventManager : MonoBehaviour
     [SerializeField] AudioClip ballCountdown;
     [SerializeField] AudioClip ballBounce;
     [SerializeField] AudioClip ballHit;
+    [SerializeField] AudioClip ballHitBlackHole;
+    [SerializeField] AudioClip ballGrab;
     [SerializeField] AudioClip dash;
 
     [HideInInspector] public UnityEvent goalScoredEvent; //
@@ -36,6 +36,8 @@ public class EventManager : MonoBehaviour
     [HideInInspector] public UnityEvent ballCountdownEvent; //
     [HideInInspector] public UnityEvent ballBounceEvent; //
     [HideInInspector] public UnityEvent ballHitEvent; //
+    [HideInInspector] public UnityEvent ballHitBlackHoleEvent; 
+    [HideInInspector] public UnityEvent ballGrabEvent; //
     [HideInInspector] public UnityEvent dashEvent; //
 
     [Header("UI Clips")]
@@ -74,6 +76,8 @@ public class EventManager : MonoBehaviour
         ballCountdownEvent ??= new UnityEvent();
         ballBounceEvent ??= new UnityEvent();
         ballHitEvent ??= new UnityEvent();
+        ballHitBlackHoleEvent ??= new UnityEvent();
+        ballGrabEvent ??= new UnityEvent();
         dashEvent ??= new UnityEvent();
 
         selectUIEvent ??= new UnityEvent();
@@ -96,6 +100,8 @@ public class EventManager : MonoBehaviour
         ballCountdownEvent.AddListener(BallCountdownCallback);
         ballBounceEvent.AddListener(BallBounceCallback);
         ballHitEvent.AddListener(BallHitCallback);
+        ballHitBlackHoleEvent.AddListener(BallHitBlackHoleCallback);
+        ballGrabEvent.AddListener(BallGrabCallback);
         dashEvent.AddListener(DashCallback);
 
         selectUIEvent.AddListener(SelectUICallback);
@@ -124,6 +130,8 @@ public class EventManager : MonoBehaviour
     void BallCountdownCallback() => SafePlayOneShot(audioSource, ballCountdown);
     void BallBounceCallback() => SafePlayOneShot(audioSource, ballBounce);
     void BallHitCallback() => SafePlayOneShot(audioSource, ballHit);
+    void BallHitBlackHoleCallback() => SafePlayOneShot(audioSource, ballHitBlackHole);
+    void BallGrabCallback() => SafePlayOneShot(audioSource, ballGrab);
     void DashCallback() => SafePlayOneShot(audioSource, dash);
 
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
