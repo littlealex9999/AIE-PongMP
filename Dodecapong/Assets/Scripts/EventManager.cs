@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-
-
 public class EventManager : MonoBehaviour
 {
     #region Instance setup
@@ -26,7 +24,9 @@ public class EventManager : MonoBehaviour
     [SerializeField] AudioClip ballCountdown;
     [SerializeField] AudioClip ballBounce;
     [SerializeField] AudioClip ballHit;
+    [SerializeField] AudioClip ballGrab;
     [SerializeField] AudioClip dash;
+    [SerializeField] AudioClip blackHole;
 
     [HideInInspector] public UnityEvent goalScoredEvent; //
     [HideInInspector] public UnityEvent playerEliminatedEvent; //
@@ -36,7 +36,9 @@ public class EventManager : MonoBehaviour
     [HideInInspector] public UnityEvent ballCountdownEvent; //
     [HideInInspector] public UnityEvent ballBounceEvent; //
     [HideInInspector] public UnityEvent ballHitEvent; //
+    [HideInInspector] public UnityEvent ballGrabEvent;
     [HideInInspector] public UnityEvent dashEvent; //
+    [HideInInspector] public UnityEvent blackHoleEvent;
 
     [Header("UI Clips")]
     [SerializeField] AudioClip selectUI;
@@ -74,7 +76,9 @@ public class EventManager : MonoBehaviour
         ballCountdownEvent ??= new UnityEvent();
         ballBounceEvent ??= new UnityEvent();
         ballHitEvent ??= new UnityEvent();
+        ballGrabEvent ??= new UnityEvent();
         dashEvent ??= new UnityEvent();
+        blackHoleEvent ??= new UnityEvent();
 
         selectUIEvent ??= new UnityEvent();
         hoverUIEvent ??= new UnityEvent();
@@ -96,7 +100,9 @@ public class EventManager : MonoBehaviour
         ballCountdownEvent.AddListener(BallCountdownCallback);
         ballBounceEvent.AddListener(BallBounceCallback);
         ballHitEvent.AddListener(BallHitCallback);
+        ballGrabEvent.AddListener(BallGrabCallback);
         dashEvent.AddListener(DashCallback);
+        blackHoleEvent.AddListener(BlackHoleCallback);
 
         selectUIEvent.AddListener(SelectUICallback);
         hoverUIEvent.AddListener(HoverUICallback);
@@ -124,7 +130,9 @@ public class EventManager : MonoBehaviour
     void BallCountdownCallback() => SafePlayOneShot(audioSource, ballCountdown);
     void BallBounceCallback() => SafePlayOneShot(audioSource, ballBounce);
     void BallHitCallback() => SafePlayOneShot(audioSource, ballHit);
+    void BallGrabCallback() => SafePlayOneShot(audioSource, ballGrab);
     void DashCallback() => SafePlayOneShot(audioSource, dash);
+    void BlackHoleCallback() => SafePlayOneShot(audioSource, blackHole);
 
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
     void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);

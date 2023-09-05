@@ -17,6 +17,7 @@ public class BlackHole : MonoBehaviour
     {
         collider = GetComponent<PongCircleCollider>();
         collider.OnTrigger += CheckCollisionBall;
+        EventManager.instance.blackHoleEvent.Invoke();
     }
 
     private void FixedUpdate()

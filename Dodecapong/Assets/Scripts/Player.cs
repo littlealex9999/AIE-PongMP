@@ -111,7 +111,7 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float limit = 6;
+        float limit = 0;
 
         float maxDev = playerMidPoint + angleDeviance - limit;
         float minDev = playerMidPoint - angleDeviance + limit;
