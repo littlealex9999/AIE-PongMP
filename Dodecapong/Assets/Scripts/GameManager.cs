@@ -281,7 +281,7 @@ public class GameManager : MonoBehaviour
 
             player.transform.localScale = gameVariables.playerSize;
             player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
-            player.collider.RecalculateNormals();
+            player.collider.RecalculateScale();
 
             player.rotationalForce = gameVariables.playerRotationalForce;
             player.collider.normalBending = gameVariables.playerNormalBending;

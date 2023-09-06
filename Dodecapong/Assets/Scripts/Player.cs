@@ -285,14 +285,14 @@ public class Player : MonoBehaviour
 
             transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
             collider.scale = new Vector2(transform.localScale.y, transform.localScale.x);
-            collider.RecalculateNormals();
+            collider.RecalculateScale();
 
             yield return new WaitForFixedUpdate();
         }
 
         transform.localScale = startingScale;
         collider.scale = colliderStart;
-        collider.RecalculateNormals();
+        collider.RecalculateScale();
 
         hitting = false;
 
