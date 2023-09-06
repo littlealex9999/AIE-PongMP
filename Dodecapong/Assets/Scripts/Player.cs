@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     #region Variables
     [HideInInspector] public int ID { get { return GameManager.instance.players.IndexOf(this); } private set { } }
+    [HideInInspector] public int livingID { get { return GameManager.instance.alivePlayers.IndexOf(this); } private set { } }
 
     [HideInInspector] public Vector2 movementInput;
 
@@ -101,7 +102,12 @@ public class Player : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (input == Vector2.zero || GameManager.instance.smashingPillars) return;
+        if (input == Vector2.zero) {
+            collider.velocity = Vector2.zero;
+            return;
+        } else if (GameManager.instance.holdGameplay) {
+            return;
+        }
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -111,7 +117,7 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float limit = 6;
+        float limit = 0;
 
         float maxDev = playerMidPoint + angleDeviance - limit;
         float minDev = playerMidPoint - angleDeviance + limit;
@@ -173,13 +179,12 @@ public class Player : MonoBehaviour
 
         float segmentOffset = 180.0f / alivePlayerCount;
 
-        playerMidPoint = 360.0f / alivePlayerCount * (ID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
+        playerMidPoint = 360.0f / alivePlayerCount * (livingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
         angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
     }
-
     #endregion
 
     #region HelperFunctions
@@ -227,6 +232,8 @@ public class Player : MonoBehaviour
     {
         if (!readyToDash || dashing || movementInput == Vector2.zero) yield break;
 
+        Vector2 dashInput = movementInput;
+
         EventManager.instance.dashEvent.Invoke();
 
         readyToDash = false;
@@ -245,7 +252,7 @@ public class Player : MonoBehaviour
             value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
             timeElapsed += Time.fixedDeltaTime;
 
-            Move(movementInput * value, false);
+            Move(dashInput * value, false);
 
             yield return new WaitForFixedUpdate();
         }
@@ -297,6 +304,8 @@ public class Player : MonoBehaviour
     public IEnumerator GrabRoutine()
     {
         if (!readyToGrab) yield break;
+
+        EventManager.instance.ballGrabEvent.Invoke();
 
         readyToGrab = false;
 

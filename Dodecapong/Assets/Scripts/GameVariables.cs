@@ -28,6 +28,7 @@ public class GameVariables : ScriptableObject
         ballSpeed = gv.ballSpeed;
         ballSpeedPerHit = gv.ballSpeedPerHit;
         ballSize = gv.ballSize;
+        ballSpeedDamp = gv.ballSpeedDamp;
         shieldBounceTowardsCenterBias = gv.shieldBounceTowardsCenterBias;
 
         shieldLives = gv.shieldLives;
