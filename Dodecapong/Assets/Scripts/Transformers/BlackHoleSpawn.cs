@@ -22,9 +22,11 @@ public class BlackHoleSpawn : Transformer
             spawn.duration = duration;
             spawn.gravityStrength = gravityStrength;
             spawn.destroyTime = destroyTime;
-        } else {
-            Destroy(gameObject);
         }
+
+        GameManager.instance.spawnedTransformers.Remove(this);
+        GameManager.instance.activeTransformers.Remove(this);
+        Destroy(gameObject);
     }
 
     protected override void RemoveModifier()

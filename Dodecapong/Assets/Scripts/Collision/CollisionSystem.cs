@@ -10,6 +10,7 @@ public class CollisionSystem : MonoBehaviour
         CIRCLE,
         RECTANGLE,
         CONVEXHULL,
+        CLIPPEDPLANE,
     }
 
     static List<PongCollider> colliders = new List<PongCollider>();
@@ -87,6 +88,8 @@ public class CollisionSystem : MonoBehaviour
                             return CircleRectangleCollision((PongCircleCollider)colliderA, (PongRectangleCollider)colliderB);
                         case ColliderTypes.CONVEXHULL:
                             return CircleConvexHullCollision((PongCircleCollider)colliderA, (PongConvexHullCollider)colliderB);
+                        //case ColliderTypes.CLIPPEDPLANE:
+                            //return CircleClippedPlaneCollision((PongCircleCollider)colliderA, (PongClippedPlaneCollider)colliderB);
                     }
                     break;
 
@@ -173,6 +176,11 @@ public class CollisionSystem : MonoBehaviour
 
             return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
         }
+
+        //static CollisionData CircleClippedPlaneCollision(PongCircleCollider circleA, PongClippedPlaneCollider planeB)
+        //{
+
+        //}
         #endregion
     }
 }
