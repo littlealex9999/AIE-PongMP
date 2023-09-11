@@ -30,7 +30,7 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void LeftStick(InputAction.CallbackContext context)
     {
-        playerA.movementInput = context.ReadValue<Vector2>();
+        if (playerA) playerA.movementInput = context.ReadValue<Vector2>();
     }
     public void RightStick(InputAction.CallbackContext context)
     {
