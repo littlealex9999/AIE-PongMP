@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class PongConvexHullCollider : PongCollider
 {
@@ -22,7 +23,15 @@ public class PongConvexHullCollider : PongCollider
         new Vector2(1, 0)
     };
 
+    [HideInInspector]
     public Vector2[] normals = new Vector2[4] {
+        new Vector2(-1, 0),
+        new Vector2(0, 1),
+        new Vector2(1, 0),
+        new Vector2(0, -1),
+    };
+
+    public Vector2[] forceNormals = new Vector2[4] {
         new Vector2(-1, 0),
         new Vector2(0, 1),
         new Vector2(1, 0),
@@ -51,6 +60,26 @@ public class PongConvexHullCollider : PongCollider
         for (int i = 0; i < normals.Length; i++) {
             normals[i] = scaledPoints[i] - scaledPoints[(i + 1) % points.Length];
             normals[i] = new Vector2(normals[i].y, -normals[i].x).normalized;
+        }
+
+        if (forceNormals.Length > normals.Length) {
+            Vector2[] temp = new Vector2[normals.Length];
+            for (int i = 0; i < normals.Length; i++) {
+                temp[i] = normals[i];
+            }
+
+            forceNormals = temp;
+        } else if (forceNormals.Length < normals.Length) {
+            Vector2[] temp = new Vector2[normals.Length];
+            for (int i = 0; i < forceNormals.Length; i++) {
+                temp[i] = forceNormals[i];
+            }
+
+            for (int i = forceNormals.Length; i < normals.Length; i++) {
+                temp[i] = normals[i];
+            }
+
+            forceNormals = temp;
         }
     }
 
@@ -92,8 +121,15 @@ public class PongConvexHullCollider : PongCollider
 
     public Vector3 GetRotationOffset()
     {
-        // used to attempt calculating automatically
         return rotationOffset;
+    }
+
+    public void NormalizeNormals()
+    {
+        for (int i = 0; i < normals.Length; i++) {
+            normals[i] = normals[i].normalized;
+            forceNormals[i] = forceNormals[i].normalized;
+        }
     }
 
     protected override void StartEvents()
