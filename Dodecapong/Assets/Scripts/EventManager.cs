@@ -126,14 +126,20 @@ public class EventManager : MonoBehaviour
 
     void MainMenuCallback()
     {
-        menuMusicSource.enabled = true;
-        gameplayMusicSource.enabled = false;
+        if (!menuMusicSource.enabled)
+        {
+            menuMusicSource.enabled = true;
+            gameplayMusicSource.enabled = false;
+        }
     }
 
     void GameplayCallback()
     {
-        menuMusicSource.enabled = false;
-        gameplayMusicSource.enabled = true;
+        if (!gameplayMusicSource.enabled)
+        {
+            menuMusicSource.enabled = false;
+            gameplayMusicSource.enabled = true;
+        }
     }
 
 }

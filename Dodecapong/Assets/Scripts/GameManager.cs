@@ -152,13 +152,13 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
-                EventManager.instance?.mainMenuEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.JOINMENU:
-                EventManager.instance?.joinMenuEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.SETTINGSMENU:
-                EventManager.instance?.settingsMenuEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
                 EventManager.instance?.gameplayEvent?.Invoke();
@@ -169,11 +169,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.GAMEPAUSED:
-                EventManager.instance?.gamePausedEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
 
                 break;
             case GameState.GAMEOVER:
-                EventManager.instance?.gameOverEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             default:
                 break;
