@@ -61,6 +61,9 @@ public class GameManager : MonoBehaviour
     public Transform shieldTextParent;
     public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
 
+    // The expected structure is that the image will have a sibling image relevant to it
+    // so it should be treated as if it always has a parent
+    public List<Image> endGamePlayerImages;
 
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
@@ -89,8 +92,9 @@ public class GameManager : MonoBehaviour
 
     #region Gameplay Settings
     float gameEndTimer;
-    [HideInInspector] public List<Player> alivePlayers;
     [HideInInspector] public List<Player> players;
+    [HideInInspector] public List<Player> alivePlayers;
+    [HideInInspector] public List<Player> elimPlayers;
 
     [HideInInspector] public BlackHole blackHole;
     #endregion
@@ -162,6 +166,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEPLAY:
                 EventManager.instance?.gameplayEvent?.Invoke();
+
                 if (!inGame) {
                     StartGame();
                 } else {
@@ -173,7 +178,24 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEOVER:
-                EventManager.instance?.menuEvent.Invoke();
+                if (inGame) {
+                    // EndGame calls a gamestate change to GAMEOVER so we must ensure it does it infinitely repeat and return
+                    EndGame();
+                    return;
+                }
+
+                EventManager.instance?.menuEvent?.Invoke();
+
+                for (int i = 0; i < elimPlayers.Count; i++) {
+                    if (i >= endGamePlayerImages.Count) break;
+
+                    endGamePlayerImages[i].color = elimPlayers[elimPlayers.Count - (i + 1)].color;
+                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(true);
+                }
+
+                for (int i = endGamePlayerImages.Count - 1; i > elimPlayers.Count - 1; i--) {
+                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(false);
+                }
                 break;
             default:
                 break;
@@ -209,10 +231,10 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        if (alivePlayers.Count <= 2) {
-            EndGame();
-            return;
-        }
+        //if (alivePlayers.Count <= 2) {
+        //    EndGame();
+        //    return;
+        //}
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -264,11 +286,16 @@ public class GameManager : MonoBehaviour
             blackHole = null;
         }
 
+
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            elimPlayers.Add(alivePlayers[i]);
+        }
         UpdateGameState(GameState.GAMEOVER);
     }
 
     void SetupPlayers()
     {
+        elimPlayers.Clear();
         alivePlayers.Clear();
         foreach (Player p in players) alivePlayers.Add(p);
 
@@ -498,7 +525,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateShieldText()
     {
-        if (shieldText.Count == 0) {
+        if (shieldText.Count < alivePlayers.Count) {
             Vector3 nextPos = Vector3.zero;
 
             for (int i = 0; i < alivePlayers.Count; i++) {
@@ -507,18 +534,19 @@ public class GameManager : MonoBehaviour
                 Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
                 if (proUGUI != null) {
                     proUGUI.transform.SetParent(shieldTextParent, false);
-                    proUGUI.text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
                     shieldText.Add(proUGUI);
                 }
             }
-        } else {
-            foreach (TextMeshProUGUI proUGUI in shieldText) {
-                Destroy(proUGUI.gameObject);
-            }
-            shieldText.Clear();
-            UpdateShieldText();
         }
 
+        for (int i = 0; i < shieldText.Count; i++) {
+            if (i >= alivePlayers.Count) {
+                shieldText[i].gameObject.SetActive(false);
+            } else {
+                shieldText[i].gameObject.SetActive(true);
+                shieldText[i].text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
+            }
+        }
     }
 
     /// <summary>
@@ -629,6 +657,7 @@ public class GameManager : MonoBehaviour
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
         }
 
+        elimPlayers.Add(alivePlayers[index]);
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
         for (int i = 0; i < alivePlayers.Count; i++) {
@@ -645,6 +674,10 @@ public class GameManager : MonoBehaviour
         ResetBalls();
 
         smashingPillars = false;
+
+        if (alivePlayers.Count <= 1) {
+            EndGame();
+        }
         yield break;
     }
     #endregion

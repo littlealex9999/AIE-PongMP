@@ -1,3 +1,4 @@
+using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ public class Ball : MonoBehaviour
         get {
             return collider.radius;
         } set {
-            collider.radius = value;
+            collider.radius = value / 2;
             transform.localScale = new Vector3(value, value, value);
         }
     }
@@ -82,6 +83,11 @@ public class Ball : MonoBehaviour
         CheckIfHitBounds();
 
         transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
+
+        Debug.LogError("Begin next ball log");
+        Debug.Log(constantVel);
+        Debug.Log(collider.velocity.x + ", " + collider.velocity.y);
+        Debug.Log(collider.velocity.magnitude);
     }
 
     private void DampVelocity()

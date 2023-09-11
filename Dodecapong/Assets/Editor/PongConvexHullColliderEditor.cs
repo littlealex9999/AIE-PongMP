@@ -60,6 +60,12 @@ public class PongConvexHullColliderEditor : PongColliderEditor
             Vector3 midPoint = (points[i] + points[(i + 1) % points.Length]) / 2;
             Handles.DrawLine(midPoint, midPoint + collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.normals[i]);
         }
+
+        Handles.color = Color.blue;
+        for (int i = 0; i < points.Length; i++) {
+            Vector3 midPoint = (points[i] + points[(i + 1) % points.Length]) / 2;
+            Handles.DrawLine(midPoint, midPoint + collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.forceNormals[i]);
+        }
     }
 
     public override void OnInspectorGUI()
@@ -70,6 +76,10 @@ public class PongConvexHullColliderEditor : PongColliderEditor
 
         if (GUILayout.Button("Recalculate Normals")) {
             collider.RecalculateNormals();
+        }
+
+        if (GUILayout.Button("Normalize Normals")) {
+            collider.NormalizeNormals();
         }
 
         //if (collider.doResolutionOnFace.Length != collider.points.Length) {
