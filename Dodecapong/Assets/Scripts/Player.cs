@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
 {
     #region Variables
     [HideInInspector] public int ID { get { return GameManager.instance.players.IndexOf(this); } private set { } }
+    [HideInInspector] public int LivingID { get { return GameManager.instance.alivePlayers.IndexOf(this); } private set { } }
 
     [HideInInspector] public Vector2 movementInput;
 
@@ -40,8 +41,9 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
+    public GameObject dashTrailObj;
+    private TrailRenderer dashTrail;
     public AnimationCurve dashAnimationCurve;
-
     [HideInInspector] public bool dashing = false;
 
     public AnimationCurve hitAnimationCurve;
@@ -53,6 +55,11 @@ public class Player : MonoBehaviour
     #endregion
 
     #region UnityMessages
+    private void Awake()
+    {
+        dashTrail = dashTrailObj.GetComponentInChildren<TrailRenderer>();
+        if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object."); 
+    }
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -95,7 +102,12 @@ public class Player : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(Vector2 input, bool clampSpeed = true)
     {
-        if (input == Vector2.zero) return;
+        if (input == Vector2.zero) {
+            collider.velocity = Vector2.zero;
+            return;
+        } else if (GameManager.instance.holdGameplay) {
+            return;
+        }
 
         float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
@@ -105,8 +117,10 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float maxDev = playerMidPoint + angleDeviance;
-        float minDev = playerMidPoint - angleDeviance;
+        float limit = 0;
+
+        float maxDev = playerMidPoint + angleDeviance - limit;
+        float minDev = playerMidPoint - angleDeviance + limit;
         float angle = Angle(transform.position);
 
         if (angle > maxDev || angle < minDev)
@@ -165,13 +179,12 @@ public class Player : MonoBehaviour
 
         float segmentOffset = 180.0f / alivePlayerCount;
 
-        playerMidPoint = 360.0f / alivePlayerCount * (ID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
+        playerMidPoint = 360.0f / alivePlayerCount * (LivingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
         angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
     }
-
     #endregion
 
     #region HelperFunctions
@@ -219,10 +232,17 @@ public class Player : MonoBehaviour
     {
         if (!readyToDash || dashing || movementInput == Vector2.zero) yield break;
 
+        Vector2 dashInput = movementInput;
+
         EventManager.instance.dashEvent.Invoke();
 
         readyToDash = false;
         dashing = true;
+
+        dashTrail.enabled = false;
+        dashTrailObj.transform.parent = transform;
+        dashTrailObj.transform.localPosition = Vector3.zero;
+        dashTrail.enabled = true;
 
         float value;
         float timeElapsed = 0;
@@ -232,12 +252,14 @@ public class Player : MonoBehaviour
             value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
             timeElapsed += Time.fixedDeltaTime;
 
-            Move(movementInput * value, false);
+            Move(dashInput * value, false);
 
             yield return new WaitForFixedUpdate();
         }
 
         dashing = false;
+
+        dashTrailObj.transform.parent = null;
 
         yield return new WaitForSeconds(dashCooldown);
 
@@ -263,14 +285,14 @@ public class Player : MonoBehaviour
 
             transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
             collider.scale = new Vector2(transform.localScale.y, transform.localScale.x);
-            collider.RecalculateNormals();
+            collider.RecalculateScale();
 
             yield return new WaitForFixedUpdate();
         }
 
         transform.localScale = startingScale;
         collider.scale = colliderStart;
-        collider.RecalculateNormals();
+        collider.RecalculateScale();
 
         hitting = false;
 
@@ -282,6 +304,8 @@ public class Player : MonoBehaviour
     public IEnumerator GrabRoutine()
     {
         if (!readyToGrab) yield break;
+
+        EventManager.instance.ballGrabEvent.Invoke();
 
         readyToGrab = false;
 

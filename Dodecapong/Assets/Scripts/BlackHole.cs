@@ -35,7 +35,7 @@ public class BlackHole : MonoBehaviour
         }
     }
 
-    void CheckCollisionBall(PongCollider other)
+    void CheckCollisionBall(PongCollider other, CollisionData data)
     {
         if (other.GetComponent<Ball>()) {
             pullEnabled = false;
@@ -43,6 +43,8 @@ public class BlackHole : MonoBehaviour
             other.gameObject.SetActive(false);
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
             other.velocity = Random.insideUnitCircle * GameManager.instance.ballPrefab.constantVel;
+
+            EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
             StartCoroutine(DestroyHole(other.gameObject));
         }

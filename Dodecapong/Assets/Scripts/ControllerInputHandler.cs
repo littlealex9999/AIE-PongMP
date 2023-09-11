@@ -30,7 +30,7 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void LeftStick(InputAction.CallbackContext context)
     {
-        playerA.movementInput = context.ReadValue<Vector2>();
+        if (playerA) playerA.movementInput = context.ReadValue<Vector2>();
     }
     public void RightStick(InputAction.CallbackContext context)
     {
@@ -40,15 +40,15 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
-            if (splitControls) playerB.Dash();
-            else playerA.Dash();
+            if (splitControls) playerA.Dash();
+            else playerB.Dash();
         }
     }
     public void SplitDash(InputAction.CallbackContext context)
     {
         if (context.started && instance.gameState == GameState.GAMEPLAY)
         {
-            if (splitControls) playerA.Dash();
+            if (splitControls) playerB.Dash();
         }
     }
     public void SwapControllerScheme(InputAction.CallbackContext context)

@@ -81,7 +81,7 @@ public class GameManager : MonoBehaviour
     #region Pause
     bool inGame;
     public bool holdGameplay { get { return smashingPillars || countdownTimer > 0; } }
-    bool smashingPillars = false;
+    [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
     float countdownTimer = 0.0f;
@@ -152,13 +152,13 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
-                EventManager.instance?.mainMenuEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.JOINMENU:
-                EventManager.instance?.joinMenuEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.SETTINGSMENU:
-                EventManager.instance?.settingsMenuEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
                 EventManager.instance?.gameplayEvent?.Invoke();
@@ -169,11 +169,11 @@ public class GameManager : MonoBehaviour
                 }
                 break;
             case GameState.GAMEPAUSED:
-                EventManager.instance?.gamePausedEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
 
                 break;
             case GameState.GAMEOVER:
-                EventManager.instance?.gameOverEvent?.Invoke();
+                EventManager.instance?.menuEvent.Invoke();
                 break;
             default:
                 break;
@@ -188,6 +188,7 @@ public class GameManager : MonoBehaviour
         EventManager.instance.playerJoinEvent.Invoke();
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
+        player.gameObject.SetActive(false);
         player.color = GetPlayerColor(players.Count);
         players.Add(player);
 
@@ -237,12 +238,7 @@ public class GameManager : MonoBehaviour
         SetupMap();
         ResetBalls();
         UpdateShieldText();
-
-        for (int i = 0; i < transformers.Count; i++) {
-            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
-                allowedTransformers.Add(transformers[i]);
-            }
-        }
+        SetupTransformers();
     }
 
     void EndGame()
@@ -258,7 +254,7 @@ public class GameManager : MonoBehaviour
         balls.Clear();
 
         for (int i = 0; i < spawnedTransformers.Count; i++) {
-            Destroy(spawnedTransformers[i].gameObject);
+            if (spawnedTransformers[i] != null) Destroy(spawnedTransformers[i].gameObject);
         }
         spawnedTransformers.Clear();
         activeTransformers.Clear();
@@ -281,7 +277,14 @@ public class GameManager : MonoBehaviour
 
             player.gameObject.SetActive(true);
 
-            player.shieldHealth = gameVariables.shieldLives;
+            player.moveSpeed = gameVariables.playerSpeed;
+
+            player.transform.localScale = gameVariables.playerSize;
+            player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
+            player.collider.RecalculateScale();
+
+            player.rotationalForce = gameVariables.playerRotationalForce;
+            player.collider.normalBending = gameVariables.playerNormalBending;
 
             player.dashCooldown = gameVariables.dashCooldown;
             player.dashDuration = gameVariables.dashDuration;
@@ -293,12 +296,7 @@ public class GameManager : MonoBehaviour
             player.grabCooldown = gameVariables.grabCooldown;
             player.grabDuration = gameVariables.grabDuration;
 
-            player.rotationalForce = gameVariables.playerRotationalForce;
-            player.collider.normalBending = gameVariables.playerNormalBending;
-
-            player.transform.localScale = gameVariables.playerSize;
-            player.collider.scale = gameVariables.playerSize;
-            player.collider.RecalculateNormals();
+            player.shieldHealth = gameVariables.shieldLives;
 
             player.CalculateLimits();
             player.SetPosition(player.playerSectionMiddle);
@@ -313,9 +311,10 @@ public class GameManager : MonoBehaviour
             Ball b = Instantiate(ballPrefab, map.transform);
 
             b.transform.position = Vector2.zero;
-            b.dampStrength = gameVariables.ballSpeedDamp;
             b.constantVel = gameVariables.ballSpeed;
             b.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
+            b.collider.radius = gameVariables.ballSize / 2;
+            b.dampStrength = gameVariables.ballSpeedDamp;
             b.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
             balls.Add(b);
         }
@@ -334,6 +333,7 @@ public class GameManager : MonoBehaviour
         int player = Random.Range(0, alivePlayers.Count);
         Vector2 dir = (alivePlayers[player].transform.position - Vector3.zero).normalized;
         for (int i = 0; i < balls.Count; i++) {
+            balls[i].gameObject.SetActive(true);
             balls[i].collider.immovable = true;
             balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantVel;
             balls[i].transform.position = Vector2.zero;
@@ -368,6 +368,40 @@ public class GameManager : MonoBehaviour
         }
         arcTanShaderHelper.CreateTexture();
     }
+
+    void SetupTransformers()
+    {
+        for (int i = 0; i < transformers.Count; i++) {
+            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
+                allowedTransformers.Add(transformers[i]);
+            }
+        }
+
+        CleanTransformers();
+    }
+
+    void CleanTransformers()
+    {
+        for (int i = 0; i < activeTransformers.Count; i++) {
+            if (activeTransformers[i] != null) {
+                activeTransformers[i].EndModifier();
+            }
+        }
+
+        for (int i = 0; i < spawnedTransformers.Count; i++) {
+            if (spawnedTransformers[i] != null) {
+                Destroy(spawnedTransformers[i].gameObject);
+            }
+        }
+
+        spawnedTransformers.Clear();
+        activeTransformers.Clear();
+
+        if (blackHole) {
+            Destroy(blackHole.gameObject);
+            blackHole = null;
+        }
+    }
     #endregion
 
     #region GAMEPLAY
@@ -393,19 +427,68 @@ public class GameManager : MonoBehaviour
 
     public Vector2 GetRandomTransformerSpawnPoint()
     {
-        return Random.insideUnitCircle * Random.Range(0, transformerSpawnRadius);
+        Vector2 ret = Vector2.zero;
+
+        for (int i = 0; i < balls.Count; i++) {
+            Vector2 movementPlaneNorm = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x).normalized;
+            if (Vector2.Dot(movementPlaneNorm, balls[i].transform.position) > 0) movementPlaneNorm *= -1;
+
+            ret += movementPlaneNorm * transformerSpawnRadius;
+        }
+
+        ret /= balls.Count;
+
+        return ret;
     }
 
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        spawnedTransformers.Add(Instantiate(allowedTransformers[Random.Range(0, allowedTransformers.Count)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
+        bool[] attempted = new bool[allowedTransformers.Count];
+
+        bool selecting = true;
+        while (selecting) {
+            int maxRand = 0;
+            for (int i = 0; i < attempted.Length; i++) {
+                if (!attempted[i]) ++maxRand;
+            }
+
+            if (maxRand <= 0) return;
+
+            int randSel = Random.Range(0, maxRand);
+            int hits = 0;
+            for (int i = 0; i < allowedTransformers.Count; i++) {
+                bool allowed = true;
+                if (allowedTransformers[i] is BlackHoleSpawn) {
+                    if (blackHole) {
+                        allowed = false;
+                    }
+
+                    for (int j = 0; j < spawnedTransformers.Count; j++) {
+                        if (spawnedTransformers[j] is BlackHoleSpawn) {
+                            allowed = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (allowed) {
+                    ++hits;
+                }
+
+                if (hits > randSel) {
+                    selecting = false;
+                    spawnedTransformers.Add(Instantiate(allowedTransformers[i], GetRandomTransformerSpawnPoint(), Quaternion.identity));
+                    return;
+                }
+            }
+        }
     }
 
     void UpdatePlayerImages()
     {
-        foreach (Image image in playerImages) {
-            image.color = Color.white;
+        for (int i = 0; i < playerImages.Count; i++) {
+            if (playerImages[i] != null) playerImages[i].color = Color.white;
         }
 
         for (int i = 0; i < players.Count; i++) {
@@ -558,6 +641,7 @@ public class GameManager : MonoBehaviour
         arcTanShaderHelper.CreateTexture();
         arcTanShaderHelper.SetShrink(0.0f);
 
+        CleanTransformers();
         ResetBalls();
 
         smashingPillars = false;
