@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
 {
     #region Variables
     [HideInInspector] public int ID { get { return GameManager.instance.players.IndexOf(this); } private set { } }
-    [HideInInspector] public int livingID { get { return GameManager.instance.alivePlayers.IndexOf(this); } private set { } }
+    [HideInInspector] public int LivingID { get { return GameManager.instance.alivePlayers.IndexOf(this); } private set { } }
 
     [HideInInspector] public Vector2 movementInput;
 
@@ -179,7 +179,7 @@ public class Player : MonoBehaviour
 
         float segmentOffset = 180.0f / alivePlayerCount;
 
-        playerMidPoint = 360.0f / alivePlayerCount * (livingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
+        playerMidPoint = 360.0f / alivePlayerCount * (LivingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
         angleDeviance = segmentOffset;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
