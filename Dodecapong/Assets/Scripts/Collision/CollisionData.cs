@@ -70,14 +70,26 @@ public class CollisionData
 
         // SOLVE VELOCITY
         float j = 2 * Vector2.Dot(colliderA.velocity - colliderB.velocity, forceResolutionNormal) / totalIMass;
+        float startingMag;
+        if (!colliderA.addForceWhileImmovable && colliderA.immovable) {
+            startingMag = colliderB.velocity.magnitude;
+        } else {
+            startingMag = colliderA.velocity.magnitude;
+        }
 
         // both colliders cannot be immovable as we return before this if that is the case
         if (colliderA.immovable) {
             if (j < 0) j *= -1;
             colliderB.ApplyImpulse(2 * j * forceResolutionNormal);
+            if (!colliderA.addForceWhileImmovable) {
+                colliderB.velocity = colliderB.velocity.normalized * startingMag;
+            }
         } else if (colliderB.immovable) {
             if (j < 0) j *= -1;
             colliderA.ApplyImpulse(2 * j * -forceResolutionNormal);
+            if (!colliderB.addForceWhileImmovable) {
+                colliderA.velocity = colliderA.velocity.normalized * startingMag;
+            }
         } else {
             colliderA.ApplyImpulse(j * -forceResolutionNormal);
             colliderB.ApplyImpulse(j * forceResolutionNormal);

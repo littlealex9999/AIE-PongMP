@@ -272,6 +272,7 @@ public class Player : MonoBehaviour
 
         readyToHit = false;
         hitting = true;
+        collider.addForceWhileImmovable = true;
 
         float value;
         float timeElapsed = 0;
@@ -294,6 +295,7 @@ public class Player : MonoBehaviour
         collider.scale = colliderStart;
         collider.RecalculateScale();
 
+        collider.addForceWhileImmovable = false;
         hitting = false;
 
         yield return new WaitForSeconds(hitCooldown);

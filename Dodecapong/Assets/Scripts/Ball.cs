@@ -1,3 +1,4 @@
+using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,7 +16,7 @@ public class Ball : MonoBehaviour
         get {
             return collider.radius;
         } set {
-            collider.radius = value;
+            collider.radius = value / 2;
             transform.localScale = new Vector3(value, value, value);
         }
     }

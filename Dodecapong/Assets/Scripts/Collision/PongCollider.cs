@@ -17,6 +17,7 @@ public abstract class PongCollider : MonoBehaviour
 
     public bool trigger = false;
     public bool immovable = false;
+    public bool addForceWhileImmovable = true;
 
     public delegate void CollisionEvents(PongCollider other, CollisionData data);
     public CollisionEvents OnCollision;
