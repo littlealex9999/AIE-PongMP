@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 49765570054812826}
   - component: {fileID: 1107721618288128298}
   - component: {fileID: 7408285359382765999}
-  - component: {fileID: 7235906791884781308}
+  - component: {fileID: 8467739201826219457}
   m_Layer: 0
-  m_Name: Transformer
+  m_Name: T_BlackHole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -104,7 +104,7 @@ MonoBehaviour:
   trigger: 1
   immovable: 0
   radius: 0.25
---- !u!114 &7235906791884781308
+--- !u!114 &8467739201826219457
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,9 +113,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 5141576805790278924}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c9fc9f0b792eba428de5b6519cd917b, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c207c83a5e2784498c8000bd3a56cf1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   limitedTime: 1
   duration: 20
-  speedMod: 2
+  gravityStrength: 0.05
+  blackHolePrefab: {fileID: 915051405892000146, guid: bf03ef5d1cd704444b09f09d984255d9, type: 3}

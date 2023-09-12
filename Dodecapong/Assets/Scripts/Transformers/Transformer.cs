@@ -29,7 +29,10 @@ public abstract class Transformer : MonoBehaviour
 
     void CheckIfCollidingBall(PongCollider other, CollisionData data)
     {
-        if (other.GetComponent<Ball>()) {
+        if (other.TryGetComponent(out Ball ball)) 
+        {
+            ball.smallRing.Play();
+
             GameManager.instance.activeTransformers.Add(this);
             ApplyModifier();
 

@@ -35,9 +35,12 @@ public class BlackHole : MonoBehaviour
         }
     }
 
+    Ball ball;
+
     void CheckCollisionBall(PongCollider other, CollisionData data)
     {
-        if (other.GetComponent<Ball>()) {
+        if (other.TryGetComponent(out ball))
+        {
             pullEnabled = false;
 
             other.gameObject.SetActive(false);
@@ -66,6 +69,7 @@ public class BlackHole : MonoBehaviour
         if (enableOnEnd) enableOnEnd.SetActive(true);
 
         // we make the assumption that this is true, as only one black hole should be able to spawn at a time
+        ball.largeRing.Play();
         GameManager.instance.blackHole = this;
         Destroy(gameObject);
         yield break;
