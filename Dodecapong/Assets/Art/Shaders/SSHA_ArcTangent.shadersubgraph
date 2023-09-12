@@ -24,7 +24,11 @@
     ],
     "m_Keywords": [],
     "m_Dropdowns": [],
-    "m_CategoryData": [],
+    "m_CategoryData": [
+        {
+            "m_Id": "7c07973ef26c4677bf814b3b65a3e50b"
+        }
+    ],
     "m_Nodes": [
         {
             "m_Id": "7f80f07cbdf34b8586e27ee89b2e88e4"
@@ -2031,6 +2035,33 @@
 
 {
     "m_SGVersion": 0,
+    "m_Type": "UnityEditor.ShaderGraph.CategoryData",
+    "m_ObjectId": "7c07973ef26c4677bf814b3b65a3e50b",
+    "m_Name": "",
+    "m_ChildObjectList": [
+        {
+            "m_Id": "0985f8ea9d34409087deee08fdb17d85"
+        },
+        {
+            "m_Id": "a2106797448d40a9878bf367e4bc6886"
+        },
+        {
+            "m_Id": "2d8456a9b0ac41bbba7ae7b034dd351c"
+        },
+        {
+            "m_Id": "fcdae040978149559cedac1222e00478"
+        },
+        {
+            "m_Id": "79fd03ac3a6d47b58839ff3480785fb9"
+        },
+        {
+            "m_Id": "302a8658afcf4ca8b30805fec3ec9ebf"
+        }
+    ]
+}
+
+{
+    "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.DynamicVectorMaterialSlot",
     "m_ObjectId": "7f4bef23b9a948669167ee034ea4964a",
     "m_Id": 2,
@@ -2440,7 +2471,7 @@
         "m_SerializableColors": []
     },
     "_intensityUnit": 1,
-    "m_NormalizeColor": false
+    "m_NormalizeColor": true
 }
 
 {
@@ -2720,10 +2751,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1750.5001220703125,
-            "y": -119.00001525878906,
-            "width": 0.0,
-            "height": 0.0
+            "x": 1678.0,
+            "y": -108.0,
+            "width": 159.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
@@ -3370,10 +3401,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 1750.5001220703125,
-            "y": -89.00001525878906,
-            "width": 0.0,
-            "height": 0.0
+            "x": 1678.0,
+            "y": -78.0,
+            "width": 164.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
