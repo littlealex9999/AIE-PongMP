@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameVariables gameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
+
+    [HideInInspector] public List<ControllerInputHandler> controllers;
     #endregion
 
     #region Map Settings
@@ -56,6 +58,7 @@ public class GameManager : MonoBehaviour
     #region UI
     [Header("UI")]
     public List<Image> playerImages;
+    public Color imageDefaultColor;
 
     public GameObject shieldTextObj;
     public Transform shieldTextParent;
@@ -204,6 +207,7 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region PLAYERS
+
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
@@ -214,7 +218,6 @@ public class GameManager : MonoBehaviour
         player.color = GetPlayerColor(players.Count);
         players.Add(player);
 
-        UpdatePlayerImages();
         return player;
     }
 
@@ -516,15 +519,31 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void UpdatePlayerImages()
+    public void UpdatePlayerImages()
     {
-        for (int i = 0; i < playerImages.Count; i++) {
-            if (playerImages[i] != null) playerImages[i].color = Color.white;
+        for (int i = 0; i < playerImages.Count; i++)
+        {
+            playerImages[i].color = imageDefaultColor;
         }
 
-        for (int i = 0; i < players.Count; i++) {
-            playerImages[i].color = GetPlayerColor(players[i].ID);
+        for (int i = 0; i < controllers.Count; i++)
+        {
+            int index = i * 2;
+
+            ControllerInputHandler controller = controllers[i];
+            if (controller.splitControls)
+            {
+                playerImages[index].color = controller.playerA.color;
+                playerImages[index + 1].color = controller.playerB.color;
+            }
+            else
+            {
+                playerImages[index].color = playerImages[index + 1].color = controller.playerA.color;
+            }
         }
+
+
+      
     }
 
     private void UpdateShieldText()

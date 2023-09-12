@@ -13,6 +13,7 @@ public class GameManagerEditor : Editor
         if (GameManager.instance != null) {
             if (GUILayout.Button("Create New Player")) {
                 GameManager.instance.GetNewPlayer();
+                GameManager.instance.UpdatePlayerImages();
             }
 
             if (GUILayout.Button("Spawn Transformer")) {
