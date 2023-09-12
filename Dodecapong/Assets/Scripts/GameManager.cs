@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     List<GameObject> pillars = new List<GameObject>();
 
     public GameVariables defaultGameVariables;
-    GameVariables gameVariables;
+    [HideInInspector] public GameVariables gameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
     #endregion

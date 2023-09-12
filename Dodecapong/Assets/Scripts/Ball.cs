@@ -83,11 +83,6 @@ public class Ball : MonoBehaviour
         CheckIfHitBounds();
 
         transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
-
-        Debug.LogError("Begin next ball log");
-        Debug.Log(constantVel);
-        Debug.Log(collider.velocity.x + ", " + collider.velocity.y);
-        Debug.Log(collider.velocity.magnitude);
     }
 
     private void DampVelocity()
