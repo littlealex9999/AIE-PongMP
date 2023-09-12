@@ -1963,7 +1963,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7521882063367354051, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7521882063367354051, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2335,6 +2335,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Arena
       objectReference: {fileID: 0}
+    - target: {fileID: 8701392530662197808, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e38fb3a5ce3a82046a5586e2f5a55263, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
 --- !u!1001 &1704093235
@@ -3107,13 +3111,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abe37a4d992782749a6e11c19e066222, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  map: {fileID: 6311386384562661521}
   ballPrefab: {fileID: 8301239450588043010, guid: 81c44623eb6399245a8f925e98bdec6a, type: 3}
   balls: []
-  pillarPrefab: {fileID: 7971536825051576077, guid: 2d25934eb56e6c34ea780a336c1aead4, type: 3}
+  pillarPrefab: {fileID: 6051333089294521256, guid: c93a086c1c0561249928e95327a6a5f3, type: 3}
   playerPrefab: {fileID: 4539453341973377358, guid: 045c3dcbbdf350147a7a4f6df7a0f42a, type: 3}
   defaultGameVariables: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+  gameVariables: {fileID: 0}
   arcTanShaderHelper: {fileID: 1148477282}
+  mapRadius: 4.5
   elimSpeedCurve:
     serializedVersion: 2
     m_Curve:
@@ -3239,7 +3244,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6903803110016064107}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6311386384045321986
 GameObject:
@@ -3342,55 +3347,6 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!1 &6311386384562661520
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6311386384562661526}
-  - component: {fileID: 6311386384562661521}
-  m_Layer: 0
-  m_Name: Map
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &6311386384562661521
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6311386384562661520}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72adf242fb8873f4299cd4fec693f02f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mapRadius: 4.5
-  lineStepCount: 360
-  ringMesh: {fileID: 233501221404875068, guid: 7089394606f00074780ef6b1c562eadc, type: 3}
-  arcTangentShader: {fileID: 2100000, guid: 0f77d2d3d882cfa46a74d238f6d5d6b2, type: 2}
-  ringMeshes: []
---- !u!4 &6311386384562661526
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6311386384562661520}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6903803110016064107}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &6311386385564727865
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3469,7 +3425,9 @@ MonoBehaviour:
   constantVel: 5
   dampStrength: 0
   shieldBounceTowardsCenterBias: 0
-  collisionEffect: {fileID: 0}
+  smallRing: {fileID: 0}
+  mediumRing: {fileID: 0}
+  largeRing: {fileID: 0}
 --- !u!33 &6311386385564727870
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3496,7 +3454,7 @@ Transform:
   - {fileID: 111473665}
   - {fileID: 843739678}
   m_Father: {fileID: 6903803110016064107}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6311386385564727872
 MonoBehaviour:
@@ -3531,7 +3489,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6311386383622038525}
-  - {fileID: 6311386384562661526}
   - {fileID: 6311386385564727871}
   - {fileID: 147032179}
   - {fileID: 6311386384045321985}

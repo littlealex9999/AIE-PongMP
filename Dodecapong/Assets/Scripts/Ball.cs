@@ -70,7 +70,7 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         collider.velocity = finalBounceDir * constantVel;
-        transform.position = (GameManager.instance.map.transform.position - (Vector3)bounceNormal) * (GameManager.instance.map.mapRadius - radius);
+        transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
     }
 
     private void FixedUpdate()
@@ -103,7 +103,7 @@ public class Ball : MonoBehaviour
 
     private void CheckIfHitBounds()
     {
-        if (distFromCenter + radius > GameManager.instance.map.mapRadius)
+        if (distFromCenter + radius > GameManager.instance.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
 
@@ -114,7 +114,7 @@ public class Ball : MonoBehaviour
                 mediumRing.Play();
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
                 Bounce(shieldBounceTowardsCenterBias, shieldNormal);
-                transform.position = transform.position.normalized * (GameManager.instance.map.mapRadius - radius);
+                transform.position = transform.position.normalized * (GameManager.instance.mapRadius - radius);
                
             }
             else // if player dies

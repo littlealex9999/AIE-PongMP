@@ -190,7 +190,7 @@ public class Player : MonoBehaviour
     #region HelperFunctions
     public void SetPosition(float angle)
     {
-        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * GameManager.instance.playerDistance;
+        transform.position = GameManager.instance.GetTargetPointInCircle(angle).normalized * GameManager.instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
