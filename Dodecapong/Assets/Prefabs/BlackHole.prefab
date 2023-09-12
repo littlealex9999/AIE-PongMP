@@ -5245,7 +5245,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gravityStrength: 0.1
   duration: 10
-  destroyTime: 3
+  destroyTime: 3.5
   pullEnabled: 1
 --- !u!82 &-157086458026005258
 AudioSource:
@@ -5257,7 +5257,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: af021f3b6e3c3564db20300e34991ea9, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 7649d16e2561f7646b9675722b62365a, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
