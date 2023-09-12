@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using Unity.VisualScripting;
+using JetBrains.Annotations;
 
 public class GameManager : MonoBehaviour
 {
@@ -63,12 +64,15 @@ public class GameManager : MonoBehaviour
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
-    public List<Image> endGamePlayerImages;
+    public List<Image> endGamePlayerImages = new List<Image>();
+    public List<int> endGamePlayerEnableThresholds = new List<int>();
+    public Transform endGameAlternatePosition;
+    Vector3 endGameRestorePosition;
 
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
 
-    public GameState gameState = GameState.MAINMENU;
+    [HideInInspector] public GameState gameState = GameState.MAINMENU;
 
     public enum GameState
     {
@@ -107,11 +111,14 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
         else Destroy(this);
 
+        UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
+
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
         else gameVariables = new GameVariables();
 
         OnGameStateChange += OnGameStateChanged;
 
+        SetupGameEndData();
         UpdateGameState(GameState.MAINMENU);
     }
 
@@ -179,26 +186,48 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEOVER:
                 if (inGame) {
-                    // EndGame calls a gamestate change to GAMEOVER so we must ensure it does it infinitely repeat and return
+                    // EndGame calls a gamestate change to GAMEOVER so we must ensure it doesn't infinitely repeat and return
                     EndGame();
                     return;
                 }
 
                 EventManager.instance?.menuEvent?.Invoke();
 
-                for (int i = 0; i < elimPlayers.Count; i++) {
-                    if (i >= endGamePlayerImages.Count) break;
-
+                for (int i = 0; i < elimPlayers.Count && i < endGamePlayerImages.Count; i++) {
                     endGamePlayerImages[i].color = elimPlayers[elimPlayers.Count - (i + 1)].color;
-                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(true);
                 }
 
-                for (int i = endGamePlayerImages.Count - 1; i > elimPlayers.Count - 1; i--) {
-                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(false);
+                if (elimPlayers.Count == 2) {
+                    endGamePlayerImages[1].transform.parent.position = endGameAlternatePosition.position;
+                } else {
+                    endGamePlayerImages[1].transform.parent.localPosition = endGameRestorePosition;
+                }
+
+                int lastAccess = 0;
+                for (int i = 0; i < endGamePlayerEnableThresholds.Count; i++) {
+                    if (endGamePlayerEnableThresholds[i] > elimPlayers.Count) {
+                        for (int j = lastAccess + 1; j < endGamePlayerImages.Count; j++) {
+                            endGamePlayerImages[j].transform.parent.gameObject.SetActive(false);
+                        }
+                        break;
+                    }
+
+                    for (int j = lastAccess; j < endGamePlayerImages.Count; j++) {
+                        if (j >= endGamePlayerEnableThresholds[i]) break;
+                        lastAccess = j;
+                        endGamePlayerImages[j].transform.parent.gameObject.SetActive(true);
+                    }
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    void SetupGameEndData()
+    {
+        if (endGamePlayerImages.Count > 1) {
+            endGameRestorePosition = endGamePlayerImages[1].transform.parent.localPosition;
         }
     }
     #endregion
