@@ -103,6 +103,7 @@ MonoBehaviour:
   normalBending: 1
   trigger: 1
   immovable: 0
+  addForceWhileImmovable: 1
   radius: 0.25
 --- !u!114 &7235906791884781308
 MonoBehaviour:
@@ -118,4 +119,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   limitedTime: 1
   duration: 20
-  speedMod: 2
+  speedMod: 0.5
