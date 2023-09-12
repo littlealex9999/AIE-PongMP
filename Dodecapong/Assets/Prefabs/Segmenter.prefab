@@ -9,9 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2513409482236552792}
-  - component: {fileID: 362963030943410478}
-  - component: {fileID: 3771513719031318346}
-  - component: {fileID: 691568168508726225}
+  - component: {fileID: 5021900262609760620}
   m_Layer: 0
   m_Name: Segmenter
   m_TagString: Untagged
@@ -35,69 +33,49 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &362963030943410478
-MeshFilter:
+--- !u!114 &5021900262609760620
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6051333089294521256}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!23 &3771513719031318346
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6051333089294521256}
-  m_Enabled: 0
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 257
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 85ac27cecc52252458fdf56503aaf578, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &691568168508726225
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6051333089294521256}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.63123, y: 1.4270074, z: 1}
-  m_Center: {x: -0.037131086, y: -0.064979404, z: 0}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 671be3e3de269904695bace9ff402f6a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inverseMass: 1
+  velocity: {x: 0, y: 0}
+  acceleration: {x: 0, y: 0}
+  normalBending: 1
+  trigger: 0
+  immovable: 1
+  addForceWhileImmovable: 0
+  points:
+  - {x: -0.3350055, y: -0.29373607}
+  - {x: -0.68859637, y: 1.1601329}
+  - {x: 0.6835351, y: 1.1602699}
+  - {x: 0.33449852, y: -0.27997974}
+  scaledPoints:
+  - {x: -0.3350055, y: -0.29373607}
+  - {x: -0.68859637, y: 1.1601329}
+  - {x: 0.6835351, y: 1.1602699}
+  - {x: 0.33449852, y: -0.27997974}
+  normals:
+  - {x: -0.9716757, y: -0.23631817}
+  - {x: -0.00009982387, y: 1}
+  - {x: 0.97186786, y: -0.23552684}
+  - {x: 0.020542717, y: -0.99978894}
+  forceNormals:
+  - {x: -0.9716757, y: -0.23631817}
+  - {x: -0.00009982387, y: 1}
+  - {x: 0.97186786, y: -0.23552684}
+  - {x: 0.020542717, y: -0.99978894}
+  doResolutionOnFace: 01010101
+  center: {x: -0.0013920665, y: 0.43667173}
+  rotationOffset: {x: 0, y: 0, z: 0}
+  scale: {x: 1, y: 1}
 --- !u!1001 &223916362624566886
 PrefabInstance:
   m_ObjectHideFlags: 0
