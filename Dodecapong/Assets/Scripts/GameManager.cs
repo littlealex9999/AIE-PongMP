@@ -13,10 +13,9 @@ public class GameManager : MonoBehaviour
 {
     #region Variables
     public static GameManager instance;
-
     #region Game Objects
     [Header("Game Objects")]
-    public Map map;
+ 
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
@@ -32,6 +31,7 @@ public class GameManager : MonoBehaviour
 
     #region Map Settings
     [Header("Map Settings")]
+    public float mapRadius = 4.5f;
     public AnimationCurve elimSpeedCurve;
     public float playerElimTime = 2.0f;
 
@@ -364,7 +364,7 @@ public class GameManager : MonoBehaviour
         EventManager.instance.ballCountdownEvent.Invoke();
 
         for (int i = 0; i < gameVariables.ballCount; i++) {
-            Ball b = Instantiate(ballPrefab, map.transform);
+            Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
             b.constantVel = gameVariables.ballSpeed;
@@ -400,7 +400,7 @@ public class GameManager : MonoBehaviour
     {
         while (pillars.Count != players.Count) {
             if (pillars.Count < players.Count) {
-                pillars.Add(Instantiate(pillarPrefab, map.transform));
+                pillars.Add(Instantiate(pillarPrefab));
             } else {
                 Destroy(pillars[pillars.Count - 1]);
                 pillars.RemoveAt(pillars.Count - 1);
@@ -409,15 +409,19 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < players.Count; i++) {
             pillars[i].transform.SetPositionAndRotation(
-                map.GetTargetPointInCircle(360.0f / players.Count * i),
+                GetTargetPointInCircle(360.0f / players.Count * i),
                 Quaternion.Euler(0, 0, 360.0f / players.Count * i));
         }
     }
 
+    public Vector3 GetTargetPointInCircle(float angle)
+    { 
+       return Vector3.zero + Quaternion.Euler(0, 0, angle) * Vector3.up * mapRadius;
+    }
+
     public void SetupMap()
     {
-        map.GenerateMap();
-        map.arcTangentShader.SetFloat("_Shrink", 0);
+        arcTanShaderHelper.SetShrink(0);
         arcTanShaderHelper.colors = new Color[alivePlayers.Count];
         for (int i = 0; i < alivePlayers.Count; i++) {
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
@@ -652,7 +656,7 @@ public class GameManager : MonoBehaviour
                     targetAngle = 360.0f / alivePlayers.Count * i - 360.0f / alivePlayers.Count / pseudoPlayerCount * playerRemovalPercentage * countAfter;
                 }
 
-                pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+                pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
 
@@ -682,7 +686,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < pillars.Count; i++) {
             float targetAngle = 360.0f / (pillars.Count) * i;
 
-            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+            pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
         }
 
