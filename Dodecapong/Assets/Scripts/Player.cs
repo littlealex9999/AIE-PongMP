@@ -190,7 +190,7 @@ public class Player : MonoBehaviour
     #region HelperFunctions
     public void SetPosition(float angle)
     {
-        transform.position = GameManager.instance.map.GetTargetPointInCircleLocal(angle).normalized * GameManager.instance.playerDistance;
+        transform.position = GameManager.instance.GetTargetPointInCircle(angle).normalized * GameManager.instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
     }
 
@@ -272,6 +272,7 @@ public class Player : MonoBehaviour
 
         readyToHit = false;
         hitting = true;
+        collider.addForceWhileImmovable = true;
 
         float value;
         float timeElapsed = 0;
@@ -294,6 +295,7 @@ public class Player : MonoBehaviour
         collider.scale = colliderStart;
         collider.RecalculateScale();
 
+        collider.addForceWhileImmovable = false;
         hitting = false;
 
         yield return new WaitForSeconds(hitCooldown);

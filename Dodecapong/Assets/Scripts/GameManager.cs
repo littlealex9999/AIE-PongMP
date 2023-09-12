@@ -12,10 +12,9 @@ public class GameManager : MonoBehaviour
 {
     #region Variables
     public static GameManager instance;
-
     #region Game Objects
     [Header("Game Objects")]
-    public Map map;
+ 
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
@@ -24,13 +23,14 @@ public class GameManager : MonoBehaviour
     List<GameObject> pillars = new List<GameObject>();
 
     public GameVariables defaultGameVariables;
-    GameVariables gameVariables;
+    [HideInInspector] public GameVariables gameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
     #endregion
 
     #region Map Settings
     [Header("Map Settings")]
+    public float mapRadius = 4.5f;
     public AnimationCurve elimSpeedCurve;
     public float playerElimTime = 2.0f;
 
@@ -61,6 +61,9 @@ public class GameManager : MonoBehaviour
     public Transform shieldTextParent;
     public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
 
+    // The expected structure is that the image will have a sibling image relevant to it
+    // so it should be treated as if it always has a parent
+    public List<Image> endGamePlayerImages;
 
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
@@ -89,8 +92,9 @@ public class GameManager : MonoBehaviour
 
     #region Gameplay Settings
     float gameEndTimer;
-    [HideInInspector] public List<Player> alivePlayers;
     [HideInInspector] public List<Player> players;
+    [HideInInspector] public List<Player> alivePlayers;
+    [HideInInspector] public List<Player> elimPlayers;
 
     [HideInInspector] public BlackHole blackHole;
     #endregion
@@ -162,6 +166,7 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEPLAY:
                 EventManager.instance?.gameplayEvent?.Invoke();
+
                 if (!inGame) {
                     StartGame();
                 } else {
@@ -173,7 +178,24 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEOVER:
-                EventManager.instance?.menuEvent.Invoke();
+                if (inGame) {
+                    // EndGame calls a gamestate change to GAMEOVER so we must ensure it does it infinitely repeat and return
+                    EndGame();
+                    return;
+                }
+
+                EventManager.instance?.menuEvent?.Invoke();
+
+                for (int i = 0; i < elimPlayers.Count; i++) {
+                    if (i >= endGamePlayerImages.Count) break;
+
+                    endGamePlayerImages[i].color = elimPlayers[elimPlayers.Count - (i + 1)].color;
+                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(true);
+                }
+
+                for (int i = endGamePlayerImages.Count - 1; i > elimPlayers.Count - 1; i--) {
+                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(false);
+                }
                 break;
             default:
                 break;
@@ -209,10 +231,10 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        if (alivePlayers.Count <= 2) {
-            EndGame();
-            return;
-        }
+        //if (alivePlayers.Count <= 2) {
+        //    EndGame();
+        //    return;
+        //}
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -264,11 +286,16 @@ public class GameManager : MonoBehaviour
             blackHole = null;
         }
 
+
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            elimPlayers.Add(alivePlayers[i]);
+        }
         UpdateGameState(GameState.GAMEOVER);
     }
 
     void SetupPlayers()
     {
+        elimPlayers.Clear();
         alivePlayers.Clear();
         foreach (Player p in players) alivePlayers.Add(p);
 
@@ -308,7 +335,7 @@ public class GameManager : MonoBehaviour
         EventManager.instance.ballCountdownEvent.Invoke();
 
         for (int i = 0; i < gameVariables.ballCount; i++) {
-            Ball b = Instantiate(ballPrefab, map.transform);
+            Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
             b.constantVel = gameVariables.ballSpeed;
@@ -344,7 +371,7 @@ public class GameManager : MonoBehaviour
     {
         while (pillars.Count != players.Count) {
             if (pillars.Count < players.Count) {
-                pillars.Add(Instantiate(pillarPrefab, map.transform));
+                pillars.Add(Instantiate(pillarPrefab));
             } else {
                 Destroy(pillars[pillars.Count - 1]);
                 pillars.RemoveAt(pillars.Count - 1);
@@ -353,15 +380,19 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < players.Count; i++) {
             pillars[i].transform.SetPositionAndRotation(
-                map.GetTargetPointInCircle(360.0f / players.Count * i),
+                GetTargetPointInCircle(360.0f / players.Count * i),
                 Quaternion.Euler(0, 0, 360.0f / players.Count * i));
         }
     }
 
+    public Vector3 GetTargetPointInCircle(float angle)
+    { 
+       return Vector3.zero + Quaternion.Euler(0, 0, angle) * Vector3.up * mapRadius;
+    }
+
     public void SetupMap()
     {
-        map.GenerateMap();
-        map.arcTangentShader.SetFloat("_Shrink", 0);
+        arcTanShaderHelper.SetShrink(0);
         arcTanShaderHelper.colors = new Color[alivePlayers.Count];
         for (int i = 0; i < alivePlayers.Count; i++) {
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
@@ -498,7 +529,7 @@ public class GameManager : MonoBehaviour
 
     private void UpdateShieldText()
     {
-        if (shieldText.Count == 0) {
+        if (shieldText.Count < alivePlayers.Count) {
             Vector3 nextPos = Vector3.zero;
 
             for (int i = 0; i < alivePlayers.Count; i++) {
@@ -507,18 +538,19 @@ public class GameManager : MonoBehaviour
                 Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
                 if (proUGUI != null) {
                     proUGUI.transform.SetParent(shieldTextParent, false);
-                    proUGUI.text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
                     shieldText.Add(proUGUI);
                 }
             }
-        } else {
-            foreach (TextMeshProUGUI proUGUI in shieldText) {
-                Destroy(proUGUI.gameObject);
-            }
-            shieldText.Clear();
-            UpdateShieldText();
         }
 
+        for (int i = 0; i < shieldText.Count; i++) {
+            if (i >= alivePlayers.Count) {
+                shieldText[i].gameObject.SetActive(false);
+            } else {
+                shieldText[i].gameObject.SetActive(true);
+                shieldText[i].text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
+            }
+        }
     }
 
     /// <summary>
@@ -595,7 +627,7 @@ public class GameManager : MonoBehaviour
                     targetAngle = 360.0f / alivePlayers.Count * i - 360.0f / alivePlayers.Count / pseudoPlayerCount * playerRemovalPercentage * countAfter;
                 }
 
-                pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+                pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
 
@@ -625,10 +657,11 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < pillars.Count; i++) {
             float targetAngle = 360.0f / (pillars.Count) * i;
 
-            pillars[i].transform.position = map.GetTargetPointInCircle(targetAngle);
+            pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
         }
 
+        elimPlayers.Add(alivePlayers[index]);
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
         for (int i = 0; i < alivePlayers.Count; i++) {
@@ -645,6 +678,10 @@ public class GameManager : MonoBehaviour
         ResetBalls();
 
         smashingPillars = false;
+
+        if (alivePlayers.Count <= 1) {
+            EndGame();
+        }
         yield break;
     }
     #endregion

@@ -147,6 +147,7 @@ public class CollisionSystem : MonoBehaviour
 
             float depth = float.MaxValue;
             Vector2 normal = rotationOffset * -convexB.normals[0];
+            Vector2 forceNormal = rotationOffset * -convexB.forceNormals[0];
             Vector2 collisionPos = (Vector2)circleA.transform.position + normal * circleA.radius;
 
             Vector4[] midpoints = new Vector4[convexB.points.Length];
@@ -167,12 +168,12 @@ public class CollisionSystem : MonoBehaviour
                 if (leastDepth < 0 && leastDepth < depth || convexB.doResolutionOnFace[i] && leastDepth < depth) {
                     depth = leastDepth;
                     normal = -testingNormal;
+                    forceNormal = rotationOffset * -convexB.forceNormals[i];
                 }
             }
 
             Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
-            //Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
-            Vector2 forceNormal = (normal - convexB.velocity * convexB.normalBending).normalized;
+            forceNormal = (forceNormal - convexB.velocity * convexB.normalBending).normalized;
 
             return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
         }

@@ -1,3 +1,4 @@
+using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -15,14 +16,16 @@ public class Ball : MonoBehaviour
         get {
             return collider.radius;
         } set {
-            collider.radius = value;
+            collider.radius = value / 2;
             transform.localScale = new Vector3(value, value, value);
         }
     }
 
     bool held;
 
-    public ParticleSystem collisionEffect; 
+    public ParticleSystem smallRing; 
+    public ParticleSystem mediumRing; 
+    public ParticleSystem largeRing; 
 
     void Awake()
     {
@@ -35,7 +38,7 @@ public class Ball : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            collisionEffect.Play();
+            smallRing.Play();
             if (player.grabbing)
             {
                 StartCoroutine(player.GrabRoutine());
@@ -46,10 +49,12 @@ public class Ball : MonoBehaviour
             else if (player.hitting)
             {
                 EventManager.instance.ballHitEvent.Invoke();
+                mediumRing.Play();
             }
             else
             {
                 EventManager.instance.ballBounceEvent.Invoke();
+                smallRing.Play();
             }
         }
     }
@@ -65,7 +70,7 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         collider.velocity = finalBounceDir * constantVel;
-        transform.position = (GameManager.instance.map.transform.position - (Vector3)bounceNormal) * (GameManager.instance.map.mapRadius - radius);
+        transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
     }
 
     private void FixedUpdate()
@@ -96,16 +101,9 @@ public class Ball : MonoBehaviour
         }
     }
 
-    private void BounceOnBounds()
-    {
-        collisionEffect.Play();
-        Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-        Bounce(shieldBounceTowardsCenterBias, shieldNormal);
-    }
-
     private void CheckIfHitBounds()
     {
-        if (distFromCenter + radius > GameManager.instance.map.mapRadius)
+        if (distFromCenter + radius > GameManager.instance.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
 
@@ -113,9 +111,18 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnSheildHit(alivePlayerID))
             {
-                BounceOnBounds();
-                transform.position = transform.position.normalized * (GameManager.instance.map.mapRadius - radius);
+                mediumRing.Play();
+                Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
+                Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+                transform.position = transform.position.normalized * (GameManager.instance.mapRadius - radius);
+               
             }
+            else // if player dies
+            {
+                largeRing.Play();
+                return;
+            }
+            mediumRing.Play();
         }
     }
 
