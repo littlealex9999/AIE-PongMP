@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     #region Variables
     [HideInInspector] public int ID { get { return GameManager.instance.players.IndexOf(this); } private set { } }
     [HideInInspector] public int LivingID { get { return GameManager.instance.alivePlayers.IndexOf(this); } private set { } }
+    [HideInInspector] public bool isAI { get; private set; }
 
     [HideInInspector] public Vector2 movementInput;
 
@@ -67,6 +68,10 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isAI) {
+            CalculateAIInput();
+        }
+
         Move(movementInput);
     }
     #endregion
@@ -185,6 +190,20 @@ public class Player : MonoBehaviour
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
     }
+
+    void CalculateAIInput()
+    {
+        Vector2 targetBallPos = GameManager.instance.balls[0].collider.position;
+        Vector2 targetBallVel = GameManager.instance.balls[0].collider.velocity;
+
+        for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+            // select target ball based on heuristic
+        }
+
+
+
+        //movementInput = ;
+    }
     #endregion
 
     #region HelperFunctions
@@ -224,6 +243,11 @@ public class Player : MonoBehaviour
         {
             grabbing = false;
         }
+    }
+
+    public void SetAI()
+    {
+        isAI = true;
     }
     #endregion
 
