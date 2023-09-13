@@ -149,6 +149,11 @@ public class GameManager : MonoBehaviour
         if (index < playerEmissives.Count) return playerEmissives[index];
         else return playerEmissives[playerEmissives.Count - 1];
     }
+
+    public void QuitGame()
+    {
+        Application.Quit();
+    }
     #endregion
 
     #region GAMESTATE
