@@ -504,44 +504,37 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        bool[] attempted = new bool[allowedTransformers.Count];
+        Transformer[] passedTransformers = new Transformer[allowedTransformers.Count];
+        int hits = 0;
 
-        bool selecting = true;
-        while (selecting) {
-            int maxRand = 0;
-            for (int i = 0; i < attempted.Length; i++) {
-                if (!attempted[i]) ++maxRand;
-            }
+        for (int i = 0; i < allowedTransformers.Count; i++) {
+            bool allowed = true;
+            if (allowedTransformers[i] is BlackHoleSpawn) {
+                if (blackHole) {
+                    allowed = false;
+                }
 
-            if (maxRand <= 0) return;
-
-            int randSel = Random.Range(0, maxRand);
-            int hits = 0;
-            for (int i = 0; i < allowedTransformers.Count; i++) {
-                bool allowed = true;
-                if (allowedTransformers[i] is BlackHoleSpawn) {
-                    if (blackHole) {
+                for (int j = 0; j < spawnedTransformers.Count; j++) {
+                    if (spawnedTransformers[j] is BlackHoleSpawn) {
                         allowed = false;
+                        break;
                     }
-
-                    for (int j = 0; j < spawnedTransformers.Count; j++) {
-                        if (spawnedTransformers[j] is BlackHoleSpawn) {
-                            allowed = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (allowed) {
-                    ++hits;
-                }
-
-                if (hits > randSel) {
-                    selecting = false;
-                    spawnedTransformers.Add(Instantiate(allowedTransformers[i], GetRandomTransformerSpawnPoint(), Quaternion.identity));
-                    return;
                 }
             }
+
+            if (allowed) {
+                ++hits;
+                for (int j = 0; j < passedTransformers.Length; j++) {
+                    if (passedTransformers[j] == null) {
+                        passedTransformers[j] = allowedTransformers[i];
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (hits > 0) {
+            spawnedTransformers.Add(Instantiate(passedTransformers[Random.Range(0, hits)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
         }
     }
 
