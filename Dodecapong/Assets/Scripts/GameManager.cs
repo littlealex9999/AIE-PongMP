@@ -150,7 +150,7 @@ public class GameManager : MonoBehaviour
         else return playerEmissives[playerEmissives.Count - 1];
     }
 
-    public void QuitGame()
+    public static void QuitGame()
     {
         Application.Quit();
     }
