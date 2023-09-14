@@ -204,6 +204,8 @@ public class Player : MonoBehaviour
 
         //movementInput = ;
     }
+
+
     #endregion
 
     #region HelperFunctions
