@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
     public float mapRadius = 4.5f;
     public AnimationCurve elimSpeedCurve;
     public float playerElimTime = 2.0f;
+    public float playerElimBallSpinSpeed = 2.0f;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
@@ -433,6 +434,7 @@ public class GameManager : MonoBehaviour
         Vector2 dir = (alivePlayers[player].transform.position - Vector3.zero).normalized;
         for (int i = 0; i < balls.Count; i++) {
             balls[i].gameObject.SetActive(true);
+            balls[i].collider.enabled = true;
             balls[i].collider.immovable = true;
             balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantVel;
             balls[i].transform.position = Vector2.zero;
@@ -533,11 +535,6 @@ public class GameManager : MonoBehaviour
         Vector2 ret = Vector2.zero;
 
         for (int i = 0; i < balls.Count; i++) {
-            //Vector2 movementPlaneNorm = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x).normalized;
-            //if (Vector2.Dot(movementPlaneNorm, balls[i].transform.position) > 0) movementPlaneNorm *= -1;
-
-            //ret += movementPlaneNorm * transformerSpawnRadius;
-
             Vector2 clampedPos = Vector2.ClampMagnitude(-balls[i].transform.position, transformerSpawnRadius);
             Vector2 velocityPerp = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x);
             Vector2[] intersections = GetCircleIntersectionDouble(clampedPos, velocityPerp, transformerSpawnRadius);
@@ -672,6 +669,9 @@ public class GameManager : MonoBehaviour
         float[] playerStartAngles = new float[alivePlayers.Count];
         float[] playerTargetAngles = new float[alivePlayers.Count];
 
+        float[] ballsStartAngles = new float[balls.Count];
+        float[] ballsStartDistances = new float[balls.Count];
+
         Vector3 elimPlayerStartScale = alivePlayers[index].transform.localScale;
 
         // calculate start and end angle for each player
@@ -686,6 +686,12 @@ public class GameManager : MonoBehaviour
             } else {
                 playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
+        }
+
+        for (int i = 0; i < balls.Count; i++) {
+            ballsStartAngles[i] = Player.Angle(balls[i].transform.position);
+            ballsStartDistances[i] = balls[i].transform.position.magnitude;
+            balls[i].collider.enabled = false;
         }
 
         // move pillars over time & handle ArcTanShader shrinkage
@@ -719,6 +725,12 @@ public class GameManager : MonoBehaviour
                 }
 
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
+            }
+
+            for (int i = 0; i < balls.Count; i++) {
+                Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * pillarSmashTimer).normalized;
+                position *= Mathf.Lerp(ballsStartDistances[i], 0.0f, playerRemovalPercentage);
+                balls[i].transform.position = position;
             }
 
             yield return new WaitForEndOfFrame();
