@@ -1818,7 +1818,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetTimerSeconds
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &798258525128799931
 GameObject:
   m_ObjectHideFlags: 0
@@ -1984,7 +1996,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetShieldLives
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &857819358167749279
 GameObject:
   m_ObjectHideFlags: 0
@@ -3390,7 +3414,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBallCount
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &1347690169934347340
 GameObject:
   m_ObjectHideFlags: 0
@@ -5173,7 +5209,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBallSize
+        m_Mode: 4
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2174250356945800173
 GameObject:
   m_ObjectHideFlags: 0
@@ -5681,7 +5729,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &2476108980989593607
 GameObject:
@@ -7302,7 +7362,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2932149951589090826
 GameObject:
   m_ObjectHideFlags: 0
@@ -8039,7 +8111,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBallSpeedTransformer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &3416601132890745067
 GameObject:
@@ -8309,7 +8393,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 851.46497, y: -42.665}
+  m_AnchoredPosition: {x: 866.08997, y: -42.665}
   m_SizeDelta: {x: 191.167, y: 85.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7838801501801931631
@@ -9240,7 +9324,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &3873091985409464523
 GameObject:
@@ -10278,7 +10374,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetPlayerSpeed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &4276113446410271191
 GameObject:
   m_ObjectHideFlags: 0
@@ -12286,7 +12394,19 @@ MonoBehaviour:
   m_Value: 5
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBallSpeed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &5146624303705537573
 GameObject:
   m_ObjectHideFlags: 0
@@ -12882,7 +13002,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBlackHoleTransformer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &5475556729468952568
 GameObject:
@@ -13680,7 +13812,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3399634032805607052
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14627,7 +14759,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBallSizeTransformer
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &6120097504426238202
 GameObject:
@@ -14866,7 +15010,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &6189918701136006899
 GameObject:
@@ -16869,7 +17025,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 146.655, y: -42.665}
+  m_AnchoredPosition: {x: 132.03, y: -42.665}
   m_SizeDelta: {x: 191.167, y: 85.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5483688940721459057
@@ -21104,7 +21260,19 @@ MonoBehaviour:
   m_Value: 3
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8284144824434408991
 GameObject:
   m_ObjectHideFlags: 0
@@ -21708,7 +21876,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetPlayerDashEnabled
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &8553461090665080474
 GameObject:
@@ -22086,7 +22266,19 @@ MonoBehaviour:
   m_Value: 3
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetTransformerFrequency
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &8632249775131171915
 GameObject:
   m_ObjectHideFlags: 0
@@ -22882,7 +23074,19 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   m_IsOn: 0
 --- !u!1 &8772637591331353226
 GameObject:
