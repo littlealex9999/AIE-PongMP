@@ -200,12 +200,25 @@ public class Player : MonoBehaviour
             // select target ball based on heuristic
         }
 
+        Vector2 intersectionPoint = GameManager.instance.GetCircleIntersection(targetBallPos, targetBallVel, GameManager.instance.mapRadius);
+        float targetAngle = Angle(intersectionPoint);
 
+        if (targetAngle < playerMidPoint - angleDeviance || targetAngle > playerMidPoint + angleDeviance) {
+            movementInput = Vector2.zero;
+        } else {
+            float currentAngle = Angle(transform.position);
 
-        //movementInput = ;
+            if (targetAngle < currentAngle) {
+                movementInput = Quaternion.Euler(0, 0, 90) * facingDirection;
+            } else {
+                movementInput = Quaternion.Euler(0, 0, -90) * facingDirection;
+            }
+
+            if (currentAngle > playerMidPoint + angleDeviance) {
+                movementInput *= -1;
+            }
+        }
     }
-
-
     #endregion
 
     #region HelperFunctions

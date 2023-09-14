@@ -150,6 +150,44 @@ public class GameManager : MonoBehaviour
         else return playerEmissives[playerEmissives.Count - 1];
     }
 
+    public Vector2 GetCircleIntersection(Vector2 startPos, Vector2 direction, float radius)
+    {
+        Vector2 p1 = startPos;
+        Vector2 p2 = startPos + direction * mapRadius * 2;
+
+        Vector2 dist = new Vector2(p2.x - p1.x, p2.y - p1.y);
+        float a = dist.x * dist.x + dist.y * dist.y;
+        float b = 2 * (dist.x * p1.x + dist.y * p1.y);
+        float c = p1.x * p1.x + p1.y * p1.y;
+        c -= radius * radius;
+        float bb4ac = b * b - 4 * a * c;
+
+        float mu1 = (-b + Mathf.Sqrt(bb4ac)) / (2 * a);
+
+        return new Vector2(p1.x + mu1 * (p2.x - p1.x), p1.y + mu1 * (p2.y - p1.y));
+    }
+
+    public Vector2[] GetCircleIntersectionDouble(Vector2 startPos, Vector2 direction, float radius)
+    {
+        Vector2 p1 = startPos;
+        Vector2 p2 = startPos + direction * mapRadius * 2;
+
+        Vector2 dist = new Vector2(p2.x - p1.x, p2.y - p1.y);
+        float a = dist.x * dist.x + dist.y * dist.y;
+        float b = 2 * (dist.x * p1.x + dist.y * p1.y);
+        float c = p1.x * p1.x + p1.y * p1.y;
+        c -= radius * radius;
+        float bb4ac = b * b - 4 * a * c;
+
+        float mu1 = (-b + Mathf.Sqrt(bb4ac)) / (2 * a);
+        float mu2 = (-b - Mathf.Sqrt(bb4ac)) / (2 * a);
+
+        return new Vector2[2] {
+            new Vector2(p1.x + mu1 * (p2.x - p1.x), p1.y + mu1 * (p2.y - p1.y)),
+            new Vector2(p1.x + mu2 * (p2.x - p1.x), p1.y + mu2 * (p2.y - p1.y)),
+        };
+    }
+
     public static void QuitGame()
     {
         Application.Quit();
@@ -490,15 +528,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public Vector2 GetRandomTransformerSpawnPoint()
+    public Vector2 GetTransformerSpawnPoint()
     {
         Vector2 ret = Vector2.zero;
 
         for (int i = 0; i < balls.Count; i++) {
-            Vector2 movementPlaneNorm = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x).normalized;
-            if (Vector2.Dot(movementPlaneNorm, balls[i].transform.position) > 0) movementPlaneNorm *= -1;
+            //Vector2 movementPlaneNorm = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x).normalized;
+            //if (Vector2.Dot(movementPlaneNorm, balls[i].transform.position) > 0) movementPlaneNorm *= -1;
 
-            ret += movementPlaneNorm * transformerSpawnRadius;
+            //ret += movementPlaneNorm * transformerSpawnRadius;
+
+            Vector2 clampedPos = Vector2.ClampMagnitude(-balls[i].transform.position, transformerSpawnRadius);
+            Vector2 velocityPerp = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x);
+            Vector2[] intersections = GetCircleIntersectionDouble(clampedPos, velocityPerp, transformerSpawnRadius);
+            if ((intersections[0] - (Vector2)balls[i].transform.position).sqrMagnitude > (intersections[1] - (Vector2)balls[i].transform.position).sqrMagnitude) {
+                ret += intersections[0];
+            } else {
+                ret += intersections[1];
+            }
         }
 
         ret /= balls.Count;
@@ -539,7 +586,7 @@ public class GameManager : MonoBehaviour
         }
 
         if (hits > 0) {
-            spawnedTransformers.Add(Instantiate(passedTransformers[Random.Range(0, hits)], GetRandomTransformerSpawnPoint(), Quaternion.identity));
+            spawnedTransformers.Add(Instantiate(passedTransformers[Random.Range(0, hits)], GetTransformerSpawnPoint(), Quaternion.identity));
         }
     }
 
