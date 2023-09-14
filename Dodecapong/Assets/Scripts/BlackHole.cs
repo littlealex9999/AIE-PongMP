@@ -27,20 +27,27 @@ public class BlackHole : MonoBehaviour
         }
 
         if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
-            Vector2 deltaPos = transform.position - GameManager.instance.ball.transform.position;
-            Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.ball.collider.mass * collider.mass / deltaPos.sqrMagnitude);
-            GameManager.instance.ball.collider.velocity += gravity * gravityStrength;
+            for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+                Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
+                Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
+                GameManager.instance.balls[i].collider.velocity += gravity * gravityStrength;
+            }
         }
     }
 
-    void CheckCollisionBall(PongCollider other)
+    Ball ball;
+
+    void CheckCollisionBall(PongCollider other, CollisionData data)
     {
-        if (other.GetComponent<Ball>()) {
+        if (other.TryGetComponent(out ball))
+        {
             pullEnabled = false;
 
             other.gameObject.SetActive(false);
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
-            other.velocity = Random.insideUnitCircle * GameManager.instance.ball.constantVel;
+            other.velocity = Random.insideUnitCircle * GameManager.instance.ballPrefab.constantVel;
+
+            EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
             StartCoroutine(DestroyHole(other.gameObject));
         }
@@ -62,7 +69,8 @@ public class BlackHole : MonoBehaviour
         if (enableOnEnd) enableOnEnd.SetActive(true);
 
         // we make the assumption that this is true, as only one black hole should be able to spawn at a time
-        GameManager.instance.blackHoleActive = false;
+        if (ball) ball.largeRing.Play();
+        GameManager.instance.blackHole = this;
         Destroy(gameObject);
         yield break;
     }

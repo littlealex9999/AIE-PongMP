@@ -1,3 +1,4 @@
+using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -5,42 +6,39 @@ public class Ball : MonoBehaviour
 {
     new public PongCircleCollider collider;
 
-    public Map map;
-
     public float constantVel;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
-    [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
-    public float paddleBounceTowardsCenterBias;
 
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
     public float radius {
         get {
             return collider.radius;
         } set {
-            collider.radius = value;
+            collider.radius = value / 2;
             transform.localScale = new Vector3(value, value, value);
         }
     }
 
-    public float countdownTimer;
-    float currentCountdownTime;
-    bool reset;
-
     bool held;
 
-    void Start()
+    public ParticleSystem smallRing; 
+    public ParticleSystem mediumRing; 
+    public ParticleSystem largeRing; 
+
+    void Awake()
     {
         collider = GetComponent<PongCircleCollider>();
         collider.OnPaddleCollision += OnPaddleCollision;
         GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
-    private void OnPaddleCollision(PongCollider other)
+    private void OnPaddleCollision(PongCollider other, CollisionData data)
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
+            smallRing.Play();
             if (player.grabbing)
             {
                 StartCoroutine(player.GrabRoutine());
@@ -51,10 +49,12 @@ public class Ball : MonoBehaviour
             else if (player.hitting)
             {
                 EventManager.instance.ballHitEvent.Invoke();
+                mediumRing.Play();
             }
             else
             {
                 EventManager.instance.ballBounceEvent.Invoke();
+                smallRing.Play();
             }
         }
     }
@@ -70,31 +70,16 @@ public class Ball : MonoBehaviour
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
         collider.velocity = finalBounceDir * constantVel;
-        transform.position = (map.transform.position - (Vector3)bounceNormal) * (map.mapRadius - radius);
+        transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
     }
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held)
-        {
-            collider.velocity = Vector2.zero;
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held) {
+            collider.immovable = true;
             return;
-        }
-
-        if (currentCountdownTime > 0)
-        {
-            currentCountdownTime -= Time.fixedDeltaTime;
-            return;
-        }
-        else if (reset)
-        {
-            int player = Random.Range(0, GameManager.instance.alivePlayers.Count);
-
-            Vector2 dir = (GameManager.instance.alivePlayers[player].transform.position - transform.position).normalized;
-
-            collider.velocity = dir * constantVel;
-
-            reset = false;
+        } else if (collider.immovable) {
+            collider.immovable = false;
         }
 
         DampVelocity();
@@ -116,15 +101,9 @@ public class Ball : MonoBehaviour
         }
     }
 
-    private void BounceOnBounds()
-    {
-        Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-        Bounce(shieldBounceTowardsCenterBias, shieldNormal);
-    }
-
     private void CheckIfHitBounds()
     {
-        if (distFromCenter + radius > map.mapRadius)
+        if (distFromCenter + radius > GameManager.instance.mapRadius)
         {
             float angle = Angle(transform.position.normalized);
 
@@ -132,21 +111,19 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnSheildHit(alivePlayerID))
             {
-                BounceOnBounds();
-                transform.position = transform.position.normalized * (map.mapRadius - radius);
+                mediumRing.Play();
+                Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
+                Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+                transform.position = transform.position.normalized * (GameManager.instance.mapRadius - radius);
+               
             }
+            else // if player dies
+            {
+                largeRing.Play();
+                return;
+            }
+            mediumRing.Play();
         }
-    }
-
-    public void ResetBall()
-    {
-        EventManager.instance.ballCountdownEvent.Invoke();
-
-        currentCountdownTime = countdownTimer;
-
-        transform.position = Vector2.zero;
-
-        reset = true;
     }
 
     public void Release()
@@ -175,6 +152,4 @@ public class Ball : MonoBehaviour
 
         return 360 - ret;
     }
-
-    // pee
 }

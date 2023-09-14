@@ -10,6 +10,7 @@ public class CollisionSystem : MonoBehaviour
         CIRCLE,
         RECTANGLE,
         CONVEXHULL,
+        CLIPPEDPLANE,
     }
 
     static List<PongCollider> colliders = new List<PongCollider>();
@@ -37,16 +38,16 @@ public class CollisionSystem : MonoBehaviour
                         if (data != null && data.isColliding) {
                             if (colliders[i].trigger || colliders[j].trigger) {
                                 if (colliders[i].OnTrigger != null)
-                                    colliders[i].OnTrigger.Invoke(colliders[j]);
+                                    colliders[i].OnTrigger.Invoke(colliders[j], data);
                                 if (colliders[j].OnTrigger != null)
-                                    colliders[j].OnTrigger.Invoke(colliders[i]);
+                                    colliders[j].OnTrigger.Invoke(colliders[i], data);
                             } else {
                                 data.ResolveCollision();
 
                                 if (colliders[i].OnCollision != null)
-                                    colliders[i].OnCollision.Invoke(colliders[j]);
+                                    colliders[i].OnCollision.Invoke(colliders[j], data);
                                 if (colliders[j].OnCollision != null)
-                                    colliders[j].OnCollision.Invoke(colliders[i]);
+                                    colliders[j].OnCollision.Invoke(colliders[i], data);
                             }
                         }
                     }
@@ -59,15 +60,15 @@ public class CollisionSystem : MonoBehaviour
                         if (data != null && data.isColliding) {
                             if (colliders[i].trigger || paddleColliders[j].trigger) {
                                 if (colliders[i].OnPaddleTrigger != null)
-                                    colliders[i].OnPaddleTrigger.Invoke(paddleColliders[j]);
+                                    colliders[i].OnPaddleTrigger.Invoke(paddleColliders[j], data);
                                 if (paddleColliders[j].OnPaddleTrigger != null)
-                                    paddleColliders[j].OnPaddleTrigger.Invoke(colliders[i]);
+                                    paddleColliders[j].OnPaddleTrigger.Invoke(colliders[i], data);
                             } else {
                                 data.ResolveCollision();
                                 if (colliders[i].OnPaddleCollision != null)
-                                    colliders[i].OnPaddleCollision.Invoke(paddleColliders[j]);
+                                    colliders[i].OnPaddleCollision.Invoke(paddleColliders[j], data);
                                 if (paddleColliders[j].OnPaddleCollision != null)
-                                    paddleColliders[j].OnPaddleCollision.Invoke(colliders[i]);
+                                    paddleColliders[j].OnPaddleCollision.Invoke(colliders[i], data);
                             }
                         }
                     }
@@ -87,6 +88,8 @@ public class CollisionSystem : MonoBehaviour
                             return CircleRectangleCollision((PongCircleCollider)colliderA, (PongRectangleCollider)colliderB);
                         case ColliderTypes.CONVEXHULL:
                             return CircleConvexHullCollision((PongCircleCollider)colliderA, (PongConvexHullCollider)colliderB);
+                        //case ColliderTypes.CLIPPEDPLANE:
+                            //return CircleClippedPlaneCollision((PongCircleCollider)colliderA, (PongClippedPlaneCollider)colliderB);
                     }
                     break;
 
@@ -144,6 +147,7 @@ public class CollisionSystem : MonoBehaviour
 
             float depth = float.MaxValue;
             Vector2 normal = rotationOffset * -convexB.normals[0];
+            Vector2 forceNormal = rotationOffset * -convexB.forceNormals[0];
             Vector2 collisionPos = (Vector2)circleA.transform.position + normal * circleA.radius;
 
             Vector4[] midpoints = new Vector4[convexB.points.Length];
@@ -164,15 +168,20 @@ public class CollisionSystem : MonoBehaviour
                 if (leastDepth < 0 && leastDepth < depth || convexB.doResolutionOnFace[i] && leastDepth < depth) {
                     depth = leastDepth;
                     normal = -testingNormal;
+                    forceNormal = rotationOffset * -convexB.forceNormals[i];
                 }
             }
 
             Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
-            //Vector2 rotatedVelocity = convexB.transform.rotation * Quaternion.Euler(convexB.GetRotationOffset()) * vel;
-            Vector2 forceNormal = (normal - convexB.velocity * convexB.normalBending).normalized;
+            forceNormal = (forceNormal - convexB.velocity * convexB.normalBending).normalized;
 
             return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
         }
+
+        //static CollisionData CircleClippedPlaneCollision(PongCircleCollider circleA, PongClippedPlaneCollider planeB)
+        //{
+
+        //}
         #endregion
     }
 }

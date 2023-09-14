@@ -22,17 +22,20 @@ public class PongConvexHullColliderEditor : PongColliderEditor
             if (collider.doResolutionOnFace[i]) ++activeFaces;
         }
 
-        int[] collisionActiveIndices = new int[activeFaces * 2];
-        for (int i = 0; i < collisionActiveIndices.Length / 2; i++) {
-            collisionActiveIndices[i * 2] = i;
-            collisionActiveIndices[i * 2 + 1] = (i + 1) % points.Length;
+        List<int> l_collisionActiveIndices = new List<int>();
+        List<int> l_collisionInactiveIndices = new List<int>();
+        for (int i = 0; i < points.Length; i++) {
+            if (collider.doResolutionOnFace[i]) {
+                l_collisionActiveIndices.Add(i);
+                l_collisionActiveIndices.Add((i + 1) % points.Length);
+            } else {
+                l_collisionInactiveIndices.Add(i);
+                l_collisionInactiveIndices.Add((i + 1) % points.Length);
+            }
         }
 
-        int[] collisionInactiveIndices = new int[(points.Length - activeFaces) * 2];
-        for (int i = 0; i < collisionInactiveIndices.Length / 2; i++) {
-            collisionActiveIndices[i * 2] = i;
-            collisionActiveIndices[i * 2 + 1] = (i + 1) % points.Length;
-        }
+        int[] collisionActiveIndices = l_collisionActiveIndices.ToArray();
+        int[] collisionInactiveIndices = l_collisionInactiveIndices.ToArray();
 
         Handles.DrawLines(points, collisionActiveIndices);
 
@@ -57,6 +60,12 @@ public class PongConvexHullColliderEditor : PongColliderEditor
             Vector3 midPoint = (points[i] + points[(i + 1) % points.Length]) / 2;
             Handles.DrawLine(midPoint, midPoint + collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.normals[i]);
         }
+
+        Handles.color = Color.blue;
+        for (int i = 0; i < points.Length; i++) {
+            Vector3 midPoint = (points[i] + points[(i + 1) % points.Length]) / 2;
+            Handles.DrawLine(midPoint, midPoint + collider.transform.rotation * Quaternion.Euler(collider.GetRotationOffset()) * (Vector3)collider.forceNormals[i]);
+        }
     }
 
     public override void OnInspectorGUI()
@@ -67,6 +76,10 @@ public class PongConvexHullColliderEditor : PongColliderEditor
 
         if (GUILayout.Button("Recalculate Normals")) {
             collider.RecalculateNormals();
+        }
+
+        if (GUILayout.Button("Normalize Normals")) {
+            collider.NormalizeNormals();
         }
 
         //if (collider.doResolutionOnFace.Length != collider.points.Length) {

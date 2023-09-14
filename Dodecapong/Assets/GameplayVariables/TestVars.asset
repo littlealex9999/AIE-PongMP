@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerSpeed: 90
   playerSize: {x: 0.03, y: 0.03, z: 0.03}
-  playerRotationalForce: 2
+  playerRotationalForce: 0.8
   playerNormalBending: 2
   dashEnabled: 1
   dashDuration: 0.25
@@ -22,7 +22,7 @@ MonoBehaviour:
   hitEnabled: 1
   hitDuration: 0.1
   hitCooldown: 0.5
-  hitStrength: 0.5
+  hitStrength: 0.1
   grabEnabled: 1
   grabDuration: 1
   grabCooldown: 1
@@ -32,12 +32,10 @@ MonoBehaviour:
   ballSpeedPerHit: 0
   ballSize: 0.5
   shieldBounceTowardsCenterBias: 0.3
-  shieldLives: 5
-  obstacleFrequency: 0
-  blackHoleEnabled: 0
-  powerupFrequency: 0
-  speedPowerupEnabled: 0
-  sizePowerupEnabled: 0
+  shieldLives: 10
+  transformerFrequency: 0.291
+  transformerPower: 1
+  enabledTransformers: 16
   winType: 0
   useTimer: 1
   timeInSeconds: 20

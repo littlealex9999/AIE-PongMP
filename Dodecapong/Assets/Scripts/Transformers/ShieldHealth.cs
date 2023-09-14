@@ -6,6 +6,11 @@ public class ShieldHealth : Transformer
 {
     public int health = 1;
 
+    public override TransformerTypes GetTransformerType()
+    {
+        return TransformerTypes.SHIELDHEALTH;
+    }
+
     public override void ApplyModifier()
     {
         for (int i = 0; i < GameManager.instance.alivePlayers.Count; i++) {
