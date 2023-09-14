@@ -728,7 +728,7 @@ public class GameManager : MonoBehaviour
             }
 
             for (int i = 0; i < balls.Count; i++) {
-                Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * pillarSmashTimer).normalized;
+                Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * Mathf.Lerp(0, pillarSmashTimer, playerRemovalPercentage)).normalized;
                 position *= Mathf.Lerp(ballsStartDistances[i], 0.0f, playerRemovalPercentage);
                 balls[i].transform.position = position;
             }
