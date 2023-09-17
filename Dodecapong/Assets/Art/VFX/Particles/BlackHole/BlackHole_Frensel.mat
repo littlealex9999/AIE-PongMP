@@ -73,7 +73,7 @@ Material:
     - _DstBlend: 0
     - _EnableBlendModePreserveSpecularLighting: 0
     - _EnableFogOnTransparent: 1
-    - _FresnelPower: 3
+    - _FresnelPower: 8.55
     - _OpaqueCullMode: 2
     - _RenderQueueType: 1
     - _SrcBlend: 1
@@ -103,5 +103,5 @@ Material:
     m_Colors:
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _FresnelColour: {r: 15.521485, g: 2.9433966, b: 16, a: 0}
+    - _FresnelColour: {r: 201.20767, g: 38.73517, b: 205.51157, a: 0}
   m_BuildTextureStacks: []
