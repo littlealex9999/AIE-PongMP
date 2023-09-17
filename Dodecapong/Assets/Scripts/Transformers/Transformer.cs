@@ -13,9 +13,11 @@ public abstract class Transformer : MonoBehaviour
         BALLSPEED       = 1 << 0,
         PLAYERSPEED     = 1 << 1,
         BALLSIZE        = 1 << 2,
-        SHIELDHEALTH    = 1 << 3,
-        BLACKHOLE       = 1 << 4,
-        DASHCOOLDOWN    = 1 << 5,
+        PLAYERSIZE      = 1 << 3,
+        SHIELDHEALTH    = 1 << 4,
+        BLACKHOLE       = 1 << 5,
+        DASHCOOLDOWN    = 1 << 6,
+        BALLCOUNT       = 1 << 7,
     }
 
     public abstract TransformerTypes GetTransformerType();

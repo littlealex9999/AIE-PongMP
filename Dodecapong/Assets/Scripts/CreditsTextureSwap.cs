@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.Rendering.DebugUI;
@@ -22,18 +23,15 @@ public class CreditsTextureSwap : MonoBehaviour
 
     public void ApplyNewTexture(Texture texture)
     {
-        // apply old second texture to first texture
-        // reset lerp to 0
-        //pinArtMaterial.SetTexture(, texture);
-        //pinArtMaterial.SetFloat(, value);
-
-        pinArtMaterial.SetTexture("_Render_Texture", texture);
+        pinArtMaterial.SetTexture("_Render_Texture", pinArtMaterial.GetTexture("_Face"));
+        pinArtMaterial.SetTexture("_Face", texture);
+        pinArtMaterial.SetFloat("_Face_On_Off_Lerp", 0.0f);
 
         elapsed = 0.0f;
     }
 
     void SetLerp(float value)
     {
-        //pinArtMaterial.SetFloat(, value);
+        pinArtMaterial.SetFloat("_Face_On_Off_Lerp", value);
     }
 }

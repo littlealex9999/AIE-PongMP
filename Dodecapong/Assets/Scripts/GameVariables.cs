@@ -33,8 +33,8 @@ public class GameVariables : ScriptableObject
 
         shieldLives = gv.shieldLives;
 
-        obstacleFrequency = gv.obstacleFrequency;
         transformerFrequency = gv.transformerFrequency;
+        transformerPower = gv.transformerPower;
         enabledTransformers = gv.enabledTransformers;
 
         winType = gv.winType;
@@ -72,6 +72,9 @@ public class GameVariables : ScriptableObject
 
     public static void SetPlayerSpeed(float value) { GameManager.instance.gameVariables.playerSpeed = value; }
     public static void SetPlayerSize(Vector3 value) { GameManager.instance.gameVariables.playerSize = value; }
+    public static void SetPlayerSizeX(float value) { GameManager.instance.gameVariables.playerSize.x = value; }
+    public static void SetPlayerSizeY(float value) { GameManager.instance.gameVariables.playerSize.y = value; }
+    public static void SetPlayerSizeZ(float value) { GameManager.instance.gameVariables.playerSize.z = value; }
     public static void SetPlayerRotationalForce(float value) { GameManager.instance.gameVariables.playerRotationalForce = value; }
     public static void SetPlayerNormalBending(float value) { GameManager.instance.gameVariables.playerNormalBending = value; }
     public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.gameVariables.dashEnabled = enabled; }
@@ -109,18 +112,21 @@ public class GameVariables : ScriptableObject
     #endregion
 
     #region Field
-    [Header("Field"), Range(0, 1)] public float obstacleFrequency;
-
     [Range(0, 1)] public float transformerFrequency;
+    public float transformerPower = 1.0f;
     public Transformer.TransformerTypes enabledTransformers;
 
-    public static void SetObstacleFrequency(float value) { GameManager.instance.gameVariables.obstacleFrequency = value; }
-
     public static void SetTransformerFrequency(float value) { GameManager.instance.gameVariables.transformerFrequency = value; }
+    public static void SetTransformerPower(float value) { GameManager.instance.gameVariables.transformerPower = value; }
     public void SetBits(Transformer.TransformerTypes mask, bool add) { enabledTransformers = add ? enabledTransformers | mask : enabledTransformers & ~mask; }
 
     public static void SetBallSpeedTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BALLSPEED, enabled); }
     public static void SetBallSizeTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BALLSIZE, enabled); }
+    public static void SetPlayerSpeedTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.PLAYERSPEED, enabled); }
+    public static void SetPlayerSizeTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.PLAYERSIZE, enabled); }
+    public static void SetDashCooldownTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.DASHCOOLDOWN, enabled); }
+    public static void SetShieldLivesTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.SHIELDHEALTH, enabled); }
+    public static void SetBallCountTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BALLCOUNT, enabled); }
     public static void SetBlackHoleTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BLACKHOLE, enabled); }
     #endregion
 
