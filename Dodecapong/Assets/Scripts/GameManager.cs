@@ -7,6 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using Unity.VisualScripting;
+using JetBrains.Annotations;
 
 public class GameManager : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class GameManager : MonoBehaviour
     public float mapRadius = 4.5f;
     public AnimationCurve elimSpeedCurve;
     public float playerElimTime = 2.0f;
+    public float playerElimBallSpinSpeed = 2.0f;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
@@ -63,12 +65,15 @@ public class GameManager : MonoBehaviour
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
-    public List<Image> endGamePlayerImages;
+    public List<Image> endGamePlayerImages = new List<Image>();
+    public List<int> endGamePlayerEnableThresholds = new List<int>();
+    public Transform endGameAlternatePosition;
+    Vector3 endGameRestorePosition;
 
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
 
-    public GameState gameState = GameState.MAINMENU;
+    [HideInInspector] public GameState gameState = GameState.MAINMENU;
 
     public enum GameState
     {
@@ -107,11 +112,14 @@ public class GameManager : MonoBehaviour
         if (!instance) instance = this;
         else Destroy(this);
 
+        UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
+
         if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
         else gameVariables = new GameVariables();
 
         OnGameStateChange += OnGameStateChanged;
 
+        SetupGameEndData();
         UpdateGameState(GameState.MAINMENU);
     }
 
@@ -141,6 +149,49 @@ public class GameManager : MonoBehaviour
     {
         if (index < playerEmissives.Count) return playerEmissives[index];
         else return playerEmissives[playerEmissives.Count - 1];
+    }
+
+    public Vector2 GetCircleIntersection(Vector2 startPos, Vector2 direction, float radius)
+    {
+        Vector2 p1 = startPos;
+        Vector2 p2 = startPos + direction * mapRadius * 2;
+
+        Vector2 dist = new Vector2(p2.x - p1.x, p2.y - p1.y);
+        float a = dist.x * dist.x + dist.y * dist.y;
+        float b = 2 * (dist.x * p1.x + dist.y * p1.y);
+        float c = p1.x * p1.x + p1.y * p1.y;
+        c -= radius * radius;
+        float bb4ac = b * b - 4 * a * c;
+
+        float mu1 = (-b + Mathf.Sqrt(bb4ac)) / (2 * a);
+
+        return new Vector2(p1.x + mu1 * (p2.x - p1.x), p1.y + mu1 * (p2.y - p1.y));
+    }
+
+    public Vector2[] GetCircleIntersectionDouble(Vector2 startPos, Vector2 direction, float radius)
+    {
+        Vector2 p1 = startPos;
+        Vector2 p2 = startPos + direction * mapRadius * 2;
+
+        Vector2 dist = new Vector2(p2.x - p1.x, p2.y - p1.y);
+        float a = dist.x * dist.x + dist.y * dist.y;
+        float b = 2 * (dist.x * p1.x + dist.y * p1.y);
+        float c = p1.x * p1.x + p1.y * p1.y;
+        c -= radius * radius;
+        float bb4ac = b * b - 4 * a * c;
+
+        float mu1 = (-b + Mathf.Sqrt(bb4ac)) / (2 * a);
+        float mu2 = (-b - Mathf.Sqrt(bb4ac)) / (2 * a);
+
+        return new Vector2[2] {
+            new Vector2(p1.x + mu1 * (p2.x - p1.x), p1.y + mu1 * (p2.y - p1.y)),
+            new Vector2(p1.x + mu2 * (p2.x - p1.x), p1.y + mu2 * (p2.y - p1.y)),
+        };
+    }
+
+    public static void QuitGame()
+    {
+        Application.Quit();
     }
     #endregion
 
@@ -179,26 +230,48 @@ public class GameManager : MonoBehaviour
                 break;
             case GameState.GAMEOVER:
                 if (inGame) {
-                    // EndGame calls a gamestate change to GAMEOVER so we must ensure it does it infinitely repeat and return
+                    // EndGame calls a gamestate change to GAMEOVER so we must ensure it doesn't infinitely repeat and return
                     EndGame();
                     return;
                 }
 
                 EventManager.instance?.menuEvent?.Invoke();
 
-                for (int i = 0; i < elimPlayers.Count; i++) {
-                    if (i >= endGamePlayerImages.Count) break;
-
+                for (int i = 0; i < elimPlayers.Count && i < endGamePlayerImages.Count; i++) {
                     endGamePlayerImages[i].color = elimPlayers[elimPlayers.Count - (i + 1)].color;
-                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(true);
                 }
 
-                for (int i = endGamePlayerImages.Count - 1; i > elimPlayers.Count - 1; i--) {
-                    endGamePlayerImages[i].transform.parent.gameObject.SetActive(false);
+                if (elimPlayers.Count == 2) {
+                    endGamePlayerImages[1].transform.parent.position = endGameAlternatePosition.position;
+                } else {
+                    endGamePlayerImages[1].transform.parent.localPosition = endGameRestorePosition;
+                }
+
+                int lastAccess = 0;
+                for (int i = 0; i < endGamePlayerEnableThresholds.Count; i++) {
+                    if (endGamePlayerEnableThresholds[i] > elimPlayers.Count) {
+                        for (int j = lastAccess + 1; j < endGamePlayerImages.Count; j++) {
+                            endGamePlayerImages[j].transform.parent.gameObject.SetActive(false);
+                        }
+                        break;
+                    }
+
+                    for (int j = lastAccess; j < endGamePlayerImages.Count; j++) {
+                        if (j >= endGamePlayerEnableThresholds[i]) break;
+                        lastAccess = j;
+                        endGamePlayerImages[j].transform.parent.gameObject.SetActive(true);
+                    }
                 }
                 break;
             default:
                 break;
+        }
+    }
+
+    void SetupGameEndData()
+    {
+        if (endGamePlayerImages.Count > 1) {
+            endGameRestorePosition = endGamePlayerImages[1].transform.parent.localPosition;
         }
     }
     #endregion
@@ -361,6 +434,7 @@ public class GameManager : MonoBehaviour
         Vector2 dir = (alivePlayers[player].transform.position - Vector3.zero).normalized;
         for (int i = 0; i < balls.Count; i++) {
             balls[i].gameObject.SetActive(true);
+            balls[i].collider.enabled = true;
             balls[i].collider.immovable = true;
             balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantVel;
             balls[i].transform.position = Vector2.zero;
@@ -456,15 +530,19 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public Vector2 GetRandomTransformerSpawnPoint()
+    public Vector2 GetTransformerSpawnPoint()
     {
         Vector2 ret = Vector2.zero;
 
         for (int i = 0; i < balls.Count; i++) {
-            Vector2 movementPlaneNorm = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x).normalized;
-            if (Vector2.Dot(movementPlaneNorm, balls[i].transform.position) > 0) movementPlaneNorm *= -1;
-
-            ret += movementPlaneNorm * transformerSpawnRadius;
+            Vector2 clampedPos = Vector2.ClampMagnitude(-balls[i].transform.position, transformerSpawnRadius);
+            Vector2 velocityPerp = new Vector2(balls[i].collider.velocity.y, -balls[i].collider.velocity.x);
+            Vector2[] intersections = GetCircleIntersectionDouble(clampedPos, velocityPerp, transformerSpawnRadius);
+            if ((intersections[0] - (Vector2)balls[i].transform.position).sqrMagnitude > (intersections[1] - (Vector2)balls[i].transform.position).sqrMagnitude) {
+                ret += intersections[0];
+            } else {
+                ret += intersections[1];
+            }
         }
 
         ret /= balls.Count;
@@ -475,44 +553,37 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Spawn Transformer")]
     public void SpawnTransformer()
     {
-        bool[] attempted = new bool[allowedTransformers.Count];
+        Transformer[] passedTransformers = new Transformer[allowedTransformers.Count];
+        int hits = 0;
 
-        bool selecting = true;
-        while (selecting) {
-            int maxRand = 0;
-            for (int i = 0; i < attempted.Length; i++) {
-                if (!attempted[i]) ++maxRand;
-            }
+        for (int i = 0; i < allowedTransformers.Count; i++) {
+            bool allowed = true;
+            if (allowedTransformers[i] is BlackHoleSpawn) {
+                if (blackHole) {
+                    allowed = false;
+                }
 
-            if (maxRand <= 0) return;
-
-            int randSel = Random.Range(0, maxRand);
-            int hits = 0;
-            for (int i = 0; i < allowedTransformers.Count; i++) {
-                bool allowed = true;
-                if (allowedTransformers[i] is BlackHoleSpawn) {
-                    if (blackHole) {
+                for (int j = 0; j < spawnedTransformers.Count; j++) {
+                    if (spawnedTransformers[j] is BlackHoleSpawn) {
                         allowed = false;
+                        break;
                     }
-
-                    for (int j = 0; j < spawnedTransformers.Count; j++) {
-                        if (spawnedTransformers[j] is BlackHoleSpawn) {
-                            allowed = false;
-                            break;
-                        }
-                    }
-                }
-
-                if (allowed) {
-                    ++hits;
-                }
-
-                if (hits > randSel) {
-                    selecting = false;
-                    spawnedTransformers.Add(Instantiate(allowedTransformers[i], GetRandomTransformerSpawnPoint(), Quaternion.identity));
-                    return;
                 }
             }
+
+            if (allowed) {
+                ++hits;
+                for (int j = 0; j < passedTransformers.Length; j++) {
+                    if (passedTransformers[j] == null) {
+                        passedTransformers[j] = allowedTransformers[i];
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (hits > 0) {
+            spawnedTransformers.Add(Instantiate(passedTransformers[Random.Range(0, hits)], GetTransformerSpawnPoint(), Quaternion.identity));
         }
     }
 
@@ -598,6 +669,9 @@ public class GameManager : MonoBehaviour
         float[] playerStartAngles = new float[alivePlayers.Count];
         float[] playerTargetAngles = new float[alivePlayers.Count];
 
+        float[] ballsStartAngles = new float[balls.Count];
+        float[] ballsStartDistances = new float[balls.Count];
+
         Vector3 elimPlayerStartScale = alivePlayers[index].transform.localScale;
 
         // calculate start and end angle for each player
@@ -612,6 +686,12 @@ public class GameManager : MonoBehaviour
             } else {
                 playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
+        }
+
+        for (int i = 0; i < balls.Count; i++) {
+            ballsStartAngles[i] = Player.Angle(balls[i].transform.position);
+            ballsStartDistances[i] = balls[i].transform.position.magnitude;
+            balls[i].collider.enabled = false;
         }
 
         // move pillars over time & handle ArcTanShader shrinkage
@@ -645,6 +725,12 @@ public class GameManager : MonoBehaviour
                 }
 
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
+            }
+
+            for (int i = 0; i < balls.Count; i++) {
+                Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * Mathf.Lerp(0, pillarSmashTimer, playerRemovalPercentage)).normalized;
+                position *= Mathf.Lerp(ballsStartDistances[i], 0.0f, playerRemovalPercentage);
+                balls[i].transform.position = position;
             }
 
             yield return new WaitForEndOfFrame();

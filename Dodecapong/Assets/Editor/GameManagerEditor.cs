@@ -12,7 +12,8 @@ public class GameManagerEditor : Editor
 
         if (GameManager.instance != null) {
             if (GUILayout.Button("Create New Player")) {
-                GameManager.instance.GetNewPlayer();
+                Player p = GameManager.instance.GetNewPlayer();
+                p.SetAI();
             }
 
             if (GUILayout.Button("Spawn Transformer")) {
