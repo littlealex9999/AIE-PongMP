@@ -17,6 +17,7 @@ public class ControllerInputHandler : MonoBehaviour
     private void OnDestroy()
     {
         GameManager.instance.controllers.Remove(this);
+        if (playerInput.actions.FindActionMap("UI").enabled) GameManager.instance.controllers[0].EnableUIControls();
         GameManager.instance.RemovePlayer(playerA);
         GameManager.instance.RemovePlayer(playerB);
         GameManager.instance.UpdatePlayerImages();
@@ -29,7 +30,16 @@ public class ControllerInputHandler : MonoBehaviour
         GameManager.instance.controllers.Add(this);
         playerA = GameManager.instance.GetNewPlayer();
         GameManager.instance.UpdatePlayerImages();
-        if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
+        if (playerA.ID != 0) DisableUIControls();
+    }
+
+    public void EnableUIControls()
+    {
+        playerInput.actions.FindActionMap("UI").Enable();
+    }
+    public void DisableUIControls()
+    {
+        playerInput.actions.FindActionMap("UI").Disable();
     }
 
     public void PlayerInput_onDeviceLost(PlayerInput obj)
