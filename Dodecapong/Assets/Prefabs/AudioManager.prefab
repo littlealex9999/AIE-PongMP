@@ -58,6 +58,7 @@ MonoBehaviour:
   ballCountdown: {fileID: 8300000, guid: b4a2af8a6ae5f41439e3f21189baf23f, type: 3}
   ballBounce: {fileID: 8300000, guid: 98b333613f09d0640b47b65ec1ba90c8, type: 3}
   ballHit: {fileID: 8300000, guid: 98b333613f09d0640b47b65ec1ba90c8, type: 3}
+  ballHitPillar: {fileID: 8300000, guid: fbef32af59d8cf64c995a8ca43730ac5, type: 3}
   ballHitBlackHole: {fileID: 8300000, guid: 811663ad249a6564c8b2fc285f6ce89f, type: 3}
   ballGrab: {fileID: 8300000, guid: 466ea7eb05d99954c84b889f8e4bb3b8, type: 3}
   dash: {fileID: 8300000, guid: 15ba97af11190774a9252635d6a165b0, type: 3}
@@ -83,6 +84,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   ballHitEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  ballHitPillarEvent:
     m_PersistentCalls:
       m_Calls: []
   ballHitBlackHoleEvent:
