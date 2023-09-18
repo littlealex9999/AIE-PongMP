@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 49765570054812826}
   - component: {fileID: 1107721618288128298}
   - component: {fileID: 7408285359382765999}
-  - component: {fileID: -3826403407305802416}
+  - component: {fileID: 7235906791884781308}
   m_Layer: 0
-  m_Name: Transformer Ball smaller
+  m_Name: T_BallSpeed-
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,9 +29,10 @@ Transform:
   m_GameObject: {fileID: 5141576805790278924}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children:
+  - {fileID: 8917189025447332317}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -50,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5141576805790278924}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -105,7 +106,7 @@ MonoBehaviour:
   immovable: 0
   addForceWhileImmovable: 1
   radius: 0.25
---- !u!114 &-3826403407305802416
+--- !u!114 &7235906791884781308
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,9 +115,72 @@ MonoBehaviour:
   m_GameObject: {fileID: 5141576805790278924}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dae7154f51a402c4583f1008a0ba2a70, type: 3}
+  m_Script: {fileID: 11500000, guid: 2c9fc9f0b792eba428de5b6519cd917b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   limitedTime: 1
+  despawnTime: 15
   duration: 20
-  sizeMod: -0.5
+  speedMod: -2
+--- !u!1001 &3215924817631909530
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 8856351250482960223}
+    m_Modifications:
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721928, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5435235546404721929, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+      propertyPath: m_Name
+      value: PRT_Morph_SpeedDecrease
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+--- !u!4 &8917189025447332317 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6296448690565209927, guid: c9383d9d4d04cb842908b57cf59389af, type: 3}
+  m_PrefabInstance: {fileID: 3215924817631909530}
+  m_PrefabAsset: {fileID: 0}

@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class Transformer : MonoBehaviour
 {
     public bool limitedTime = true;
+    public float despawnTime = 15.0f;
     public float duration = 20.0f;
 
     [System.Flags]
@@ -35,6 +36,7 @@ public abstract class Transformer : MonoBehaviour
         {
             ball.smallRing.Play();
 
+            GameManager.instance.spawnedTransformers.Remove(this);
             GameManager.instance.activeTransformers.Add(this);
             ApplyModifier();
 

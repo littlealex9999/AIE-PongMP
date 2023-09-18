@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 [Serializable]
 public class MenuTextPair
@@ -33,6 +34,16 @@ public class MenuTextPair
 
 public class MenuManager : MonoBehaviour
 {
+    #region Instance setup
+    public static MenuManager instance;
+
+    private void Awake()
+    {
+        if (!instance) instance = this;
+        else Destroy(this);
+    }
+    #endregion
+
     public EventSystem eventSystem;
 
     [Header("Screens")]
@@ -44,10 +55,8 @@ public class MenuManager : MonoBehaviour
     public GameObject endScreen;
 
     [Header("Settings Screens")]
-    public GameObject fieldSettings;
-    public GameObject playerSettings;
-    public GameObject scoreSettings;
-    public GameObject ballSettings;
+    public GameObject[] settingsSubScreens;
+    int settingsCurrentActive = 0;
 
     [Header("Default Buttons")]
     public GameObject mainMenuDefault;
@@ -83,11 +92,6 @@ public class MenuManager : MonoBehaviour
         gameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         endScreen.SetActive(false);
-
-        ballSettings.SetActive(false);
-        fieldSettings.SetActive(false);
-        playerSettings.SetActive(false);
-        scoreSettings.SetActive(false);
     }
 
     public void UpdateState(StateToChangeTo stateToChangeTo)
@@ -126,33 +130,18 @@ public class MenuManager : MonoBehaviour
     }
 
     // Buttons at top, enabling/disabling panels
-    public void BallSettingsEnable()
+    void SettingsScreenCycle(int index)
     {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        ballSettings.SetActive(true);
+        if (index >= settingsSubScreens.Count()) index = settingsSubScreens.Count() - 1;
+        if (index < 0) index = 0;
+
+        settingsSubScreens[settingsCurrentActive].SetActive(false);
+        settingsSubScreens[index].SetActive(true);
+        settingsCurrentActive = index;
     }
 
-    public void FieldSettingsEnable()
-    {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        fieldSettings.SetActive(true);
-    }
-
-    public void PlayerSettingsEnable()
-    {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        playerSettings.SetActive(true);
-    }
-
-    public void ScoreSettingsEnable()
-    {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        scoreSettings.SetActive(true);
-    }
+    public void SettingsScreenPageRight() => SettingsScreenCycle(settingsCurrentActive + 1);
+    public void SettingsScreenPageLeft() => SettingsScreenCycle(settingsCurrentActive - 1);
 
     // buttons ohohoho
 
@@ -167,7 +156,7 @@ public class MenuManager : MonoBehaviour
     {
         DisableAll();
         settingsScreen.SetActive(true);
-        ballSettings.SetActive(true);
+        SettingsScreenCycle(0);
         eventSystem.SetSelectedGameObject(settingsDefault);
     }
 
