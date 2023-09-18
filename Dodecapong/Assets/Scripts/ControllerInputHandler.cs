@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.ShaderData;
 
 [RequireComponent(typeof(PlayerInput))]
 public class ControllerInputHandler : MonoBehaviour
@@ -15,8 +16,10 @@ public class ControllerInputHandler : MonoBehaviour
 
     private void OnDestroy()
     {
+        GameManager.instance.controllers.Remove(this);
         GameManager.instance.RemovePlayer(playerA);
         GameManager.instance.RemovePlayer(playerB);
+        GameManager.instance.UpdatePlayerImages();
     }
 
     private void Awake()
@@ -27,7 +30,11 @@ public class ControllerInputHandler : MonoBehaviour
         playerA = GameManager.instance.GetNewPlayer();
         GameManager.instance.UpdatePlayerImages();
         if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
-        
+    }
+
+    public void PlayerInput_onDeviceLost(PlayerInput obj)
+    {
+        //Destroy(gameObject);
     }
 
     public void LeftStick(InputAction.CallbackContext context)
@@ -74,11 +81,10 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
         {
-            GameManager.instance.controllers.Remove(this);
             Destroy(gameObject);
-            GameManager.instance.UpdatePlayerImages();
         }
     }
+
     public void SplitHit(InputAction.CallbackContext context)
     {
         if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
