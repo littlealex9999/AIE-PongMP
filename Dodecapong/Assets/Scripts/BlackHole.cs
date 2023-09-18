@@ -12,6 +12,7 @@ public class BlackHole : MonoBehaviour
     public bool pullEnabled = true;
 
     new PongCircleCollider collider;
+    Ball ball;
 
     private void Start()
     {
@@ -35,8 +36,6 @@ public class BlackHole : MonoBehaviour
         }
     }
 
-    Ball ball;
-
     void CheckCollisionBall(PongCollider other, CollisionData data)
     {
         if (other.TryGetComponent(out ball))
@@ -45,7 +44,7 @@ public class BlackHole : MonoBehaviour
 
             other.gameObject.SetActive(false);
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
-            other.velocity = Random.insideUnitCircle * GameManager.instance.ballPrefab.constantVel;
+            other.velocity = Random.insideUnitCircle * ball.constantSpd;
 
             EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
@@ -68,9 +67,8 @@ public class BlackHole : MonoBehaviour
 
         if (enableOnEnd) enableOnEnd.SetActive(true);
 
-        // we make the assumption that this is true, as only one black hole should be able to spawn at a time
         if (ball) ball.largeRing.Play();
-        GameManager.instance.blackHole = this;
+        GameManager.instance.blackHole = null;
         Destroy(gameObject);
         yield break;
     }

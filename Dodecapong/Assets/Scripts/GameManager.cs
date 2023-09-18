@@ -411,7 +411,7 @@ public class GameManager : MonoBehaviour
             Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
-            b.constantVel = gameVariables.ballSpeed;
+            b.constantSpd = gameVariables.ballSpeed;
             b.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
             b.collider.radius = gameVariables.ballSize / 2;
             b.dampStrength = gameVariables.ballSpeedDamp;
@@ -436,7 +436,7 @@ public class GameManager : MonoBehaviour
             balls[i].gameObject.SetActive(true);
             balls[i].collider.enabled = true;
             balls[i].collider.immovable = true;
-            balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantVel;
+            balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantSpd;
             balls[i].transform.position = Vector2.zero;
         }
     }
@@ -517,6 +517,15 @@ public class GameManager : MonoBehaviour
         if (transformerSpawnTimer > transformerSpawnTime) {
             SpawnTransformer();
             transformerSpawnTimer = 0;
+        }
+
+        for (int i = 0; i < spawnedTransformers.Count; i++) {
+            spawnedTransformers[i].despawnTime -= delta;
+            if (spawnedTransformers[i].despawnTime <= 0.0f) {
+                Destroy(spawnedTransformers[i].gameObject);
+                spawnedTransformers.RemoveAt(i);
+                --i;
+            }
         }
 
         for (int i = 0; i < activeTransformers.Count; i++) {
