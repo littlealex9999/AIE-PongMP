@@ -32,11 +32,11 @@ public class Ball : MonoBehaviour
     void Awake()
     {
         collider = GetComponent<PongCircleCollider>();
-        collider.OnPaddleCollision += OnPaddleCollision;
+        collider.OnPaddleCollisionEnter += OnPaddleCollisionEnter;
         GameManager.instance.OnGameStateChange += OnGameStateChanged;
     }
 
-    private void OnPaddleCollision(PongCollider other, CollisionData data)
+    private void OnPaddleCollisionEnter(PongCollider other, CollisionData data)
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {

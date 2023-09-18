@@ -20,10 +20,22 @@ public abstract class PongCollider : MonoBehaviour
     public bool addForceWhileImmovable = true;
 
     public delegate void CollisionEvents(PongCollider other, CollisionData data);
+    public CollisionEvents OnCollisionEnter;
+    public CollisionEvents OnPaddleCollisionEnter;
+    public CollisionEvents OnTriggerEnter;
+    public CollisionEvents OnPaddleTriggerEnter;
+
     public CollisionEvents OnCollision;
     public CollisionEvents OnPaddleCollision;
     public CollisionEvents OnTrigger;
     public CollisionEvents OnPaddleTrigger;
+
+    public CollisionEvents OnCollisionExit;
+    public CollisionEvents OnPaddleCollisionExit;
+    public CollisionEvents OnTriggerExit;
+    public CollisionEvents OnPaddleTriggerExit;
+
+    public List<PongCollider> collidingWith = new List<PongCollider>();
 
     private void Start()
     {
