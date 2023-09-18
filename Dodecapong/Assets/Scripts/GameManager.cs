@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public GameVariables gameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
+
+    [HideInInspector] public List<ControllerInputHandler> controllers;
     #endregion
 
     #region Map Settings
@@ -57,7 +59,9 @@ public class GameManager : MonoBehaviour
 
     #region UI
     [Header("UI")]
-    public List<Image> playerImages;
+    public List<Image> controllerImages;
+    public List<Image> halfControllerImages;
+    public Color imageDefaultColor;
 
     public GameObject shieldTextObj;
     public Transform shieldTextParent;
@@ -277,17 +281,33 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region PLAYERS
+
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
+        if (controllers.Count >= 4 || players.Count >= playerEmissives.Count) return null;
         EventManager.instance.playerJoinEvent.Invoke();
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
-        player.color = GetPlayerColor(players.Count);
+
+        //for (int i = 0; i < playerEmissives.Count; i++)
+        //{
+        //    if (i >= players.Count)
+        //    {
+        //        player.ID = i;
+        //        break;
+        //    }
+
+        //    if (players[i].ID == i) continue;
+
+        //    player.ID = i;
+        //    break;
+        //}
+        //player.color = GetPlayerColor(player.ID);
+
         players.Add(player);
 
-        UpdatePlayerImages();
         return player;
     }
 
@@ -587,15 +607,42 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void UpdatePlayerImages()
+    public void UpdatePlayerImages()
     {
-        for (int i = 0; i < playerImages.Count; i++) {
-            if (playerImages[i] != null) playerImages[i].color = Color.white;
+        for (int i = 0; i < controllerImages.Count; i++)
+        {
+            controllerImages[i].color = imageDefaultColor;
+            controllerImages[i].gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < players.Count; i++) {
-            playerImages[i].color = GetPlayerColor(players[i].ID);
+        for (int i = 0; i < halfControllerImages.Count; i++)
+        {
+            halfControllerImages[i].color = imageDefaultColor;
+            halfControllerImages[i].gameObject.SetActive(false);
         }
+
+        for (int controllerImageIndex = 0; controllerImageIndex < controllers.Count; controllerImageIndex++)
+        {
+            ControllerInputHandler controller = controllers[controllerImageIndex];
+            if (controller.splitControls)
+            {
+                int playerAIndex = controllerImageIndex * 2;
+                int playerBIndex = playerAIndex + 1;
+
+                controllerImages[controllerImageIndex].gameObject.SetActive(false);
+                halfControllerImages[playerAIndex].gameObject.SetActive(true);
+                halfControllerImages[playerBIndex].gameObject.SetActive(true);
+                halfControllerImages[playerAIndex].color = controller.playerA.color;
+                halfControllerImages[playerBIndex].color = controller.playerB.color;
+            }
+            else
+            {
+                controllerImages[controllerImageIndex].color = controller.playerA.color;
+            }
+        }
+
+
+      
     }
 
     private void UpdateShieldText()
