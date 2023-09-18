@@ -109,6 +109,7 @@ public class GameVariables : ScriptableObject
     [Header("Goal & Shield"), Min(0)] public int shieldLives = 1;
 
     public static void SetShieldLives(int value) { GameManager.instance.gameVariables.shieldLives = value; }
+    public static void SetShieldLives(float value) { GameManager.instance.gameVariables.shieldLives = (int)value; }
     #endregion
 
     #region Field

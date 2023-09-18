@@ -44,10 +44,8 @@ public class MenuManager : MonoBehaviour
     public GameObject endScreen;
 
     [Header("Settings Screens")]
-    public GameObject fieldSettings;
-    public GameObject playerSettings;
-    public GameObject scoreSettings;
-    public GameObject ballSettings;
+    public GameObject[] settingsSubScreens;
+    int settingsCurrentActive = 0;
 
     [Header("Default Buttons")]
     public GameObject mainMenuDefault;
@@ -83,11 +81,6 @@ public class MenuManager : MonoBehaviour
         gameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         endScreen.SetActive(false);
-
-        ballSettings.SetActive(false);
-        fieldSettings.SetActive(false);
-        playerSettings.SetActive(false);
-        scoreSettings.SetActive(false);
     }
 
     public void UpdateState(StateToChangeTo stateToChangeTo)
@@ -126,32 +119,10 @@ public class MenuManager : MonoBehaviour
     }
 
     // Buttons at top, enabling/disabling panels
-    public void BallSettingsEnable()
+    public void SettingsScreenCycle(int index)
     {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        ballSettings.SetActive(true);
-    }
-
-    public void FieldSettingsEnable()
-    {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        fieldSettings.SetActive(true);
-    }
-
-    public void PlayerSettingsEnable()
-    {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        playerSettings.SetActive(true);
-    }
-
-    public void ScoreSettingsEnable()
-    {
-        DisableAll();
-        settingsScreen.SetActive(true);
-        scoreSettings.SetActive(true);
+        settingsSubScreens[settingsCurrentActive].SetActive(false);
+        settingsSubScreens[index].SetActive(true);
     }
 
     // buttons ohohoho
@@ -167,7 +138,7 @@ public class MenuManager : MonoBehaviour
     {
         DisableAll();
         settingsScreen.SetActive(true);
-        ballSettings.SetActive(true);
+        SettingsScreenCycle(0);
         eventSystem.SetSelectedGameObject(settingsDefault);
     }
 
