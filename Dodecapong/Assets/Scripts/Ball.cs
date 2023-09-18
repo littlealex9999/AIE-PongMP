@@ -6,7 +6,9 @@ public class Ball : MonoBehaviour
 {
     new public PongCircleCollider collider;
 
-    public float constantVel;
+    public float constantSpd;
+    public float minimumSpd = 0.5f;
+    float targetSpd;
     public float dampStrength;
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
@@ -73,7 +75,7 @@ public class Ball : MonoBehaviour
         Vector2 forward = collider.velocity.normalized;
         Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
         Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        collider.velocity = finalBounceDir * constantVel;
+        collider.velocity = finalBounceDir * targetSpd;
         transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
     }
 
@@ -86,8 +88,10 @@ public class Ball : MonoBehaviour
             collider.immovable = false;
         }
 
-        DampVelocity();
+        if (constantSpd < minimumSpd) targetSpd = minimumSpd;
+        else targetSpd = constantSpd;
 
+        DampVelocity();
         CheckIfHitBounds();
 
         transform.rotation = Quaternion.Euler(0, 0, Angle(collider.velocity));
@@ -95,13 +99,13 @@ public class Ball : MonoBehaviour
 
     private void DampVelocity()
     {
-        if (collider.velocity.sqrMagnitude > constantVel * constantVel)
+        if (collider.velocity.sqrMagnitude > constantSpd * constantSpd)
         {
             collider.velocity -= collider.velocity.normalized * dampStrength * Time.fixedDeltaTime;
         }
-        else if (collider.velocity.sqrMagnitude < constantVel * constantVel)
+        else if (collider.velocity.sqrMagnitude < constantSpd * constantSpd)
         {
-            collider.velocity = collider.velocity.normalized * constantVel;
+            collider.velocity = collider.velocity.normalized * targetSpd;
         }
     }
 
@@ -136,7 +140,7 @@ public class Ball : MonoBehaviour
         held = false;
         transform.parent = null;
         Vector2 dir = (Vector3.zero - transform.position).normalized;
-        collider.velocity = dir * constantVel;
+        collider.velocity = dir * constantSpd;
     }
 
     public void AddVelocity(Vector2 velocity)
