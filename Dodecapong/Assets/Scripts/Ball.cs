@@ -57,6 +57,10 @@ public class Ball : MonoBehaviour
                 smallRing.Play();
             }
         }
+        else if (other.gameObject.tag == "Pillar")
+        {
+            EventManager.instance.ballHitPillarEvent.Invoke();
+        }
     }
 
     private void OnGameStateChanged()
