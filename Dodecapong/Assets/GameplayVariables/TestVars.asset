@@ -32,10 +32,10 @@ MonoBehaviour:
   ballSpeedPerHit: 0
   ballSize: 0.5
   shieldBounceTowardsCenterBias: 0.3
-  shieldLives: 99
-  obstacleFrequency: 0
+  shieldLives: 10
   transformerFrequency: 0.291
-  enabledTransformers: 17
+  transformerPower: 1
+  enabledTransformers: 16
   winType: 0
   useTimer: 1
   timeInSeconds: 20
