@@ -1,14 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.ShaderData;
 
 [RequireComponent(typeof(PlayerInput))]
 public class ControllerInputHandler : MonoBehaviour
 {
-    PlayerInputManager playerInputManager;
-
-    PlayerInput playerInput;
-
     [HideInInspector] public Player playerA;
     [HideInInspector] public Player playerB;
 
@@ -24,12 +19,9 @@ public class ControllerInputHandler : MonoBehaviour
 
     private void Awake()
     {
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
-        playerInput = GetComponent<PlayerInput>();
         GameManager.instance.controllers.Add(this);
         playerA = GameManager.instance.GetNewPlayer();
         GameManager.instance.UpdatePlayerImages();
-        if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
     }
 
     public void PlayerInput_onDeviceLost(PlayerInput obj)
@@ -130,14 +122,14 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void PageRight(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU && playerInput.actions.FindActionMap("UI").enabled)
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
         {
             MenuManager.instance.SettingsScreenPageRight();
         }
     }
     public void PageLeft(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU && playerInput.actions.FindActionMap("UI").enabled)
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
         {
             MenuManager.instance.SettingsScreenPageLeft();
         }
