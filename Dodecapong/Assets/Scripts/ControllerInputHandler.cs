@@ -17,7 +17,7 @@ public class ControllerInputHandler : MonoBehaviour
     private void OnDestroy()
     {
         GameManager.instance.controllers.Remove(this);
-        if (playerInput.actions.FindActionMap("UI").enabled) GameManager.instance.controllers[0].EnableUIControls();
+        if (playerInput.actions.FindActionMap("UI").enabled && GameManager.instance.controllers[0] != null) GameManager.instance.controllers[0].EnableUIControls();
         GameManager.instance.RemovePlayer(playerA);
         GameManager.instance.RemovePlayer(playerB);
         GameManager.instance.UpdatePlayerImages();
