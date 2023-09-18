@@ -59,7 +59,8 @@ public class GameManager : MonoBehaviour
 
     #region UI
     [Header("UI")]
-    public List<Image> playerImages;
+    public List<Image> controllerImages;
+    public List<Image> halfControllerImages;
     public Color imageDefaultColor;
 
     public GameObject shieldTextObj;
@@ -284,11 +285,27 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
+        if (controllers.Count >= 4 || players.Count >= playerEmissives.Count) return null;
         EventManager.instance.playerJoinEvent.Invoke();
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
-        player.color = GetPlayerColor(players.Count);
+
+        //for (int i = 0; i < playerEmissives.Count; i++)
+        //{
+        //    if (i >= players.Count)
+        //    {
+        //        player.ID = i;
+        //        break;
+        //    }
+
+        //    if (players[i].ID == i) continue;
+
+        //    player.ID = i;
+        //    break;
+        //}
+        //player.color = GetPlayerColor(player.ID);
+
         players.Add(player);
 
         return player;
@@ -592,24 +609,35 @@ public class GameManager : MonoBehaviour
 
     public void UpdatePlayerImages()
     {
-        for (int i = 0; i < playerImages.Count; i++)
+        for (int i = 0; i < controllerImages.Count; i++)
         {
-            playerImages[i].color = imageDefaultColor;
+            controllerImages[i].color = imageDefaultColor;
+            controllerImages[i].gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < controllers.Count; i++)
+        for (int i = 0; i < halfControllerImages.Count; i++)
         {
-            int index = i * 2;
+            halfControllerImages[i].color = imageDefaultColor;
+            halfControllerImages[i].gameObject.SetActive(false);
+        }
 
-            ControllerInputHandler controller = controllers[i];
+        for (int controllerImageIndex = 0; controllerImageIndex < controllers.Count; controllerImageIndex++)
+        {
+            ControllerInputHandler controller = controllers[controllerImageIndex];
             if (controller.splitControls)
             {
-                playerImages[index].color = controller.playerA.color;
-                playerImages[index + 1].color = controller.playerB.color;
+                int playerAIndex = controllerImageIndex * 2;
+                int playerBIndex = playerAIndex + 1;
+
+                controllerImages[controllerImageIndex].gameObject.SetActive(false);
+                halfControllerImages[playerAIndex].gameObject.SetActive(true);
+                halfControllerImages[playerBIndex].gameObject.SetActive(true);
+                halfControllerImages[playerAIndex].color = controller.playerA.color;
+                halfControllerImages[playerBIndex].color = controller.playerB.color;
             }
             else
             {
-                playerImages[index].color = playerImages[index + 1].color = controller.playerA.color;
+                controllerImages[controllerImageIndex].color = controller.playerA.color;
             }
         }
 
