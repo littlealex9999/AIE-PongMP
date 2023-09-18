@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
+using System.Linq;
 
 [Serializable]
 public class MenuTextPair
@@ -33,6 +34,16 @@ public class MenuTextPair
 
 public class MenuManager : MonoBehaviour
 {
+    #region Instance setup
+    public static MenuManager instance;
+
+    private void Awake()
+    {
+        if (!instance) instance = this;
+        else Destroy(this);
+    }
+    #endregion
+
     public EventSystem eventSystem;
 
     [Header("Screens")]
@@ -119,11 +130,18 @@ public class MenuManager : MonoBehaviour
     }
 
     // Buttons at top, enabling/disabling panels
-    public void SettingsScreenCycle(int index)
+    void SettingsScreenCycle(int index)
     {
+        if (index > settingsSubScreens.Count()) index = settingsSubScreens.Count();
+        if (index < 0) index = 0;
+
         settingsSubScreens[settingsCurrentActive].SetActive(false);
         settingsSubScreens[index].SetActive(true);
+        settingsCurrentActive = index;
     }
+
+    public void SettingsScreenPageRight() => SettingsScreenCycle(settingsCurrentActive + 1);
+    public void SettingsScreenPageLeft() => SettingsScreenCycle(settingsCurrentActive--);
 
     // buttons ohohoho
 

@@ -27,6 +27,7 @@ public class ControllerInputHandler : MonoBehaviour
         playerA = GameManager.instance.GetNewPlayer();
         GameManager.instance.UpdatePlayerImages();
         if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
+        
     }
 
     public void LeftStick(InputAction.CallbackContext context)
@@ -118,6 +119,21 @@ public class ControllerInputHandler : MonoBehaviour
         if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
             if (splitControls) playerA.Grab(context);
+        }
+    }
+
+    public void PageRight(InputAction.CallbackContext context)
+    {
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU && playerInput.actions.FindActionMap("UI").enabled)
+        {
+            MenuManager.instance.SettingsScreenPageRight();
+        }
+    }
+    public void PageLeft(InputAction.CallbackContext context)
+    {
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU && playerInput.actions.FindActionMap("UI").enabled)
+        {
+            MenuManager.instance.SettingsScreenPageLeft();
         }
     }
 }
