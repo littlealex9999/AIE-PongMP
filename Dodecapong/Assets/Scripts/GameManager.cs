@@ -285,7 +285,7 @@ public class GameManager : MonoBehaviour
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
-        if (controllers.Count >= 4 || players.Count >= playerEmissives.Count) return null;
+        if (controllers.Count > 4 || players.Count >= playerEmissives.Count) return null;
         EventManager.instance.playerJoinEvent.Invoke();
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
