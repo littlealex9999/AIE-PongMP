@@ -442,7 +442,7 @@ public class GameManager : MonoBehaviour
 
     void ResetBalls()
     {
-        EventManager.instance.ballCountdownEvent.Invoke();
+        if (alivePlayers.Count > 1) EventManager.instance.ballCountdownEvent.Invoke();
         countdownTimer = countdownTime;
 
         for (int i = balls.Count - 1; i > gameVariables.ballCount; i--) {
