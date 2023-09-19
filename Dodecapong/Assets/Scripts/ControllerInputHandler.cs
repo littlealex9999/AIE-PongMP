@@ -41,15 +41,21 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
-            if (splitControls) playerA.Dash();
-            else playerB.Dash();
+            if (splitControls)
+            {
+                playerB.Dash();
+            }
+            else
+            {
+                playerA.Dash();
+            }
         }
     }
     public void SplitDash(InputAction.CallbackContext context)
     {
         if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
-            if (splitControls) playerB.Dash();
+            if (splitControls) playerA.Dash();
         }
     }
     public void SwapControllerScheme(InputAction.CallbackContext context)

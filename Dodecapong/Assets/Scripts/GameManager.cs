@@ -390,7 +390,6 @@ public class GameManager : MonoBehaviour
     {
         elimPlayers.Clear();
         alivePlayers.Clear();
-        foreach (Player p in players) alivePlayers.Add(p);
 
         for (int i = 0; i < players.Count; i++) {
             Player player = players[i];
@@ -398,10 +397,6 @@ public class GameManager : MonoBehaviour
             player.gameObject.SetActive(true);
 
             player.moveSpeed = gameVariables.playerSpeed;
-
-            player.transform.localScale = gameVariables.playerSize;
-            player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
-            player.collider.RecalculateScale();
 
             player.rotationalForce = gameVariables.playerRotationalForce;
             player.collider.normalBending = gameVariables.playerNormalBending;
@@ -418,7 +413,27 @@ public class GameManager : MonoBehaviour
 
             player.shieldHealth = gameVariables.shieldLives;
 
+            alivePlayers.Add(player);
+        }
+        UpdateAlivePlayers();
+    }
+
+    void UpdateAlivePlayers()
+    {
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            Player player = alivePlayers[i];
+
+            player.shieldHealth = gameVariables.shieldLives;
+
+            Vector3 playerSize = gameVariables.playerSizes[alivePlayers.Count - 2];
+            player.transform.localScale = playerSize;
+            player.collider.scale = new Vector2(playerSize.y, playerSize.x);
+
+            player.collider.RecalculateScale();
+
             player.CalculateLimits();
+
             player.SetPosition(player.playerSectionMiddle);
         }
     }
@@ -599,6 +614,26 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+            
+            for (int j = 0; j < spawnedTransformers.Count; j++)
+            {
+                if (allowedTransformers[i].GetTransformerType() == spawnedTransformers[j].GetTransformerType())
+                {
+                    allowed = false;
+                    break;
+                }
+            }
+
+            for (int j = 0; j < activeTransformers.Count; j++)
+            {
+                if (allowedTransformers[i].GetTransformerType() == activeTransformers[j].GetTransformerType())
+                {
+                    allowed = false;
+                    break;
+                }
+            }
+
+
 
             if (allowed) {
                 ++hits;
@@ -806,9 +841,8 @@ public class GameManager : MonoBehaviour
         elimPlayers.Add(alivePlayers[index]);
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
-        for (int i = 0; i < alivePlayers.Count; i++) {
-            alivePlayers[i].CalculateLimits();
-        }
+
+        UpdateAlivePlayers();
 
         UpdateShieldText();
 

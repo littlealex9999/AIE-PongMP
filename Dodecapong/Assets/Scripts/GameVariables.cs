@@ -11,7 +11,7 @@ public class GameVariables : ScriptableObject
     public GameVariables(GameVariables gv)
     {
         playerSpeed = gv.playerSpeed;
-        playerSize = gv.playerSize;
+        playerSizes = gv.playerSizes;
         playerRotationalForce = gv.playerRotationalForce;
         playerNormalBending = gv.playerNormalBending;
         dashEnabled = gv.dashEnabled;
@@ -50,7 +50,7 @@ public class GameVariables : ScriptableObject
 
     #region Player
     [Header("Player")] public float playerSpeed = 90.0f;
-    public Vector3 playerSize = new Vector3(0.03f, 0.03f, 0.03f);
+    [Tooltip("player size based on player count Element 0 = 2 players Element 1 = 3 players ect.")] public List<Vector3> playerSizes = new();
     public float playerRotationalForce = 0.5f;
     public float playerNormalBending = 2.0f;
 
@@ -71,10 +71,10 @@ public class GameVariables : ScriptableObject
     public float grabCooldown = 1;
 
     public static void SetPlayerSpeed(float value) { GameManager.instance.gameVariables.playerSpeed = value; }
-    public static void SetPlayerSize(Vector3 value) { GameManager.instance.gameVariables.playerSize = value; }
-    public static void SetPlayerSizeX(float value) { GameManager.instance.gameVariables.playerSize.x = value; }
-    public static void SetPlayerSizeY(float value) { GameManager.instance.gameVariables.playerSize.y = value; }
-    public static void SetPlayerSizeZ(float value) { GameManager.instance.gameVariables.playerSize.z = value; }
+    //public static void SetPlayerSize(Vector3 value) { GameManager.instance.gameVariables.playerSize = value; }
+    //public static void SetPlayerSizeX(float value) { GameManager.instance.gameVariables.playerSize.x = value; }
+    //public static void SetPlayerSizeY(float value) { GameManager.instance.gameVariables.playerSize.y = value; }
+    //public static void SetPlayerSizeZ(float value) { GameManager.instance.gameVariables.playerSize.z = value; }
     public static void SetPlayerRotationalForce(float value) { GameManager.instance.gameVariables.playerRotationalForce = value; }
     public static void SetPlayerNormalBending(float value) { GameManager.instance.gameVariables.playerNormalBending = value; }
     public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.gameVariables.dashEnabled = enabled; }
