@@ -1,3 +1,5 @@
+using System.Collections;
+using UnityEditor.DeviceSimulation;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,6 +10,10 @@ public class ControllerInputHandler : MonoBehaviour
     [HideInInspector] public Player playerB;
 
     [HideInInspector] public bool splitControls = false;
+
+    public PlayerInput playerInput { get; private set; }
+    public Gamepad gamepad { get; private set; }
+    bool hapticsOn = false;
 
     private void OnDestroy()
     {
@@ -22,6 +28,15 @@ public class ControllerInputHandler : MonoBehaviour
         GameManager.instance.controllers.Add(this);
         playerA = GameManager.instance.GetNewPlayer();
         GameManager.instance.UpdatePlayerImages();
+        playerInput = GetComponent<PlayerInput>();
+        if (playerInput) {
+            for (int i = 0; i < playerInput.devices.Count; i++) {
+                if (playerInput.devices[i] is Gamepad) {
+                    gamepad = (Gamepad)playerInput.devices[i];
+                    break;
+                }
+            }
+        }
     }
 
     public void PlayerInput_onDeviceLost(PlayerInput obj)
@@ -139,5 +154,26 @@ public class ControllerInputHandler : MonoBehaviour
         {
             MenuManager.instance.SettingsScreenPageLeft();
         }
+    }
+
+    public IEnumerator SetHaptics(float lowFrequency, float highFrequency, float duration)
+    {
+        if (gamepad != null && !hapticsOn) {
+            hapticsOn = true;
+            gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
+            gamepad.ResumeHaptics();
+        } else {
+            yield return null;
+        }
+
+        while (duration > 0.0f) {
+            duration -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        gamepad.ResetHaptics();
+        hapticsOn = false;
+
+        yield return null;
     }
 }

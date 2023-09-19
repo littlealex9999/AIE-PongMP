@@ -51,6 +51,7 @@ public class BlackHole : MonoBehaviour
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
             other.velocity = Random.insideUnitCircle * ball.constantSpd * ballLaunchMult;
 
+            GameManager.instance.CleanTransformers(false);
             EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
             StartCoroutine(DestroyHole(other.gameObject));

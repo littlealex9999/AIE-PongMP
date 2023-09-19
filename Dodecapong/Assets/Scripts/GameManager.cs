@@ -519,7 +519,7 @@ public class GameManager : MonoBehaviour
         CleanTransformers();
     }
 
-    void CleanTransformers()
+    public void CleanTransformers(bool clearBlackHole = true)
     {
         for (int i = 0; i < activeTransformers.Count; i++) {
             if (activeTransformers[i] != null) {
@@ -536,7 +536,7 @@ public class GameManager : MonoBehaviour
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
-        if (blackHole) {
+        if (clearBlackHole && blackHole) {
             Destroy(blackHole.gameObject);
             blackHole = null;
         }
@@ -549,7 +549,9 @@ public class GameManager : MonoBehaviour
         transformerSpawnTimer += delta;
 
         if (transformerSpawnTimer > transformerSpawnTime) {
-            SpawnTransformer();
+            if (Random.Range(0, 1) < gameVariables.transformerFrequency) {
+                SpawnTransformer();
+            }
             transformerSpawnTimer = 0;
         }
 

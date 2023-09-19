@@ -494,6 +494,66 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2059096380}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 2059096380}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetShakeTime
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
+      value: SetShakeStrength
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CameraShake, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
+      value: CameraShake, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_FloatArgument
+      value: 3.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_FloatArgument
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4273386352708368405, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
       propertyPath: m_Name
       value: AudioManager
@@ -3290,6 +3350,7 @@ GameObject:
   - component: {fileID: 2059096377}
   - component: {fileID: 2059096376}
   - component: {fileID: 2059096379}
+  - component: {fileID: 2059096380}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -3489,6 +3550,20 @@ MonoBehaviour:
       enableFptlForForwardOpaque: 0
       enableBigTilePrepass: 0
       isFptlEnabled: 0
+--- !u!114 &2059096380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2059096375}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a877e9fbd2a8f644aa0446a1a9a6c1a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  time: 20
+  strength: 1
 --- !u!224 &2098458177 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5788920200971858792, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
