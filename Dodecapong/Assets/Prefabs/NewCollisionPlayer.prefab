@@ -49,7 +49,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementInput: {x: 0, y: 0}
   shieldHealth: 0
-  color: {r: 0, g: 0, b: 0, a: 0}
   dashDuration: 0
   dashCooldown: 0
   hitDuration: 0
@@ -144,6 +143,7 @@ MonoBehaviour:
   trigger: 0
   immovable: 1
   addForceWhileImmovable: 0
+  collidingWith: []
   points:
   - {x: -13.15, y: 0}
   - {x: -8.8, y: 11.95}

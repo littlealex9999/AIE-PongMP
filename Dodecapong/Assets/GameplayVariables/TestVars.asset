@@ -13,7 +13,14 @@ MonoBehaviour:
   m_Name: TestVars
   m_EditorClassIdentifier: 
   playerSpeed: 90
-  playerSize: {x: 0.03, y: 0.03, z: 0.03}
+  playerSizes:
+  - {x: 0.01, y: 0.01, z: 0.01}
+  - {x: 0.02, y: 0.02, z: 0.02}
+  - {x: 0.03, y: 0.03, z: 0.03}
+  - {x: 0.04, y: 0.04, z: 0.04}
+  - {x: 0.05, y: 0.05, z: 0.05}
+  - {x: 0.06, y: 0.06, z: 0.06}
+  - {x: 0.07, y: 0.07, z: 0.07}
   playerRotationalForce: 0.8
   playerNormalBending: 2
   dashEnabled: 1

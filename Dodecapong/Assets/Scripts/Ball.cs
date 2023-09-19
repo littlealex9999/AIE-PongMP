@@ -18,8 +18,8 @@ public class Ball : MonoBehaviour
         get {
             return collider.radius;
         } set {
-            collider.radius = value / 2;
-            transform.localScale = new Vector3(value, value, value);
+            collider.radius = value;
+            transform.localScale = new Vector3(value * 2, value * 2, value * 2);
         }
     }
 
