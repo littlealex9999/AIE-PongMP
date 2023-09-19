@@ -201,6 +201,14 @@ public class Player : MonoBehaviour
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
     }
 
+    public void Resize(Vector3 size)
+    {
+        transform.localScale = size;
+        collider.scale = new Vector2(size.y, size.x);
+        collider.RecalculateScale();
+        CalculateLimits();
+    }
+
     void CalculateAIInput()
     {
         Vector2 targetBallPos = GameManager.instance.balls[0].collider.position;
@@ -328,14 +336,15 @@ public class Player : MonoBehaviour
         Vector3 startingScale = transform.localScale;
         Vector2 colliderStart = collider.scale;
 
+        collider.scale = new Vector2(colliderStart.x, startingScale.x * 2);
+        collider.RecalculateScale();
+
         while (timeElapsed < hitDuration)
         {
             value = Mathf.Lerp(startingScale.x, startingScale.x * 2, hitAnimationCurve.Evaluate(timeElapsed / hitDuration));
             timeElapsed += Time.fixedDeltaTime;
 
             transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
-            collider.scale = new Vector2(transform.localScale.y, transform.localScale.x);
-            collider.RecalculateScale();
 
             yield return new WaitForFixedUpdate();
         }

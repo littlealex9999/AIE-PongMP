@@ -426,13 +426,12 @@ public class GameManager : MonoBehaviour
 
             player.shieldHealth = gameVariables.shieldLives;
 
-            Vector3 playerSize = gameVariables.playerSizes[alivePlayers.Count - 2];
-            player.transform.localScale = playerSize;
-            player.collider.scale = new Vector2(playerSize.y, playerSize.x);
-
-            player.collider.RecalculateScale();
-
-            player.CalculateLimits();
+            if (alivePlayers.Count > 1) {
+                // area limits are calculated with a resize
+                player.Resize(gameVariables.playerSizes[alivePlayers.Count - 2]);
+            } else {
+                player.CalculateLimits();
+            }
 
             player.SetPosition(player.playerSectionMiddle);
         }
