@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -7,11 +8,14 @@ public class VFXColorSetter : MonoBehaviour
     public ParticleSystem.MinMaxGradient colorOverLifetime;
 
     ParticleSystem[] particleSystems;
-
     private void OnValidate()
     {
-        if (particleSystems.Length == 0) particleSystems = GetComponentsInChildren<ParticleSystem>();
+        particleSystems ??= GetComponentsInChildren<ParticleSystem>();
+        ApplyValues();
+    }
 
+    void ApplyValues()
+    {
         foreach (ParticleSystem p in particleSystems)
         {
             ParticleSystem.MainModule main = p.main;
