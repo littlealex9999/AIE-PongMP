@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class Player : MonoBehaviour
 {
@@ -122,28 +124,29 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float limit = 0;
-
-        float maxDev = playerMidPoint + angleDeviance - limit;
-        float minDev = playerMidPoint - angleDeviance + limit;
+        float maxDev = playerMidPoint + angleDeviance;
+        float minDev = playerMidPoint - angleDeviance;
         float angle = Angle(transform.position);
 
-        if (angle > maxDev || angle < minDev)
-        {
-            float lowComparison = Mathf.Abs(360 - angle);
-            float lowExtraComparison = Mathf.Abs(minDev - angle);
-            if (lowExtraComparison < lowComparison) lowComparison = lowExtraComparison;
-
-            if (maxDev >= 360) maxDev -= 360;
-            float highComparison = Mathf.Abs(maxDev - angle);
-
-            if (lowComparison < highComparison)
-            {
-                SetPosition(minDev);
-            }
-            else
-            {
-                SetPosition(maxDev);
+        if (angle > maxDev || angle < minDev) {
+            if (playerMidPoint >= 180.0f) {
+                float oppositePoint = playerMidPoint - 180.0f;
+                if (angle < oppositePoint || angle > maxDev) {
+                    // player is closer to max
+                    SetPosition(maxDev);
+                } else {
+                    // player is closer to min
+                    SetPosition(minDev);
+                }
+            } else {
+                float oppositePoint = playerMidPoint + 180.0f;
+                if (angle < oppositePoint && angle > maxDev) {
+                    // player is closer to max
+                    SetPosition(maxDev);
+                } else {
+                    // player is closer to min
+                    SetPosition(minDev);
+                }
             }
         }
 
@@ -174,18 +177,25 @@ public class Player : MonoBehaviour
 
     public void CalculateLimits()
     {
-        // the "starting position" is as follows, with 2 players as an example:
-        // 360 / player count to get the base angle (360 / 2 = 180)
-        // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
-        // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
-        // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
-        // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
         int alivePlayerCount = GameManager.instance.alivePlayers.Count;
 
         float segmentOffset = 180.0f / alivePlayerCount;
 
+        Vector2 devianceMax = Vector2.zero;
+        Vector2 devianceMin = Vector2.zero;
+        for (int i = 0; i < collider.points.Length; i++) {
+            if (collider.scaledPoints[i].x > devianceMax.x) devianceMax.x = collider.scaledPoints[i].x;
+            if (collider.scaledPoints[i].y > devianceMax.y) devianceMax.y = collider.scaledPoints[i].y;
+            if (collider.scaledPoints[i].x < devianceMin.x) devianceMin.x = collider.scaledPoints[i].x;
+            if (collider.scaledPoints[i].y < devianceMin.y) devianceMin.y = collider.scaledPoints[i].y;
+        }
+
+        devianceMin.x += GameManager.instance.mapRadius;
+        devianceMax.x += GameManager.instance.mapRadius;
+        float angleColliderTotal = Angle(devianceMax) - Angle(devianceMin);
+
         playerMidPoint = 360.0f / alivePlayerCount * (LivingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
-        angleDeviance = segmentOffset;
+        angleDeviance = segmentOffset - angleColliderTotal;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
