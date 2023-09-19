@@ -13,6 +13,11 @@ public class Ball : MonoBehaviour
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
 
+    public GameObject hitPillar;
+    public GameObject hitShield;
+    public GameObject hitPaddle;
+    public GameObject playerDies;
+
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
     public float radius {
         get {
@@ -40,7 +45,8 @@ public class Ball : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            smallRing.Play();
+            PlayVFX(hitPaddle, new Vector3(data.collisionPos.x, 0, data.collisionPos.y), player.color);
+
             if (player.grabbing)
             {
                 StartCoroutine(player.GrabRoutine());
@@ -59,8 +65,9 @@ public class Ball : MonoBehaviour
                 smallRing.Play();
             }
         }
-        else if (other.gameObject.tag == "Pillar")
+        else if (other.gameObject.CompareTag("Pillar"))
         {
+            PlayVFX(hitPillar, new Vector3(data.collisionPos.x, 0, data.collisionPos.y));
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
     }
@@ -68,15 +75,6 @@ public class Ball : MonoBehaviour
     private void OnGameStateChanged()
     {
         
-    }
-
-    private void Bounce(float centerBias, Vector2 bounceNormal)
-    {
-        Vector2 forward = collider.velocity.normalized;
-        Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
-        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        collider.velocity = finalBounceDir * targetSpd;
-        transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
     }
 
     private void FixedUpdate()
@@ -109,6 +107,23 @@ public class Ball : MonoBehaviour
         }
     }
 
+    void PlayVFX(GameObject particle, Vector3 pos)
+    {
+        Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+    }
+    void PlayVFX(GameObject particle, Vector3 pos, Color color)
+    {
+        GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
+
+        ParticleSystem.MinMaxGradient gradient = new()
+        {
+            mode = ParticleSystemGradientMode.Color,
+            color = color
+        };
+        vfxColorSetter.SetStartColor(gradient);
+    }
+
     private void CheckIfHitBounds()
     {
         if (distFromCenter + radius > GameManager.instance.mapRadius)
@@ -119,14 +134,21 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnSheildHit(alivePlayerID))
             {
+                PlayVFX(hitShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
                 mediumRing.Play();
+
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-                Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+                Vector2 forward = collider.velocity.normalized;
+                Vector2 bounceDir = Vector2.Reflect(forward, shieldNormal).normalized;
+                Vector2 finalBounceDir = Vector2.Lerp(bounceDir, shieldNormal, shieldBounceTowardsCenterBias).normalized;
+                collider.velocity = finalBounceDir * targetSpd;
+                transform.position = (Vector3.zero - (Vector3)shieldNormal) * (GameManager.instance.mapRadius - radius);
                 transform.position = transform.position.normalized * (GameManager.instance.mapRadius - radius);
                
             }
             else // if player dies
             {
+                PlayVFX(playerDies, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
                 largeRing.Play();
                 return;
             }

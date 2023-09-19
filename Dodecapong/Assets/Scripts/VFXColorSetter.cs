@@ -4,18 +4,34 @@ using UnityEngine;
 
 public class VFXColorSetter : MonoBehaviour
 {
-    public ParticleSystem.MinMaxGradient startColor;
-    public ParticleSystem.MinMaxGradient colorOverLifetime;
+    private ParticleSystem.MinMaxGradient startColor;
+   
+    private ParticleSystem.MinMaxGradient colorOverLifetime;
 
     ParticleSystem[] particleSystems;
     private void OnValidate()
     {
-        particleSystems ??= GetComponentsInChildren<ParticleSystem>();
+        
+        ApplyValues();
+    }
+
+    public void SetStartColor(ParticleSystem.MinMaxGradient startColor)
+    {
+        this.startColor = startColor;
+        ApplyValues();
+    }
+
+    public void SetStartAndLifetimeColor(ParticleSystem.MinMaxGradient startColor, ParticleSystem.MinMaxGradient colorOverLifetime)
+    {
+        this.startColor = startColor;
+        this.colorOverLifetime = colorOverLifetime;
         ApplyValues();
     }
 
     void ApplyValues()
     {
+        particleSystems ??= GetComponentsInChildren<ParticleSystem>();
+
         foreach (ParticleSystem p in particleSystems)
         {
             ParticleSystem.MainModule main = p.main;
