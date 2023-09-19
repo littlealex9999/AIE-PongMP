@@ -71,10 +71,8 @@ public class GameVariables : ScriptableObject
     public float grabCooldown = 1;
 
     public static void SetPlayerSpeed(float value) { GameManager.instance.gameVariables.playerSpeed = value; }
-    //public static void SetPlayerSize(Vector3 value) { GameManager.instance.gameVariables.playerSize = value; }
-    //public static void SetPlayerSizeX(float value) { GameManager.instance.gameVariables.playerSize.x = value; }
-    //public static void SetPlayerSizeY(float value) { GameManager.instance.gameVariables.playerSize.y = value; }
-    //public static void SetPlayerSizeZ(float value) { GameManager.instance.gameVariables.playerSize.z = value; }
+    public static void SetPlayersSize(List<Vector3> value) { GameManager.instance.gameVariables.playerSizes = value; }
+    
     public static void SetPlayerRotationalForce(float value) { GameManager.instance.gameVariables.playerRotationalForce = value; }
     public static void SetPlayerNormalBending(float value) { GameManager.instance.gameVariables.playerNormalBending = value; }
     public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.gameVariables.dashEnabled = enabled; }

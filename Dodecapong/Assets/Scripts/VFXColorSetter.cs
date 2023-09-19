@@ -10,7 +10,7 @@ public class VFXColorSetter : MonoBehaviour
 
     private void OnValidate()
     {
-        if (particleSystems.Count() !> 0) particleSystems = GetComponentsInChildren<ParticleSystem>();
+        if (particleSystems.Count() == 0) particleSystems = GetComponentsInChildren<ParticleSystem>();
 
         foreach (ParticleSystem p in particleSystems)
         {
