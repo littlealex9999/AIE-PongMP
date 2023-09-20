@@ -55,13 +55,17 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
+
+    public ControllerInputHandler controllerHandler;
     #endregion
 
-    #region UnityMessages
+    #region Unity
     private void Awake()
     {
         dashTrail = dashTrailObj.GetComponentInChildren<TrailRenderer>();
-        if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object."); 
+        if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
+
+        collider.OnCollisionEnter += OnCollisionEnterBall;
     }
     private void OnDestroy()
     {
@@ -235,6 +239,13 @@ public class Player : MonoBehaviour
             if (currentAngle > playerMidPoint + angleDeviance) {
                 movementInput *= -1;
             }
+        }
+    }
+
+    void OnCollisionEnterBall(PongCollider other, CollisionData data)
+    {
+        if (other.tag == "Ball") {
+            controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
         }
     }
     #endregion

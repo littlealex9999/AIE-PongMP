@@ -107,6 +107,18 @@ public class GameManager : MonoBehaviour
 
     [HideInInspector] public BlackHole blackHole;
     #endregion
+
+    #region Haptics
+    [Header("Haptics")]
+    public ControllerHaptics playerJoinHaptics;
+    public ControllerHaptics shieldTouchHaptics;
+    public ControllerHaptics paddleBounceHaptics;
+    public ControllerHaptics playerElimHaptics;
+    #endregion
+
+    #region Extra Settings
+    public bool enableHaptics = true;
+    #endregion
     #endregion
 
     #region Functions
@@ -291,21 +303,6 @@ public class GameManager : MonoBehaviour
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
 
-        //for (int i = 0; i < playerEmissives.Count; i++)
-        //{
-        //    if (i >= players.Count)
-        //    {
-        //        player.ID = i;
-        //        break;
-        //    }
-
-        //    if (players[i].ID == i) continue;
-
-        //    player.ID = i;
-        //    break;
-        //}
-        //player.color = GetPlayerColor(player.ID);
-
         players.Add(player);
 
         return player;
@@ -324,10 +321,6 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        //if (alivePlayers.Count <= 2) {
-        //    EndGame();
-        //    return;
-        //}
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -734,6 +727,7 @@ public class GameManager : MonoBehaviour
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
+            player.controllerHandler.SetHaptics(shieldTouchHaptics);
             UpdateShieldText();
             return false;
         }
@@ -748,10 +742,10 @@ public class GameManager : MonoBehaviour
     {
         if (smashingPillars) throw new Exception("Pillars are already being smashed");
 
+        smashingPillars = true;
+
         EventManager.instance?.playerEliminatedEvent?.Invoke();
         EventManager.instance?.towerMoveEvent?.Invoke();
-
-        smashingPillars = true;
 
         index %= pillars.Count;
         arcTanShaderHelper.SetTargetPlayer(index);
@@ -785,6 +779,10 @@ public class GameManager : MonoBehaviour
             ballsStartDistances[i] = balls[i].transform.position.magnitude;
             balls[i].collider.enabled = false;
         }
+
+        // set haptics
+        playerElimHaptics.duration = playerElimTime;
+        alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
 
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < playerElimTime) {

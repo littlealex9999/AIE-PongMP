@@ -25,6 +25,12 @@ public class CameraShake : MonoBehaviour
         strength = str;
     }
 
+    public void SetShakeData(CameraShakeData data)
+    {
+        time = data.time;
+        strength = data.strength;
+    }
+
     private void Update()
     {
         if (time > 0) {
@@ -32,6 +38,15 @@ public class CameraShake : MonoBehaviour
             if (time < 0) time = 0;
 
             camera.transform.position = cameraOriginalPos + (Vector3)(Random.insideUnitCircle * strength);
+        } else {
+            camera.transform.position = cameraOriginalPos;
         }
     }
+}
+
+[CreateAssetMenu(fileName = "Camera Shake Data")]
+public class CameraShakeData : ScriptableObject
+{
+    public float time;
+    public float strength;
 }

@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d2972b81d92d3f04bb4c5c70125c02ea, type: 3}
-  m_Name: LowRumble
+  m_Name: PlayerElimRumble
   m_EditorClassIdentifier: 
-  lowFrequencyIntensity: 0
+  lowFrequencyIntensity: 0.5
   highFrequencyIntensity: 0
   duration: 0.5
