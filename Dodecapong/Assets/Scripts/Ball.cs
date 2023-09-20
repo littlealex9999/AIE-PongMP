@@ -117,7 +117,7 @@ public class Ball : MonoBehaviour
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
 
-            if (!GameManager.instance.OnSheildHit(alivePlayerID))
+            if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
                 mediumRing.Play();
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;

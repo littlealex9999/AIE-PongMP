@@ -5,9 +5,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 using Unity.VisualScripting;
 using JetBrains.Annotations;
+using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
+using Image = UnityEngine.UI.Image;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,6 +25,8 @@ public class GameManager : MonoBehaviour
     public GameObject playerPrefab;
     List<GameObject> pillars = new List<GameObject>();
 
+    public GameObject healthDotPrefab;
+
     public GameVariables defaultGameVariables;
     [HideInInspector] public GameVariables gameVariables;
 
@@ -37,6 +41,10 @@ public class GameManager : MonoBehaviour
     public AnimationCurve elimSpeedCurve;
     public float playerElimTime = 2.0f;
     public float playerElimBallSpinSpeed = 2.0f;
+    [Range(0, 1)]
+    public float healthBlipSpread = 0.1f;
+    public float healthBlipSquishTime = 0.5f;
+    public float healthBlipDistance = 4.6f;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
@@ -62,10 +70,6 @@ public class GameManager : MonoBehaviour
     public List<Image> controllerImages;
     public List<Image> halfControllerImages;
     public Color imageDefaultColor;
-
-    public GameObject shieldTextObj;
-    public Transform shieldTextParent;
-    public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
@@ -106,6 +110,18 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<Player> elimPlayers;
 
     [HideInInspector] public BlackHole blackHole;
+    #endregion
+
+    #region Haptics
+    [Header("Haptics")]
+    public ControllerHaptics playerJoinHaptics;
+    public ControllerHaptics shieldTouchHaptics;
+    public ControllerHaptics paddleBounceHaptics;
+    public ControllerHaptics playerElimHaptics;
+    #endregion
+
+    #region Extra Settings
+    public bool enableHaptics = true;
     #endregion
     #endregion
 
@@ -225,7 +241,7 @@ public class GameManager : MonoBehaviour
                 if (!inGame) {
                     StartGame();
                 } else {
-                    UpdateShieldText();
+                    ResetShieldDisplay();
                 }
                 break;
             case GameState.GAMEPAUSED:
@@ -291,21 +307,6 @@ public class GameManager : MonoBehaviour
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
 
-        //for (int i = 0; i < playerEmissives.Count; i++)
-        //{
-        //    if (i >= players.Count)
-        //    {
-        //        player.ID = i;
-        //        break;
-        //    }
-
-        //    if (players[i].ID == i) continue;
-
-        //    player.ID = i;
-        //    break;
-        //}
-        //player.color = GetPlayerColor(player.ID);
-
         players.Add(player);
 
         return player;
@@ -324,10 +325,11 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        //if (alivePlayers.Count <= 2) {
-        //    EndGame();
-        //    return;
-        //}
+        for (int i = 0; i < player.healthBlips.Count; i++) {
+            Destroy(player.healthBlips[i]);
+        }
+        player.healthBlips.Clear();
+
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -352,7 +354,7 @@ public class GameManager : MonoBehaviour
         SetupPillars();
         SetupMap();
         ResetBalls();
-        UpdateShieldText();
+        ResetShieldDisplay();
         SetupTransformers();
     }
 
@@ -488,14 +490,14 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < players.Count; i++) {
             pillars[i].transform.SetPositionAndRotation(
-                GetTargetPointInCircle(360.0f / players.Count * i),
+                GetTargetPointInCircle(360.0f / players.Count * i) * mapRadius,
                 Quaternion.Euler(0, 0, 360.0f / players.Count * i));
         }
     }
 
     public Vector3 GetTargetPointInCircle(float angle)
-    { 
-       return Vector3.zero + Quaternion.Euler(0, 0, angle) * Vector3.up * mapRadius;
+    {
+        return Vector3.zero + Quaternion.Euler(0, 0, angle) * Vector3.up;
     }
 
     public void SetupMap()
@@ -690,30 +692,47 @@ public class GameManager : MonoBehaviour
       
     }
 
-    private void UpdateShieldText()
+    private void ResetShieldDisplay()
     {
-        if (shieldText.Count < alivePlayers.Count) {
-            Vector3 nextPos = Vector3.zero;
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            float angleChange = alivePlayers[i].playerAngleDeviance * healthBlipSpread / (alivePlayers[i].shieldHealth + 1) * 2;
+            float angle = alivePlayers[i].playerSectionMiddle - alivePlayers[i].playerAngleDeviance * healthBlipSpread + angleChange;
 
-            for (int i = 0; i < alivePlayers.Count; i++) {
-                TextMeshProUGUI proUGUI;
-                nextPos.y = i * -50;
-                Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
-                if (proUGUI != null) {
-                    proUGUI.transform.SetParent(shieldTextParent, false);
-                    shieldText.Add(proUGUI);
-                }
+            for (int j = 0; j < alivePlayers[i].shieldHealth; j++) {
+                if (alivePlayers[i].healthBlips.Count <= j) alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                angle += angleChange;
+            }
+
+            for (int j = alivePlayers[i].healthBlips.Count - 1; j >= alivePlayers[i].shieldHealth; j--) {
+                Destroy(alivePlayers[i].healthBlips[j]);
+                alivePlayers[i].healthBlips.RemoveAt(j);
             }
         }
+    }
 
-        for (int i = 0; i < shieldText.Count; i++) {
-            if (i >= alivePlayers.Count) {
-                shieldText[i].gameObject.SetActive(false);
-            } else {
-                shieldText[i].gameObject.SetActive(true);
-                shieldText[i].text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
+    IEnumerator SquishHealthBlips(Player player)
+    {
+        float timer = 0.0f;
+        int targetDestroyBlip = (int)(player.healthBlips.Count / 2.0f);
+
+        while (timer < healthBlipSquishTime) {
+            timer += Time.deltaTime;
+            float removalPercentage = timer / healthBlipSquishTime / 2;
+
+            float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.shieldHealth - removalPercentage + 1) * 2;
+            float angle = player.playerSectionMiddle - player.playerAngleDeviance * healthBlipSpread + angleChange;
+            for (int i = 0; i < player.healthBlips.Count; i++) {
+                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
             }
+
+
+            yield return new WaitForEndOfFrame();
         }
+
+        ResetShieldDisplay();
+
+        yield return null;
     }
 
     /// <summary>
@@ -721,7 +740,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="alivePlayerID"></param>
     /// <returns></returns>
-    public bool OnSheildHit(int alivePlayerID)
+    public bool OnShieldHit(int alivePlayerID)
     {
         if (alivePlayerID >= alivePlayers.Count) return false;
 
@@ -734,7 +753,8 @@ public class GameManager : MonoBehaviour
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
-            UpdateShieldText();
+            player.controllerHandler.SetHaptics(shieldTouchHaptics);
+            StartCoroutine(SquishHealthBlips(player));
             return false;
         }
     }
@@ -748,10 +768,10 @@ public class GameManager : MonoBehaviour
     {
         if (smashingPillars) throw new Exception("Pillars are already being smashed");
 
+        smashingPillars = true;
+
         EventManager.instance?.playerEliminatedEvent?.Invoke();
         EventManager.instance?.towerMoveEvent?.Invoke();
-
-        smashingPillars = true;
 
         index %= pillars.Count;
         arcTanShaderHelper.SetTargetPlayer(index);
@@ -786,6 +806,10 @@ public class GameManager : MonoBehaviour
             balls[i].collider.enabled = false;
         }
 
+        // set haptics
+        playerElimHaptics.duration = playerElimTime;
+        alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
+
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < playerElimTime) {
             pillarSmashTimer += Time.deltaTime;
@@ -799,7 +823,7 @@ public class GameManager : MonoBehaviour
                     targetAngle = 360.0f / alivePlayers.Count * i - 360.0f / alivePlayers.Count / pseudoPlayerCount * playerRemovalPercentage * countAfter;
                 }
 
-                pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
+                pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
 
@@ -817,6 +841,21 @@ public class GameManager : MonoBehaviour
                 }
 
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
+                
+                float deviance = 180.0f / pseudoPlayerCount;
+                float targetMidsection;
+                if (i >= index) {
+                    deviance *= -1;
+                    targetMidsection = 360.0f - 360.0f / pseudoPlayerCount * (alivePlayers.Count - 1 - i) + deviance;
+                } else {
+                    targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
+                }
+                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + 1) * 2;
+                float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
+                for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
+                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                    healthAngle += angleChange;
+                }
             }
 
             for (int i = 0; i < balls.Count; i++) {
@@ -835,7 +874,7 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < pillars.Count; i++) {
             float targetAngle = 360.0f / (pillars.Count) * i;
 
-            pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
+            pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
         }
 
@@ -845,7 +884,7 @@ public class GameManager : MonoBehaviour
 
         UpdateAlivePlayers();
 
-        UpdateShieldText();
+        ResetShieldDisplay();
 
         arcTanShaderHelper.colors = GenerateLivingColors();
         arcTanShaderHelper.CreateTexture();

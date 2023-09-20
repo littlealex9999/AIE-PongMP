@@ -13,7 +13,7 @@ public class ControllerInputHandler : MonoBehaviour
 
     public PlayerInput playerInput { get; private set; }
     public Gamepad gamepad { get; private set; }
-    bool hapticsOn = false;
+    bool hapticsRunning = false;
 
     private void OnDestroy()
     {
@@ -26,8 +26,7 @@ public class ControllerInputHandler : MonoBehaviour
     private void Awake()
     {
         GameManager.instance.controllers.Add(this);
-        playerA = GameManager.instance.GetNewPlayer();
-        GameManager.instance.UpdatePlayerImages();
+
         playerInput = GetComponent<PlayerInput>();
         if (playerInput) {
             for (int i = 0; i < playerInput.devices.Count; i++) {
@@ -37,6 +36,8 @@ public class ControllerInputHandler : MonoBehaviour
                 }
             }
         }
+        
+        JoinPlayer(out playerA);
     }
 
     public void PlayerInput_onDeviceLost(PlayerInput obj)
@@ -85,8 +86,7 @@ public class ControllerInputHandler : MonoBehaviour
             else
             {
                 splitControls = true;
-                playerB = GameManager.instance.GetNewPlayer();
-                GameManager.instance.UpdatePlayerImages();
+                JoinPlayer(out playerB);
             }
         }
     }
@@ -158,8 +158,8 @@ public class ControllerInputHandler : MonoBehaviour
 
     public IEnumerator SetHaptics(float lowFrequency, float highFrequency, float duration)
     {
-        if (gamepad != null && !hapticsOn) {
-            hapticsOn = true;
+        if (gamepad != null && !hapticsRunning && GameManager.instance.enableHaptics) {
+            hapticsRunning = true;
             gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
             gamepad.ResumeHaptics();
         } else {
@@ -172,8 +172,27 @@ public class ControllerInputHandler : MonoBehaviour
         }
 
         gamepad.ResetHaptics();
-        hapticsOn = false;
+        hapticsRunning = false;
 
         yield return null;
+    }
+
+    public void SetHaptics(ControllerHaptics haptics, bool resetHaptics = true)
+    {
+        if (resetHaptics) {
+            gamepad.ResetHaptics();
+            hapticsRunning = false;
+            StopAllCoroutines();
+        }
+        StartCoroutine(SetHaptics(haptics.lowFrequencyIntensity, haptics.highFrequencyIntensity, haptics.duration));
+    }
+
+    void JoinPlayer(out Player player)
+    {
+        player = GameManager.instance.GetNewPlayer();
+        GameManager.instance.UpdatePlayerImages();
+        player.controllerHandler = this;
+
+        SetHaptics(GameManager.instance.playerJoinHaptics);
     }
 }
