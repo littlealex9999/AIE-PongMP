@@ -3,6 +3,7 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using System.Linq;
 using Unity.VisualScripting;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour
 {
@@ -33,8 +34,11 @@ public class Player : MonoBehaviour
 
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
+    float angleDevianceCollider; // the amount that the collider affects the outcome of angleDeviance
 
     public float playerSectionMiddle { get { return playerMidPoint; } }
+    public float playerAngleDeviance { get { return angleDeviance; } }
+
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
 
@@ -57,6 +61,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool grabbing = false;
 
     public ControllerInputHandler controllerHandler;
+
+    [HideInInspector] public List<GameObject> healthBlips = new List<GameObject>();
     #endregion
 
     #region Unity
@@ -128,8 +134,8 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float maxDev = playerMidPoint + angleDeviance;
-        float minDev = playerMidPoint - angleDeviance;
+        float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
+        float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
         float angle = Angle(transform.position);
 
         if (angle > maxDev || angle < minDev) {
@@ -199,7 +205,8 @@ public class Player : MonoBehaviour
         float angleColliderTotal = Angle(devianceMax) - Angle(devianceMin);
 
         playerMidPoint = 360.0f / alivePlayerCount * (LivingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
-        angleDeviance = segmentOffset - angleColliderTotal;
+        angleDeviance = segmentOffset;
+        angleDevianceCollider = angleColliderTotal;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
@@ -225,7 +232,7 @@ public class Player : MonoBehaviour
         Vector2 intersectionPoint = GameManager.instance.GetCircleIntersection(targetBallPos, targetBallVel, GameManager.instance.mapRadius);
         float targetAngle = Angle(intersectionPoint);
 
-        if (targetAngle < playerMidPoint - angleDeviance || targetAngle > playerMidPoint + angleDeviance) {
+        if (targetAngle < playerMidPoint - angleDeviance + angleDevianceCollider || targetAngle > playerMidPoint + angleDeviance - angleDevianceCollider) {
             movementInput = Vector2.zero;
         } else {
             float currentAngle = Angle(transform.position);
@@ -236,7 +243,7 @@ public class Player : MonoBehaviour
                 movementInput = Quaternion.Euler(0, 0, -90) * facingDirection;
             }
 
-            if (currentAngle > playerMidPoint + angleDeviance) {
+            if (currentAngle > playerMidPoint + angleDeviance - angleDevianceCollider) {
                 movementInput *= -1;
             }
         }
