@@ -105,6 +105,7 @@ MonoBehaviour:
   trigger: 1
   immovable: 0
   addForceWhileImmovable: 1
+  collidingWith: []
   radius: 0.25
 --- !u!114 &-3826403407305802416
 MonoBehaviour:
@@ -121,7 +122,7 @@ MonoBehaviour:
   limitedTime: 1
   despawnTime: 15
   duration: 20
-  sizeMod: -0.5
+  sizeMod: -0.125
 --- !u!1001 &1838081175253462335
 PrefabInstance:
   m_ObjectHideFlags: 0
