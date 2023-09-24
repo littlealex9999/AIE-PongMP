@@ -714,16 +714,27 @@ public class GameManager : MonoBehaviour
     IEnumerator SquishHealthBlips(Player player)
     {
         float timer = 0.0f;
-        int targetDestroyBlip = (int)(player.healthBlips.Count / 2.0f);
+        int targetDestroyBlip = (int)(player.healthBlips.Count / 2.0f - 1);
+
+        if (player.healthBlips.Count <= 1) {
+            ResetShieldDisplay();
+            yield break;
+        }
 
         while (timer < healthBlipSquishTime) {
             timer += Time.deltaTime;
-            float removalPercentage = timer / healthBlipSquishTime / 2;
+            float removalPercentage = timer / healthBlipSquishTime;
 
-            float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.shieldHealth - removalPercentage + 1) * 2;
+            float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.healthBlips.Count - removalPercentage + 1) * 2;
             float angle = player.playerSectionMiddle - player.playerAngleDeviance * healthBlipSpread + angleChange;
             for (int i = 0; i < player.healthBlips.Count; i++) {
                 player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                angle += angleChange;
+
+                if (i == targetDestroyBlip) {
+                    angleChange *= -1;
+                    angle = player.playerSectionMiddle + player.playerAngleDeviance * healthBlipSpread + angleChange;
+                }
             }
 
 
@@ -745,7 +756,8 @@ public class GameManager : MonoBehaviour
         if (alivePlayerID >= alivePlayers.Count) return false;
 
         Player player = alivePlayers[alivePlayerID];
-        if (player.shieldHealth <= 0) {
+        if (player.shieldHealth <= 1) {
+            ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
         } else {
