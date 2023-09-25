@@ -45,29 +45,29 @@ public class Ball : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            PlayVFX(hitPaddle, new Vector3(data.collisionPos.x, 0, data.collisionPos.y), player.color);
-
             if (player.grabbing)
             {
+                transform.SetParent(player.transform);
                 StartCoroutine(player.GrabRoutine());
                 player.heldBall = this;
-                transform.parent = player.transform;
                 held = true;
             }
             else if (player.hitting)
             {
+                
                 EventManager.instance.ballHitEvent.Invoke();
                 mediumRing.Play();
             }
             else
             {
+                PlayVFX(hitPaddle, data.collisionPos, player.color);
                 EventManager.instance.ballBounceEvent.Invoke();
                 smallRing.Play();
             }
         }
         else if (other.gameObject.CompareTag("Pillar"))
         {
-            PlayVFX(hitPillar, new Vector3(data.collisionPos.x, 0, data.collisionPos.y));
+            PlayVFX(hitPillar,data.collisionPos, Color.white);
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
     }

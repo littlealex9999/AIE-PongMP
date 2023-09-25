@@ -297,11 +297,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &578928589 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7521882063906400500, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
-  m_PrefabInstance: {fileID: 1231663700}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &635068921 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5923284251722421739, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
@@ -1935,6 +1930,7 @@ MonoBehaviour:
   balls: []
   pillarPrefab: {fileID: 6051333089294521256, guid: c93a086c1c0561249928e95327a6a5f3, type: 3}
   playerPrefab: {fileID: 4539453341973377358, guid: 045c3dcbbdf350147a7a4f6df7a0f42a, type: 3}
+  healthDotPrefab: {fileID: 8894475303991870082, guid: d9cb08f12f01eaf478d6a792776627c6, type: 3}
   defaultGameVariables: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
   gameVariables: {fileID: 0}
   arcTanShaderHelper: {fileID: 1148477282}
@@ -1966,6 +1962,9 @@ MonoBehaviour:
     m_RotationOrder: 4
   playerElimTime: 2
   playerElimBallSpinSpeed: 2
+  healthBlipSpread: 0.1
+  healthBlipSquishTime: 0.5
+  healthBlipDistance: 4.6
   mapRotationOffset: 0
   playerDistance: 4
   playerEmissives:
@@ -2002,9 +2001,6 @@ MonoBehaviour:
   - {fileID: 214672889}
   - {fileID: 635068921}
   imageDefaultColor: {r: 0.7529412, g: 0.7529412, b: 0.7529412, a: 1}
-  shieldTextObj: {fileID: 906934315204513494, guid: 8916c61deebddb34a8f878f34c593695, type: 3}
-  shieldTextParent: {fileID: 578928589}
-  shieldText: []
   endGamePlayerImages:
   - {fileID: 1032260445}
   - {fileID: 1541694610}
@@ -2019,6 +2015,11 @@ MonoBehaviour:
   alivePlayers: []
   elimPlayers: []
   blackHole: {fileID: 0}
+  playerJoinHaptics: {fileID: 11400000, guid: ec7a153ea35454e4bb85e4c72f3b501e, type: 2}
+  shieldTouchHaptics: {fileID: 11400000, guid: 150e7105bf473ac41b33eae338710894, type: 2}
+  paddleBounceHaptics: {fileID: 11400000, guid: 0ce4a4d30ae4fbf40b6c86978d5b3a4c, type: 2}
+  playerElimHaptics: {fileID: 11400000, guid: 1d9d6047bc5069c4e97def82b57c2770, type: 2}
+  enableHaptics: 1
 --- !u!4 &6311386383622038525
 Transform:
   m_ObjectHideFlags: 0
