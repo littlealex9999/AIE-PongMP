@@ -132,8 +132,8 @@ public class MenuManager : MonoBehaviour
     // Buttons at top, enabling/disabling panels
     void SettingsScreenCycle(int index)
     {
-        if (index >= settingsSubScreens.Count()) index = settingsSubScreens.Count() - 1;
-        if (index < 0) index = 0;
+        if (index >= settingsSubScreens.Length) index = 0;
+        if (index < 0) index = settingsSubScreens.Length - 1;
 
         settingsSubScreens[settingsCurrentActive].SetActive(false);
         settingsSubScreens[index].SetActive(true);

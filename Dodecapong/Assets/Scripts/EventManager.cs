@@ -33,24 +33,24 @@ public class EventManager : MonoBehaviour
     [SerializeField] AudioClip ballGrab;
     [SerializeField] AudioClip dash;
 
-    [HideInInspector] public UnityEvent goalScoredEvent; //
-    [HideInInspector] public UnityEvent playerEliminatedEvent; //
-    [HideInInspector] public UnityEvent towerMoveEvent; // 
-    [HideInInspector] public UnityEvent shieldBreakEvent; // 
-    [HideInInspector] public UnityEvent shieldHitEvent; //
-    [HideInInspector] public UnityEvent ballCountdownEvent; //
-    [HideInInspector] public UnityEvent ballBounceEvent; //
-    [HideInInspector] public UnityEvent ballHitEvent; //
-    [HideInInspector] public UnityEvent ballHitPillarEvent; 
-    [HideInInspector] public UnityEvent ballHitBlackHoleEvent; //
-    [HideInInspector] public UnityEvent ballGrabEvent; //
-    [HideInInspector] public UnityEvent dashEvent; //
-
     [Header("UI Clips")]
     [SerializeField] AudioClip selectUI;
     [SerializeField] AudioClip hoverUI;
     [SerializeField] AudioClip playerJoin;
     [SerializeField] AudioClip playerLeave;
+
+    public UnityEvent goalScoredEvent; //
+    public UnityEvent playerEliminatedEvent; //
+    public UnityEvent towerMoveEvent; // 
+    public UnityEvent shieldBreakEvent; // 
+    public UnityEvent shieldHitEvent; //
+    public UnityEvent ballCountdownEvent; //
+    public UnityEvent ballBounceEvent; //
+    public UnityEvent ballHitEvent; //
+    public UnityEvent ballHitPillarEvent; 
+    public UnityEvent ballHitBlackHoleEvent; //
+    public UnityEvent ballGrabEvent; //
+    public UnityEvent dashEvent; //
 
     [HideInInspector] public UnityEvent selectUIEvent; //
     [HideInInspector] public UnityEvent hoverUIEvent; //
