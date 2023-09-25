@@ -50,7 +50,16 @@ public class GameVariables : ScriptableObject
 
     #region Player
     [Header("Player")] public float playerSpeed = 90.0f;
-    [Tooltip("player size based on player count Element 0 = 2 players Element 1 = 3 players ect.")] public List<Vector3> playerSizes = new();
+    [Tooltip("player size based on player count Element 0 = 2 players Element 1 = 3 players ect.")] 
+    public List<Vector3> playerSizes = new List<Vector3>() {
+        new Vector3(0.04f, 0.04f, 0.04f),
+        new Vector3(0.04f, 0.04f, 0.04f),
+        new Vector3(0.03f, 0.03f, 0.03f),
+        new Vector3(0.03f, 0.03f, 0.03f),
+        new Vector3(0.03f, 0.03f, 0.03f),
+        new Vector3(0.02f, 0.02f, 0.02f),
+        new Vector3(0.02f, 0.02f, 0.02f),
+    };
     public float playerRotationalForce = 0.5f;
     public float playerNormalBending = 2.0f;
 
