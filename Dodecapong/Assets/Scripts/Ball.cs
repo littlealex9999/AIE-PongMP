@@ -117,12 +117,12 @@ public class Ball : MonoBehaviour
         GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
         VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
 
-        ParticleSystem.MinMaxGradient gradient = new()
+        ParticleSystem.MinMaxGradient startColor = new()
         {
             mode = ParticleSystemGradientMode.Color,
             color = color
         };
-        vfxColorSetter.SetStartColor(gradient);
+        vfxColorSetter.SetStartColor(startColor);
     }
 
     private void CheckIfHitBounds()
