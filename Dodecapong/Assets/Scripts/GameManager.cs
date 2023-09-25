@@ -765,7 +765,7 @@ public class GameManager : MonoBehaviour
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
-            player.controllerHandler.SetHaptics(shieldTouchHaptics);
+            if (!player.isAI) player.controllerHandler.SetHaptics(shieldTouchHaptics);
             StartCoroutine(SquishHealthBlips(player));
             return false;
         }
@@ -820,7 +820,7 @@ public class GameManager : MonoBehaviour
 
         // set haptics
         playerElimHaptics.duration = playerElimTime;
-        alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
+        if (!alivePlayers[index].isAI) alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
 
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < playerElimTime) {
