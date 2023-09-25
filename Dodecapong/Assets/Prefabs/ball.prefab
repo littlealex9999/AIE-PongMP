@@ -325,6 +325,11 @@ MonoBehaviour:
   minimumSpd: 0.5
   dampStrength: 0
   shieldBounceTowardsCenterBias: 0
+  bouncePillar: {fileID: 4344030160298166289, guid: 67f6b10afaac02f448754ca1cda76ac0, type: 3}
+  bounceShield: {fileID: 1173357965376637556, guid: 3bb0471d8d40b0b4e86c8f6d7edea48e, type: 3}
+  bouncePaddle: {fileID: 3511931716861035794, guid: 10d5cb06056bd7b438d93c9505c96fe9, type: 3}
+  hitPaddle: {fileID: 5765492447424006579, guid: 5fbbe5b806791d546807abe803adec48, type: 3}
+  playerDies: {fileID: 8154808341645599611, guid: 75db88388e7966748936800ba66aefef, type: 3}
   smallRing: {fileID: 4661124823747825990}
   mediumRing: {fileID: 3241484898122013697}
   largeRing: {fileID: 3209633161082959168}

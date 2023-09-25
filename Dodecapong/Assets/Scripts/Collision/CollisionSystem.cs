@@ -198,7 +198,6 @@ public class CollisionSystem : MonoBehaviour
         float depth = float.MaxValue;
         Vector2 normal = rotationOffset * -convexB.normals[0];
         Vector2 forceNormal = rotationOffset * -convexB.forceNormals[0];
-        Vector2 collisionPos = (Vector2)circleA.transform.position + normal * circleA.radius;
 
         Vector4[] midpoints = new Vector4[convexB.points.Length];
         for (int i = 0; i < midpoints.Length; i++) {
@@ -224,6 +223,7 @@ public class CollisionSystem : MonoBehaviour
 
         Vector2 vel = new Vector2(convexB.velocity.x, convexB.velocity.y);
         forceNormal = (forceNormal - convexB.velocity * convexB.normalBending).normalized;
+        Vector2 collisionPos = (Vector2)circleA.transform.position + normal * circleA.radius;
 
         return new CollisionData(circleA, convexB, depth, normal, forceNormal, collisionPos);
     }
