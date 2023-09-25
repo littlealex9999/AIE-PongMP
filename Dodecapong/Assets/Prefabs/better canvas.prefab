@@ -1845,6 +1845,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 0.5
   - 1
@@ -2057,6 +2058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 0
   - 3
@@ -3446,6 +3448,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 1
   - 2
@@ -5213,6 +5216,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 0.3
   - 0.4
@@ -7475,6 +7479,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 15
   - 50
@@ -10522,6 +10527,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 40
   - 60
@@ -12473,6 +12479,7 @@ GameObject:
   - component: {fileID: 8059001112047677045}
   - component: {fileID: 1520721613}
   - component: {fileID: 6361354362208042030}
+  - component: {fileID: 1096371070}
   m_Layer: 5
   m_Name: ballSpeedSlider
   m_TagString: Untagged
@@ -12553,7 +12560,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6361354362208042030}
+      - m_Target: {fileID: 1096371070}
         m_TargetAssemblyTypeName: UISliderPassthrough, Assembly-CSharp
         m_MethodName: ApplyValue
         m_Mode: 0
@@ -12597,12 +12604,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 2
   - 3
   - 4
   - 5
   - 6
+  UnityEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetBallSpeed
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &1096371070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5144586662439271794}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 0}
+  values:
+  - 0
+  - 0
+  - 0
+  - 0
+  - 0
   UnityEvent:
     m_PersistentCalls:
       m_Calls:
@@ -19152,6 +19194,24 @@ MonoBehaviour:
     - 3 Balls
     - 5 Balls
     - Chaos
+  ballSpeedSlider: {fileID: 1096371070}
+  ballSizeSlider: {fileID: 1440168988967017278}
+  ballCountSlider: {fileID: 6656789011072903729}
+  increasingSpeedToggle: {fileID: 2450596460031527742}
+  increasingSizeToggle: {fileID: 7255464042063291629}
+  playerSpeedSlider: {fileID: 8397031258610251146}
+  playerSizeSlider: {fileID: 3326865883901664176}
+  playerDashToggle: {fileID: 6229871942924775854}
+  timerSlider: {fileID: 7327475610230668010}
+  shieldHealthSlider: {fileID: 8111982230173718246}
+  transformerFrequencySlider: {fileID: 6788641825730561574}
+  transformerPowerSlider: {fileID: 9051783925308681638}
+  transformerBallSizeToggle: {fileID: 1510488351595521124}
+  transformerBallSpeedToggle: {fileID: 5481330358680210834}
+  transformerBlackHoleToggle: {fileID: 2441167093340047194}
+  transformerDashCooldownToggle: {fileID: 8709875154516426293}
+  transformerPlayerSpeedToggle: {fileID: 7992779298577257105}
+  transformerShieldHealthToggle: {fileID: 5713468295541557285}
 --- !u!1 &7521882063906400499
 GameObject:
   m_ObjectHideFlags: 0
@@ -21356,6 +21416,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 1
   - 2
@@ -21584,6 +21645,7 @@ GameObject:
   - component: {fileID: 7812235310470054039}
   - component: {fileID: 4244106137229993912}
   - component: {fileID: 718321608}
+  - component: {fileID: 7903297894865408885}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -21693,7 +21755,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 718321608}
+      - m_Target: {fileID: 7903297894865408885}
         m_TargetAssemblyTypeName: QuitGame, Assembly-CSharp
         m_MethodName: Quit
         m_Mode: 1
@@ -21751,6 +21813,18 @@ MonoBehaviour:
             m_BoolArgument: 0
           m_CallState: 2
 --- !u!114 &718321608
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8352825480177045544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6db25d8b85a7d7443b48375109840529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &7903297894865408885
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -22274,6 +22348,7 @@ GameObject:
   - component: {fileID: 3810640417667334611}
   - component: {fileID: 1452650548867129200}
   - component: {fileID: 6788641825730561574}
+  - component: {fileID: 712421715}
   m_Layer: 5
   m_Name: morphFrequencySlider
   m_TagString: Untagged
@@ -22354,7 +22429,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6788641825730561574}
+      - m_Target: {fileID: 712421715}
         m_TargetAssemblyTypeName: UISliderPassthrough, Assembly-CSharp
         m_MethodName: ApplyValue
         m_Mode: 0
@@ -22378,6 +22453,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  slider: {fileID: 0}
+  values:
+  - 0
+  - 0.5
+  - 1
+  UnityEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
+        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
+        m_MethodName: SetTransformerFrequency
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &712421715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8631661961309011051}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 0}
   values:
   - 0
   - 0.5
@@ -22909,6 +23017,7 @@ GameObject:
   - component: {fileID: 4472004928848953427}
   - component: {fileID: 2930683860882526167}
   - component: {fileID: 215903228}
+  - component: {fileID: 2282091110754833818}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -23023,7 +23132,7 @@ MonoBehaviour:
         m_MethodName: UpdateState
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 215903228}
+          m_ObjectArgument: {fileID: 2282091110754833818}
           m_ObjectArgumentAssemblyTypeName: StateToChangeTo, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -23044,6 +23153,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   state: 3
 --- !u!114 &215903228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8728336424204008982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 3
+--- !u!114 &2282091110754833818
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
