@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class VFXColorSetter : MonoBehaviour
 {
-    private ParticleSystem.MinMaxGradient startColor;
-   
-    private ParticleSystem.MinMaxGradient colorOverLifetime;
+    [SerializeField] private ParticleSystem.MinMaxGradient startColor;
+
+    [SerializeField] private ParticleSystem.MinMaxGradient colorOverLifetime;
 
     ParticleSystem[] particleSystems;
+    [SerializeField] private ParticleSystem[] ignoredSystems;
     private void OnValidate()
     {
         
@@ -34,6 +35,7 @@ public class VFXColorSetter : MonoBehaviour
 
         foreach (ParticleSystem p in particleSystems)
         {
+            if (ignoredSystems.Contains(p)) continue;
             ParticleSystem.MainModule main = p.main;
             ParticleSystem.ColorOverLifetimeModule colorOverLifetimeModule = p.colorOverLifetime;
             main.startColor = startColor;

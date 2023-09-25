@@ -13,8 +13,9 @@ public class Ball : MonoBehaviour
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
 
-    public GameObject hitPillar;
-    public GameObject hitShield;
+    public GameObject bouncePillar;
+    public GameObject bounceShield;
+    public GameObject bouncePaddle;
     public GameObject hitPaddle;
     public GameObject playerDies;
 
@@ -54,20 +55,20 @@ public class Ball : MonoBehaviour
             }
             else if (player.hitting)
             {
-                
+                PlayVFX(hitPaddle, data.collisionPos, player.color);
                 EventManager.instance.ballHitEvent.Invoke();
                 mediumRing.Play();
             }
             else
             {
-                PlayVFX(hitPaddle, data.collisionPos, player.color);
+                PlayVFX(bouncePaddle, data.collisionPos, player.color);
                 EventManager.instance.ballBounceEvent.Invoke();
                 smallRing.Play();
             }
         }
         else if (other.gameObject.CompareTag("Pillar"))
         {
-            PlayVFX(hitPillar,data.collisionPos, Color.white);
+            PlayVFX(bouncePillar,data.collisionPos, Color.white);
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
     }
@@ -134,7 +135,7 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
-                PlayVFX(hitShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
+                PlayVFX(bounceShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
                 mediumRing.Play();
 
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
