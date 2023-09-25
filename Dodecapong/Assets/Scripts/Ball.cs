@@ -13,6 +13,12 @@ public class Ball : MonoBehaviour
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
 
+    public GameObject bouncePillar;
+    public GameObject bounceShield;
+    public GameObject bouncePaddle;
+    public GameObject hitPaddle;
+    public GameObject playerDies;
+
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
     public float radius {
         get {
@@ -40,27 +46,29 @@ public class Ball : MonoBehaviour
     {
         if (other.gameObject.TryGetComponent(out Player player))
         {
-            smallRing.Play();
             if (player.grabbing)
             {
+                transform.SetParent(player.transform);
                 StartCoroutine(player.GrabRoutine());
                 player.heldBall = this;
-                transform.parent = player.transform;
                 held = true;
             }
             else if (player.hitting)
             {
+                PlayVFX(hitPaddle, data.collisionPos, player.color);
                 EventManager.instance.ballHitEvent.Invoke();
                 mediumRing.Play();
             }
             else
             {
+                PlayVFX(bouncePaddle, data.collisionPos, player.color);
                 EventManager.instance.ballBounceEvent.Invoke();
                 smallRing.Play();
             }
         }
-        else if (other.gameObject.tag == "Pillar")
+        else if (other.gameObject.CompareTag("Pillar"))
         {
+            PlayVFX(bouncePillar,data.collisionPos, Color.white);
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
     }
@@ -68,15 +76,6 @@ public class Ball : MonoBehaviour
     private void OnGameStateChanged()
     {
         
-    }
-
-    private void Bounce(float centerBias, Vector2 bounceNormal)
-    {
-        Vector2 forward = collider.velocity.normalized;
-        Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
-        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        collider.velocity = finalBounceDir * targetSpd;
-        transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
     }
 
     private void FixedUpdate()
@@ -109,6 +108,23 @@ public class Ball : MonoBehaviour
         }
     }
 
+    void PlayVFX(GameObject particle, Vector3 pos)
+    {
+        Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+    }
+    void PlayVFX(GameObject particle, Vector3 pos, Color color)
+    {
+        GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
+
+        ParticleSystem.MinMaxGradient startColor = new()
+        {
+            mode = ParticleSystemGradientMode.Color,
+            color = color
+        };
+        vfxColorSetter.SetStartColor(startColor);
+    }
+
     private void CheckIfHitBounds()
     {
         if (distFromCenter + radius > GameManager.instance.mapRadius)
@@ -119,14 +135,21 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
+                PlayVFX(bounceShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
                 mediumRing.Play();
+
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-                Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+                Vector2 forward = collider.velocity.normalized;
+                Vector2 bounceDir = Vector2.Reflect(forward, shieldNormal).normalized;
+                Vector2 finalBounceDir = Vector2.Lerp(bounceDir, shieldNormal, shieldBounceTowardsCenterBias).normalized;
+                collider.velocity = finalBounceDir * targetSpd;
+                transform.position = (Vector3.zero - (Vector3)shieldNormal) * (GameManager.instance.mapRadius - radius);
                 transform.position = transform.position.normalized * (GameManager.instance.mapRadius - radius);
                
             }
             else // if player dies
             {
+                PlayVFX(playerDies, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
                 largeRing.Play();
                 return;
             }

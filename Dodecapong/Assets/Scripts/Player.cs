@@ -63,6 +63,8 @@ public class Player : MonoBehaviour
     public ControllerInputHandler controllerHandler;
 
     [HideInInspector] public List<GameObject> healthBlips = new List<GameObject>();
+
+    [SerializeField] private Animator animator;
     #endregion
 
     #region Unity
@@ -349,27 +351,9 @@ public class Player : MonoBehaviour
         hitting = true;
         collider.addForceWhileImmovable = true;
 
-        float value;
-        float timeElapsed = 0;
-        Vector3 startingScale = transform.localScale;
-        Vector2 colliderStart = collider.scale;
+        animator.SetTrigger("Play Hit");
 
-        collider.scale = new Vector2(colliderStart.x, startingScale.x * 2);
-        collider.RecalculateScale();
-
-        while (timeElapsed < hitDuration)
-        {
-            value = Mathf.Lerp(startingScale.x, startingScale.x * 2, hitAnimationCurve.Evaluate(timeElapsed / hitDuration));
-            timeElapsed += Time.fixedDeltaTime;
-
-            transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        transform.localScale = startingScale;
-        collider.scale = colliderStart;
-        collider.RecalculateScale();
+        yield return new WaitForSeconds(hitDuration);
 
         collider.addForceWhileImmovable = false;
         hitting = false;
