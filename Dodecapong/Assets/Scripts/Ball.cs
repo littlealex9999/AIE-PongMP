@@ -132,7 +132,7 @@ public class Ball : MonoBehaviour
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
 
-            if (!GameManager.instance.OnSheildHit(alivePlayerID))
+            if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
                 PlayVFX(hitShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
                 mediumRing.Play();

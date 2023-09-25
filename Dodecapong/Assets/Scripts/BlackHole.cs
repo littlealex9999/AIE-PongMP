@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class BlackHole : MonoBehaviour
 {
+    public GameObject pointer;
+
     public float gravityStrength;
     public float duration = 10.0f;
 
     public float destroyTime = 2.0f;
+    public float ballLaunchMult = 4.0f;
 
     public bool pullEnabled = true;
 
@@ -22,16 +25,18 @@ public class BlackHole : MonoBehaviour
 
     private void FixedUpdate()
     {
-        duration -= Time.fixedDeltaTime;
-        if (duration <= 0) {
-            StartCoroutine(DestroyHole(null));
-        }
+        if (!ball) {
+            duration -= Time.fixedDeltaTime;
+            if (duration <= 0) {
+                StartCoroutine(DestroyHole(null));
+            }
 
-        if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
-            for (int i = 0; i < GameManager.instance.balls.Count; i++) {
-                Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
-                Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
-                GameManager.instance.balls[i].collider.velocity += gravity * gravityStrength;
+            if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
+                for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+                    Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
+                    Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
+                    GameManager.instance.balls[i].collider.velocity += gravity * gravityStrength;
+                }
             }
         }
     }
@@ -44,8 +49,9 @@ public class BlackHole : MonoBehaviour
 
             other.gameObject.SetActive(false);
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
-            other.velocity = Random.insideUnitCircle * ball.constantSpd;
+            other.velocity = Random.insideUnitCircle * ball.constantSpd * ballLaunchMult;
 
+            GameManager.instance.CleanTransformers(false);
             EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
             StartCoroutine(DestroyHole(other.gameObject));
@@ -60,7 +66,12 @@ public class BlackHole : MonoBehaviour
             destroyTimer += Time.deltaTime;
             float endPercentage = destroyTime / destroyTimer;
 
-            transform.localScale = Vector3.Lerp(startScale, Vector3.zero, endPercentage);
+            //transform.localScale = Vector3.Lerp(startScale, Vector3.zero, endPercentage);
+
+            if (pointer && ball) {
+                pointer.SetActive(true);
+                pointer.transform.rotation = Quaternion.Euler(0, 0, Player.Angle(ball.collider.velocity));
+            }
 
             yield return new WaitForEndOfFrame();
         }
