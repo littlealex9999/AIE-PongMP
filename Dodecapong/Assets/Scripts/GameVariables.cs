@@ -105,6 +105,7 @@ public class GameVariables : ScriptableObject
     [Range(0, 1)] public float shieldBounceTowardsCenterBias;
 
     public static void SetBallCount(int value) { GameManager.instance.gameVariables.ballCount = value; }
+    public static void SetBallCount(float value) { GameManager.instance.gameVariables.ballCount = (int)value; }
     public static void SetBallSpeed(float value) { GameManager.instance.gameVariables.ballSpeed = value; }
     public static void SetBallSpeedDamp(float value) { GameManager.instance.gameVariables.ballSpeedDamp = value; }
     public static void SetBallSpeedPerHit(float value) { GameManager.instance.gameVariables.ballSpeedPerHit = value; }

@@ -44,7 +44,7 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollisionEnter(PongCollider other, CollisionData data)
     {
-        if (other.gameObject.TryGetComponent(out Player player))
+        if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
         {
             if (player.grabbing)
             {
@@ -112,6 +112,7 @@ public class Ball : MonoBehaviour
     {
         Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
     }
+
     void PlayVFX(GameObject particle, Vector3 pos, Color color)
     {
         GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));

@@ -92,6 +92,7 @@ public class MenuManager : MonoBehaviour
     public Toggle transformerDashCooldownToggle;
     public Toggle transformerPlayerSpeedToggle;
     public Toggle transformerShieldHealthToggle;
+    public bool settingUIVars { get; private set; } = true;
 
     // Start is called before the first frame update
     void Start()
@@ -174,6 +175,8 @@ public class MenuManager : MonoBehaviour
 
     void SettingsScreenResetVariableUI()
     {
+        settingUIVars = true;
+
         ballSpeedSlider.SetSliderToApproximate(GameManager.instance.gameVariables.ballSpeed);
         ballSizeSlider.SetSliderToApproximate(GameManager.instance.gameVariables.ballSize);
         ballCountSlider.SetSliderToApproximate(GameManager.instance.gameVariables.ballCount);
@@ -195,6 +198,8 @@ public class MenuManager : MonoBehaviour
         transformerDashCooldownToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.DASHCOOLDOWN) > 0;
         transformerPlayerSpeedToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.PLAYERSPEED) > 0;
         transformerShieldHealthToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.SHIELDHEALTH) > 0;
+
+        settingUIVars = false;
     }
 
     public void StartScreen()
