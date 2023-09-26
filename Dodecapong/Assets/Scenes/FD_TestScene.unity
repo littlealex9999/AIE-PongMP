@@ -428,7 +428,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &887844995
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1962,7 +1962,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   playerElimTime: 2
   playerElimBallSpinSpeed: 2
-  healthBlipSpread: 0.1
+  healthBlipSpread: 0.9
   healthBlipSquishTime: 0.5
   healthBlipDistance: 4.6
   mapRotationOffset: 0
