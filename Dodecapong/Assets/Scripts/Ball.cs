@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -29,7 +30,8 @@ public class Ball : MonoBehaviour
         }
     }
 
-    bool held;
+    bool held = false;
+    bool hitstunned = false;
 
     public ParticleSystem smallRing; 
     public ParticleSystem mediumRing; 
@@ -55,9 +57,10 @@ public class Ball : MonoBehaviour
             }
             else if (player.hitting)
             {
-                PlayVFX(hitPaddle, data.collisionPos, player.color);
-                EventManager.instance.ballHitEvent.Invoke();
-                mediumRing.Play();
+                //PlayVFX(hitPaddle, data.collisionPos, player.color);
+                //EventManager.instance.ballHitEvent.Invoke();
+                //mediumRing.Play();
+                StartCoroutine(HitStun(player, data, 1.0f));
             }
             else
             {
@@ -71,6 +74,29 @@ public class Ball : MonoBehaviour
             PlayVFX(bouncePillar,data.collisionPos, Color.white);
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
+    }
+
+    IEnumerator HitStun(Player player, CollisionData data, float duration)
+    {
+        if (hitstunned) yield break;
+
+        hitstunned = true;
+
+        collider.immovable = true;
+
+        while (duration > 0) {
+            duration -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        collider.immovable = false;
+
+        PlayVFX(hitPaddle, data.collisionPos, player.color);
+        EventManager.instance.ballHitEvent.Invoke();
+        mediumRing.Play();
+
+        hitstunned = false;
+        yield break;
     }
 
     private void OnGameStateChanged()

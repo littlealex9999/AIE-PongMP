@@ -59,12 +59,20 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
+    [HideInInspector] public bool hitstunned = false;
 
     public ControllerInputHandler controllerHandler;
 
     [HideInInspector] public List<GameObject> healthBlips = new List<GameObject>();
 
     [SerializeField] private Animator animator;
+
+    public enum ControlType
+    {
+        MIDSECTION,
+        PADDLE,
+    }
+    public ControlType controlType;
     #endregion
 
     #region Unity
@@ -75,6 +83,7 @@ public class Player : MonoBehaviour
 
         collider.OnCollisionEnter += OnCollisionEnterBall;
     }
+
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -124,11 +133,22 @@ public class Player : MonoBehaviour
         if (input == Vector2.zero) {
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay) {
+        } else if (GameManager.instance.holdGameplay || hitstunned) {
             return;
         }
 
-        float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+        float moveTarget;
+
+        switch (controlType) {
+            case ControlType.MIDSECTION:
+            default:
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+                break;
+            case ControlType.PADDLE:
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 270) * transform.position.normalized) * input.magnitude * moveSpeed;
+                break;
+        }
+
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
         Vector3 startPos = transform.position;
