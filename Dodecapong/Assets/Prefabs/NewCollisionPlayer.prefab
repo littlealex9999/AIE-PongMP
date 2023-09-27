@@ -56,11 +56,12 @@ MonoBehaviour:
   hitCooldown: 0
   grabDuration: 0
   grabCooldown: 0
+  readyToGrab: 1
   collider: {fileID: 8348195646772282906}
   moveSpeed: 90
   rotationalForce: 1
   pushDistance: 0.1
-  pushStrength: 3
+  deadzone: 0.05
   facingDirection: {x: 1, y: 0, z: 0}
   dashTrailObj: {fileID: 1258679848125004533}
   dashAnimationCurve:
@@ -125,9 +126,11 @@ MonoBehaviour:
   hitStrength: 0
   heldBall: {fileID: 0}
   grabbing: 0
+  hitstunned: 0
   controllerHandler: {fileID: 0}
   healthBlips: []
   animator: {fileID: 6108231517275231207}
+  controlType: 3
 --- !u!114 &8348195646772282906
 MonoBehaviour:
   m_ObjectHideFlags: 0

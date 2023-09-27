@@ -45,6 +45,7 @@ public class Player : MonoBehaviour
 
     public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
+    [Range(0, 1)] public float deadzone = 0.01f;
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
@@ -71,6 +72,8 @@ public class Player : MonoBehaviour
     {
         MIDSECTION,
         PADDLE,
+        MIDSECTION_NORMALIZED,
+        PADDLE_NORMALIZED,
     }
     public ControlType controlType;
     #endregion
@@ -142,13 +145,36 @@ public class Player : MonoBehaviour
 
         switch (controlType) {
             case ControlType.MIDSECTION:
+            case ControlType.MIDSECTION_NORMALIZED:
             default:
-                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection);
                 break;
             case ControlType.PADDLE:
-                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 270) * transform.position.normalized) * input.magnitude * moveSpeed;
+            case ControlType.PADDLE_NORMALIZED:
+
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
                 break;
         }
+
+        if (moveTarget < deadzone && moveTarget > -deadzone) {
+            collider.velocity = Vector2.zero;
+            return;
+        }
+
+        switch (controlType) {
+            case ControlType.MIDSECTION_NORMALIZED:
+            case ControlType.PADDLE_NORMALIZED:
+
+                if (moveTarget > deadzone) {
+                    moveTarget = 1.0f;
+                } else {
+                    moveTarget = -1.0f;
+                }
+                break;
+        }
+
+        moveTarget *= input.magnitude * moveSpeed;
 
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 

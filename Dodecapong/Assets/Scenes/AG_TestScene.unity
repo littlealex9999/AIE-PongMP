@@ -1760,6 +1760,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7521882062942111281, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: 653360f19ea344d4498431b350201bd5, type: 2}
     - target: {fileID: 7521882063367354051, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1851,6 +1855,10 @@ PrefabInstance:
     - target: {fileID: 7521882063367354063, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_Name
       value: better canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7521882064166033467, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8879739368886651871, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.x
@@ -2794,6 +2802,7 @@ MonoBehaviour:
   paddleBounceHaptics: {fileID: 11400000, guid: 0ce4a4d30ae4fbf40b6c86978d5b3a4c, type: 2}
   playerElimHaptics: {fileID: 11400000, guid: 1d9d6047bc5069c4e97def82b57c2770, type: 2}
   enableHaptics: 1
+  enableScreenShake: 1
 --- !u!4 &6311386383622038525
 Transform:
   m_ObjectHideFlags: 0
