@@ -30,7 +30,7 @@ public class Ball : MonoBehaviour
         }
     }
 
-    bool held = false;
+    [HideInInspector] public bool held = false;
     bool hitstunned = false;
 
     public ParticleSystem smallRing; 
@@ -48,10 +48,10 @@ public class Ball : MonoBehaviour
     {
         if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
         {
-            if (player.grabbing)
+            if (player.grabbing && player.readyToGrab)
             {
                 transform.SetParent(player.transform);
-                StartCoroutine(player.GrabRoutine());
+                StartCoroutine(player.GrabRoutine(data));
                 player.heldBall = this;
                 held = true;
             }
@@ -187,15 +187,6 @@ public class Ball : MonoBehaviour
             }
             mediumRing.Play();
         }
-    }
-
-    public void Release(float strength)
-    {
-        if (!held) return;
-        held = false;
-        transform.parent = null;
-        Vector2 dir = -transform.position.normalized;
-        collider.velocity = dir * constantSpd * strength;
     }
 
     public void AddVelocity(Vector2 velocity)

@@ -20,6 +20,7 @@ public class GameVariables : ScriptableObject
         dashCooldown = gv.dashCooldown;
         hitEnabled = gv.hitEnabled;
         hitDuration = gv.hitDuration;
+        hitStrength = gv.hitStrength;
         hitCooldown = gv.hitCooldown;
         grabEnabled = gv.grabEnabled;
         grabDuration = gv.grabDuration;

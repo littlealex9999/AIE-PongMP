@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using Unity.VisualScripting;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class Player : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public float grabDuration;
     [HideInInspector] public float grabCooldown;
-    bool readyToGrab = true;
+    [HideInInspector] public bool readyToGrab = true;
 
     new public PongConvexHullCollider collider;
 
@@ -44,7 +45,6 @@ public class Player : MonoBehaviour
 
     public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
-    public float pushStrength = 3.0f;
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
@@ -55,7 +55,7 @@ public class Player : MonoBehaviour
 
     public AnimationCurve hitAnimationCurve;
     [HideInInspector] public bool hitting = false;
-    [HideInInspector] public float hitStrength;
+    public float hitStrength;
 
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
@@ -107,7 +107,7 @@ public class Player : MonoBehaviour
 
     public void Hit()
     {
-        StartCoroutine(HitRoutine());
+        //StartCoroutine(HitRoutine());
     }
 
     public void Grab(InputAction.CallbackContext context)
@@ -303,11 +303,15 @@ public class Player : MonoBehaviour
         return 360 - ret;
     }
 
-    public void Release(float strength)
+    public void Release(Vector2 releaseVel)
     {
         if (heldBall)
         {
-            heldBall.Release(strength);
+            if (!heldBall.held) return;
+            heldBall.held = false;
+            heldBall.transform.parent = null;
+            heldBall.collider.velocity = releaseVel;
+
             heldBall = null;
             grabbing = false;
             readyToHit = true;
@@ -385,7 +389,7 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public IEnumerator GrabRoutine()
+    public IEnumerator GrabRoutine(CollisionData data)
     {
         if (!readyToGrab) yield break;
 
@@ -402,9 +406,11 @@ public class Player : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Release((1 - timeElapsed / grabDuration) * hitStrength);
+        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
+        Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
-        yield return new WaitForSeconds(grabDuration);
+        yield return new WaitForSeconds(grabCooldown);
 
         readyToGrab = true;
     }
