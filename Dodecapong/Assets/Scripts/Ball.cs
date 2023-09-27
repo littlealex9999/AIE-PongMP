@@ -57,10 +57,13 @@ public class Ball : MonoBehaviour
             }
             else if (player.hitting)
             {
-                //PlayVFX(hitPaddle, data.collisionPos, player.color);
-                //EventManager.instance.ballHitEvent.Invoke();
-                //mediumRing.Play();
-                StartCoroutine(HitStun(player, data, 1.0f));
+                if (GameManager.instance.gameVariables.enableHitstun) {
+                    StartCoroutine(HitStun(player, data, 1.0f));
+                } else {
+                    PlayVFX(hitPaddle, data.collisionPos, player.color);
+                    EventManager.instance.ballHitEvent.Invoke();
+                    mediumRing.Play();
+                }
             }
             else
             {
@@ -81,6 +84,7 @@ public class Ball : MonoBehaviour
         if (hitstunned) yield break;
 
         hitstunned = true;
+        player.hitstunned = true;
 
         collider.immovable = true;
 
@@ -95,6 +99,7 @@ public class Ball : MonoBehaviour
         EventManager.instance.ballHitEvent.Invoke();
         mediumRing.Play();
 
+        player.hitstunned = false;
         hitstunned = false;
         yield break;
     }
@@ -106,7 +111,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held) {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held || hitstunned) {
             collider.immovable = true;
             return;
         } else if (collider.immovable) {
@@ -184,13 +189,13 @@ public class Ball : MonoBehaviour
         }
     }
 
-    public void Release()
+    public void Release(float strength)
     {
         if (!held) return;
         held = false;
         transform.parent = null;
-        Vector2 dir = (Vector3.zero - transform.position).normalized;
-        collider.velocity = dir * constantSpd;
+        Vector2 dir = -transform.position.normalized;
+        collider.velocity = dir * constantSpd * strength;
     }
 
     public void AddVelocity(Vector2 velocity)

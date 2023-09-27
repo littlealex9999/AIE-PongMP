@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Game Variables")]
@@ -32,6 +33,7 @@ public class GameVariables : ScriptableObject
         shieldBounceTowardsCenterBias = gv.shieldBounceTowardsCenterBias;
 
         shieldLives = gv.shieldLives;
+        enableHitstun = gv.enableHitstun;
 
         transformerFrequency = gv.transformerFrequency;
         transformerPower = gv.transformerPower;
@@ -115,9 +117,11 @@ public class GameVariables : ScriptableObject
 
     #region Goal & Shield
     [Header("Goal & Shield"), Min(0)] public int shieldLives = 1;
+    public bool enableHitstun = true;
 
     public static void SetShieldLives(int value) { GameManager.instance.gameVariables.shieldLives = value; }
     public static void SetShieldLives(float value) { GameManager.instance.gameVariables.shieldLives = (int)value; }
+    public static void SetHitstunEnabled(bool enabled) { GameManager.instance.gameVariables.enableHitstun = enabled; }
     #endregion
 
     #region Field

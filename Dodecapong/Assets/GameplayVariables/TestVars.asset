@@ -25,7 +25,7 @@ MonoBehaviour:
   playerNormalBending: 2
   dashEnabled: 1
   dashDuration: 0.25
-  dashCooldown: 0.5
+  dashCooldown: 0.1
   hitEnabled: 1
   hitDuration: 0.3
   hitCooldown: 0.5
@@ -40,6 +40,7 @@ MonoBehaviour:
   ballSize: 0.5
   shieldBounceTowardsCenterBias: 0.3
   shieldLives: 5
+  enableHitstun: 0
   transformerFrequency: 1
   transformerPower: 1
   enabledTransformers: 175

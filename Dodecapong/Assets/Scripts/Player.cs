@@ -118,7 +118,8 @@ public class Player : MonoBehaviour
         }
         else if (context.canceled)
         {
-            Release();
+            //Release();
+            grabbing = false;
         }
     }
 
@@ -302,15 +303,16 @@ public class Player : MonoBehaviour
         return 360 - ret;
     }
 
-    public void Release()
+    public void Release(float strength)
     {
         if (heldBall)
         {
-            heldBall.Release();
+            heldBall.Release(strength);
             heldBall = null;
             grabbing = false;
             readyToHit = true;
-            Hit();
+            animator.SetTrigger("Play Hit");
+            //Hit();
         }
         else
         {
@@ -393,9 +395,14 @@ public class Player : MonoBehaviour
 
         float timeElapsed = 0;
 
-        yield return new WaitUntil(() => !grabbing || (timeElapsed += Time.fixedDeltaTime) >= grabDuration);
+        while (timeElapsed < grabDuration) {
+            timeElapsed += Time.deltaTime;
+            if (!grabbing) break;
 
-        Release();
+            yield return new WaitForEndOfFrame();
+        }
+
+        Release((1 - timeElapsed / grabDuration) * hitStrength);
 
         yield return new WaitForSeconds(grabDuration);
 
