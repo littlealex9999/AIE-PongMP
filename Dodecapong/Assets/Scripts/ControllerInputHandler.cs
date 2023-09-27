@@ -1,31 +1,44 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static GameManager;
 
 [RequireComponent(typeof(PlayerInput))]
 public class ControllerInputHandler : MonoBehaviour
 {
-    PlayerInputManager playerInputManager;
+    [HideInInspector] public Player playerA;
+    [HideInInspector] public Player playerB;
 
-    PlayerInput playerInput;
+    [HideInInspector] public bool splitControls = false;
 
-    Player playerA;
-    Player playerB;
-
-    bool splitControls = false;
+    public PlayerInput playerInput { get; private set; }
+    public Gamepad gamepad { get; private set; }
+    bool hapticsRunning = false;
 
     private void OnDestroy()
     {
-        instance.RemovePlayer(playerA);
-        instance.RemovePlayer(playerB);
+        if (gamepad != null) gamepad.ResetHaptics();
     }
 
     private void Awake()
     {
-        playerInputManager = FindObjectOfType<PlayerInputManager>();
+        GameManager.instance.controllers.Add(this);
+
         playerInput = GetComponent<PlayerInput>();
-        playerA = instance.GetNewPlayer();
-        if (playerA.ID != 0) playerInput.actions.FindActionMap("UI").Disable();
+        if (playerInput) {
+            for (int i = 0; i < playerInput.devices.Count; i++) {
+                if (playerInput.devices[i] is Gamepad) {
+                    gamepad = (Gamepad)playerInput.devices[i];
+                    break;
+                }
+            }
+        }
+        
+        JoinPlayer(out playerA);
+    }
+
+    public void PlayerInput_onDeviceLost(PlayerInput obj)
+    {
+        //Destroy(gameObject);
     }
 
     public void LeftStick(InputAction.CallbackContext context)
@@ -38,52 +51,64 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void Dash(InputAction.CallbackContext context)
     {
-        if (context.started && instance.gameState == GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
-            if (splitControls) playerA.Dash();
-            else playerB.Dash();
+            if (splitControls)
+            {
+                playerB.Dash();
+            }
+            else
+            {
+                playerA.Dash();
+            }
         }
     }
     public void SplitDash(InputAction.CallbackContext context)
     {
-        if (context.started && instance.gameState == GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
-            if (splitControls) playerB.Dash();
+            if (splitControls) playerA.Dash();
         }
     }
     public void SwapControllerScheme(InputAction.CallbackContext context)
     {
-        if (context.canceled && instance.gameState == GameState.JOINMENU)
+        if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
         {
             if (splitControls)
             {
-                instance.RemovePlayer(playerB);
                 splitControls = false;
+                GameManager.instance.RemovePlayer(playerB);
             }
             else
             {
-                playerB = instance.GetNewPlayer();
                 splitControls = true;
+                JoinPlayer(out playerB);
             }
         }
     }
     public void DisconnectController(InputAction.CallbackContext context)
     {
-        if (context.canceled && instance.gameState == GameState.JOINMENU)
+        if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
         {
+            GameManager.instance.controllers.Remove(this);
+            GameManager.instance.RemovePlayer(playerA);
+            GameManager.instance.RemovePlayer(playerB);
+            GameManager.instance.UpdatePlayerImages();
+
             Destroy(gameObject);
         }
     }
+
     public void SplitHit(InputAction.CallbackContext context)
     {
-        if (context.started && instance.gameState == GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
             if (splitControls) playerA.Hit();
         }
     }
     public void Hit(InputAction.CallbackContext context)
     {
-        if (instance.gameState == GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
             if (splitControls)
             {
@@ -97,7 +122,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void Grab(InputAction.CallbackContext context)
     {
-        if (instance.gameState == GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
             if (splitControls)
             {
@@ -111,9 +136,64 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void SplitGrab(InputAction.CallbackContext context)
     {
-        if (instance.gameState == GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
             if (splitControls) playerA.Grab(context);
         }
+    }
+
+    public void PageRight(InputAction.CallbackContext context)
+    {
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
+        {
+            MenuManager.instance.SettingsScreenPageRight();
+        }
+    }
+    public void PageLeft(InputAction.CallbackContext context)
+    {
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
+        {
+            MenuManager.instance.SettingsScreenPageLeft();
+        }
+    }
+
+    public IEnumerator SetHaptics(float lowFrequency, float highFrequency, float duration)
+    {
+        if (gamepad != null && !hapticsRunning && GameManager.instance.enableHaptics) {
+            hapticsRunning = true;
+            gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
+            gamepad.ResumeHaptics();
+        } else {
+            yield return null;
+        }
+
+        while (duration > 0.0f) {
+            duration -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        gamepad.ResetHaptics();
+        hapticsRunning = false;
+
+        yield return null;
+    }
+
+    public void SetHaptics(ControllerHaptics haptics, bool resetHaptics = true)
+    {
+        if (resetHaptics) {
+            gamepad.ResetHaptics();
+            hapticsRunning = false;
+            StopAllCoroutines();
+        }
+        StartCoroutine(SetHaptics(haptics.lowFrequencyIntensity, haptics.highFrequencyIntensity, haptics.duration));
+    }
+
+    void JoinPlayer(out Player player)
+    {
+        player = GameManager.instance.GetNewPlayer();
+        GameManager.instance.UpdatePlayerImages();
+        player.controllerHandler = this;
+
+        SetHaptics(GameManager.instance.playerJoinHaptics);
     }
 }

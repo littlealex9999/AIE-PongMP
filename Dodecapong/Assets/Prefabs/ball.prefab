@@ -232,7 +232,7 @@ GameObject:
   - component: {fileID: 8301239450588043129}
   m_Layer: 7
   m_Name: ball
-  m_TagString: Untagged
+  m_TagString: Ball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -321,9 +321,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collider: {fileID: 0}
-  constantVel: 5
+  constantSpd: 0
+  minimumSpd: 0.5
   dampStrength: 0
   shieldBounceTowardsCenterBias: 0
+  bouncePillar: {fileID: 4344030160298166289, guid: 67f6b10afaac02f448754ca1cda76ac0, type: 3}
+  bounceShield: {fileID: 1173357965376637556, guid: 3bb0471d8d40b0b4e86c8f6d7edea48e, type: 3}
+  bouncePaddle: {fileID: 3511931716861035794, guid: 10d5cb06056bd7b438d93c9505c96fe9, type: 3}
+  hitPaddle: {fileID: 5765492447424006579, guid: 5fbbe5b806791d546807abe803adec48, type: 3}
+  playerDies: {fileID: 8154808341645599611, guid: 75db88388e7966748936800ba66aefef, type: 3}
   smallRing: {fileID: 4661124823747825990}
   mediumRing: {fileID: 3241484898122013697}
   largeRing: {fileID: 3209633161082959168}
@@ -346,6 +352,7 @@ MonoBehaviour:
   trigger: 0
   immovable: 0
   addForceWhileImmovable: 1
+  collidingWith: []
   radius: 0.25
 --- !u!1001 &1637132977998753704
 PrefabInstance:
@@ -643,7 +650,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3788634554138036003, guid: 433e354f46839bf4e90463968ab00828, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.30070582
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3788634554138036003, guid: 433e354f46839bf4e90463968ab00828, type: 3}
       propertyPath: m_LocalRotation.x
@@ -655,7 +662,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3788634554138036003, guid: 433e354f46839bf4e90463968ab00828, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.95371693
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3788634554138036003, guid: 433e354f46839bf4e90463968ab00828, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -667,7 +674,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3788634554138036003, guid: 433e354f46839bf4e90463968ab00828, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -145
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: ShapeModule.type
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: ShapeModule.arc.value
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: ShapeModule.arc.spread
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 0.0001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: EmissionModule.rateOverTime.scalar
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3788634554138036061, guid: 433e354f46839bf4e90463968ab00828, type: 3}
+      propertyPath: EmissionModule.rateOverDistance.scalar
+      value: 50
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 433e354f46839bf4e90463968ab00828, type: 3}

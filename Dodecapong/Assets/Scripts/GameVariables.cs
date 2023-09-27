@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Game Variables")]
@@ -11,7 +12,7 @@ public class GameVariables : ScriptableObject
     public GameVariables(GameVariables gv)
     {
         playerSpeed = gv.playerSpeed;
-        playerSize = gv.playerSize;
+        playerSizes = gv.playerSizes;
         playerRotationalForce = gv.playerRotationalForce;
         playerNormalBending = gv.playerNormalBending;
         dashEnabled = gv.dashEnabled;
@@ -19,6 +20,7 @@ public class GameVariables : ScriptableObject
         dashCooldown = gv.dashCooldown;
         hitEnabled = gv.hitEnabled;
         hitDuration = gv.hitDuration;
+        hitStrength = gv.hitStrength;
         hitCooldown = gv.hitCooldown;
         grabEnabled = gv.grabEnabled;
         grabDuration = gv.grabDuration;
@@ -32,6 +34,7 @@ public class GameVariables : ScriptableObject
         shieldBounceTowardsCenterBias = gv.shieldBounceTowardsCenterBias;
 
         shieldLives = gv.shieldLives;
+        enableHitstun = gv.enableHitstun;
 
         transformerFrequency = gv.transformerFrequency;
         transformerPower = gv.transformerPower;
@@ -50,7 +53,16 @@ public class GameVariables : ScriptableObject
 
     #region Player
     [Header("Player")] public float playerSpeed = 90.0f;
-    public Vector3 playerSize = new Vector3(0.03f, 0.03f, 0.03f);
+    [Tooltip("player size based on player count Element 0 = 2 players Element 1 = 3 players ect.")] 
+    public List<Vector3> playerSizes = new List<Vector3>() {
+        new Vector3(0.04f, 0.04f, 0.04f),
+        new Vector3(0.04f, 0.04f, 0.04f),
+        new Vector3(0.03f, 0.03f, 0.03f),
+        new Vector3(0.03f, 0.03f, 0.03f),
+        new Vector3(0.03f, 0.03f, 0.03f),
+        new Vector3(0.02f, 0.02f, 0.02f),
+        new Vector3(0.02f, 0.02f, 0.02f),
+    };
     public float playerRotationalForce = 0.5f;
     public float playerNormalBending = 2.0f;
 
@@ -71,10 +83,8 @@ public class GameVariables : ScriptableObject
     public float grabCooldown = 1;
 
     public static void SetPlayerSpeed(float value) { GameManager.instance.gameVariables.playerSpeed = value; }
-    public static void SetPlayerSize(Vector3 value) { GameManager.instance.gameVariables.playerSize = value; }
-    public static void SetPlayerSizeX(float value) { GameManager.instance.gameVariables.playerSize.x = value; }
-    public static void SetPlayerSizeY(float value) { GameManager.instance.gameVariables.playerSize.y = value; }
-    public static void SetPlayerSizeZ(float value) { GameManager.instance.gameVariables.playerSize.z = value; }
+    public static void SetPlayersSize(List<Vector3> value) { GameManager.instance.gameVariables.playerSizes = value; }
+    
     public static void SetPlayerRotationalForce(float value) { GameManager.instance.gameVariables.playerRotationalForce = value; }
     public static void SetPlayerNormalBending(float value) { GameManager.instance.gameVariables.playerNormalBending = value; }
     public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.gameVariables.dashEnabled = enabled; }
@@ -98,6 +108,7 @@ public class GameVariables : ScriptableObject
     [Range(0, 1)] public float shieldBounceTowardsCenterBias;
 
     public static void SetBallCount(int value) { GameManager.instance.gameVariables.ballCount = value; }
+    public static void SetBallCount(float value) { GameManager.instance.gameVariables.ballCount = (int)value; }
     public static void SetBallSpeed(float value) { GameManager.instance.gameVariables.ballSpeed = value; }
     public static void SetBallSpeedDamp(float value) { GameManager.instance.gameVariables.ballSpeedDamp = value; }
     public static void SetBallSpeedPerHit(float value) { GameManager.instance.gameVariables.ballSpeedPerHit = value; }
@@ -107,8 +118,11 @@ public class GameVariables : ScriptableObject
 
     #region Goal & Shield
     [Header("Goal & Shield"), Min(0)] public int shieldLives = 1;
+    public bool enableHitstun = true;
 
     public static void SetShieldLives(int value) { GameManager.instance.gameVariables.shieldLives = value; }
+    public static void SetShieldLives(float value) { GameManager.instance.gameVariables.shieldLives = (int)value; }
+    public static void SetHitstunEnabled(bool enabled) { GameManager.instance.gameVariables.enableHitstun = enabled; }
     #endregion
 
     #region Field
@@ -138,5 +152,10 @@ public class GameVariables : ScriptableObject
     public static void SetWinType(WinType type) { GameManager.instance.gameVariables.winType = type; }
     public static void SetTimerEnabled(bool enabled) { GameManager.instance.gameVariables.useTimer = enabled; }
     public static void SetTimerSeconds(float value) { GameManager.instance.gameVariables.timeInSeconds = value; }
+    #endregion
+
+    #region Extra
+    public static void SetHapticsEnabled(bool enabled) { GameManager.instance.enableHaptics = enabled; }
+    public static void SetScreenShakeEnabled(bool enabled) { GameManager.instance.enableScreenShake = enabled; }
     #endregion
 }

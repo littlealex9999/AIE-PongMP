@@ -1,6 +1,10 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections;
+using System.Linq;
+using Unity.VisualScripting;
+using System.Collections.Generic;
+using UnityEditor;
 
 public class Player : MonoBehaviour
 {
@@ -13,7 +17,7 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public int shieldHealth;
 
-    [HideInInspector] public Color color;
+    [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
 
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
@@ -25,20 +29,23 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public float grabDuration;
     [HideInInspector] public float grabCooldown;
-    bool readyToGrab = true;
+    [HideInInspector] public bool readyToGrab = true;
 
     new public PongConvexHullCollider collider;
 
     float playerMidPoint;
     float angleDeviance; // the max amount you can move from your starting rotation
+    float angleDevianceCollider; // the amount that the collider affects the outcome of angleDeviance
 
     public float playerSectionMiddle { get { return playerMidPoint; } }
+    public float playerAngleDeviance { get { return angleDeviance; } }
+
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
 
     public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
-    public float pushStrength = 3.0f;
+    [Range(0, 1)] public float deadzone = 0.01f;
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
@@ -49,18 +56,37 @@ public class Player : MonoBehaviour
 
     public AnimationCurve hitAnimationCurve;
     [HideInInspector] public bool hitting = false;
-    [HideInInspector] public float hitStrength;
+    public float hitStrength;
 
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
+    [HideInInspector] public bool hitstunned = false;
+
+    public ControllerInputHandler controllerHandler;
+
+    [HideInInspector] public List<GameObject> healthBlips = new List<GameObject>();
+
+    [SerializeField] private Animator animator;
+
+    public enum ControlType
+    {
+        MIDSECTION,
+        PADDLE,
+        MIDSECTION_NORMALIZED,
+        PADDLE_NORMALIZED,
+    }
+    public ControlType controlType;
     #endregion
 
-    #region UnityMessages
+    #region Unity
     private void Awake()
     {
         dashTrail = dashTrailObj.GetComponentInChildren<TrailRenderer>();
-        if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object."); 
+        if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
+
+        collider.OnCollisionEnter += OnCollisionEnterBall;
     }
+
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -84,7 +110,7 @@ public class Player : MonoBehaviour
 
     public void Hit()
     {
-        StartCoroutine(HitRoutine());
+        //StartCoroutine(HitRoutine());
     }
 
     public void Grab(InputAction.CallbackContext context)
@@ -95,7 +121,8 @@ public class Player : MonoBehaviour
         }
         else if (context.canceled)
         {
-            Release();
+            //Release();
+            grabbing = false;
         }
     }
 
@@ -110,11 +137,45 @@ public class Player : MonoBehaviour
         if (input == Vector2.zero) {
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay) {
+        } else if (GameManager.instance.holdGameplay || hitstunned) {
             return;
         }
 
-        float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+        float moveTarget;
+
+        switch (controlType) {
+            case ControlType.MIDSECTION:
+            case ControlType.MIDSECTION_NORMALIZED:
+            default:
+
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection);
+                break;
+            case ControlType.PADDLE:
+            case ControlType.PADDLE_NORMALIZED:
+
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
+                break;
+        }
+
+        if (moveTarget < deadzone && moveTarget > -deadzone) {
+            collider.velocity = Vector2.zero;
+            return;
+        }
+
+        switch (controlType) {
+            case ControlType.MIDSECTION_NORMALIZED:
+            case ControlType.PADDLE_NORMALIZED:
+
+                if (moveTarget > deadzone) {
+                    moveTarget = 1.0f;
+                } else {
+                    moveTarget = -1.0f;
+                }
+                break;
+        }
+
+        moveTarget *= input.magnitude * moveSpeed;
+
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
         Vector3 startPos = transform.position;
@@ -122,28 +183,29 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float limit = 0;
-
-        float maxDev = playerMidPoint + angleDeviance - limit;
-        float minDev = playerMidPoint - angleDeviance + limit;
+        float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
+        float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
         float angle = Angle(transform.position);
 
-        if (angle > maxDev || angle < minDev)
-        {
-            float lowComparison = Mathf.Abs(360 - angle);
-            float lowExtraComparison = Mathf.Abs(minDev - angle);
-            if (lowExtraComparison < lowComparison) lowComparison = lowExtraComparison;
-
-            if (maxDev >= 360) maxDev -= 360;
-            float highComparison = Mathf.Abs(maxDev - angle);
-
-            if (lowComparison < highComparison)
-            {
-                SetPosition(minDev);
-            }
-            else
-            {
-                SetPosition(maxDev);
+        if (angle > maxDev || angle < minDev) {
+            if (playerMidPoint >= 180.0f) {
+                float oppositePoint = playerMidPoint - 180.0f;
+                if (angle < oppositePoint || angle > maxDev) {
+                    // player is closer to max
+                    SetPosition(maxDev);
+                } else {
+                    // player is closer to min
+                    SetPosition(minDev);
+                }
+            } else {
+                float oppositePoint = playerMidPoint + 180.0f;
+                if (angle < oppositePoint && angle > maxDev) {
+                    // player is closer to max
+                    SetPosition(maxDev);
+                } else {
+                    // player is closer to min
+                    SetPosition(minDev);
+                }
             }
         }
 
@@ -174,21 +236,37 @@ public class Player : MonoBehaviour
 
     public void CalculateLimits()
     {
-        // the "starting position" is as follows, with 2 players as an example:
-        // 360 / player count to get the base angle (360 / 2 = 180)
-        // ... * i + 1 to get a multiple of the base angle based on the player (180 * (0 + 1) = 180)
-        // ... + mapRotationOffset to ensure the paddles spawn relative to the way the map is rotated (+ 0 in example, so ignored)
-        // 360 / (playerCount * 2) to get the offset of the middle of each player area (360 / (2 * 2) = 90)
-        // (player position - segment offset) to get the correct position to place the player (180 - 90 = 90)
         int alivePlayerCount = GameManager.instance.alivePlayers.Count;
 
         float segmentOffset = 180.0f / alivePlayerCount;
 
+        Vector2 devianceMax = Vector2.zero;
+        Vector2 devianceMin = Vector2.zero;
+        for (int i = 0; i < collider.points.Length; i++) {
+            if (collider.scaledPoints[i].x > devianceMax.x) devianceMax.x = collider.scaledPoints[i].x;
+            if (collider.scaledPoints[i].y > devianceMax.y) devianceMax.y = collider.scaledPoints[i].y;
+            if (collider.scaledPoints[i].x < devianceMin.x) devianceMin.x = collider.scaledPoints[i].x;
+            if (collider.scaledPoints[i].y < devianceMin.y) devianceMin.y = collider.scaledPoints[i].y;
+        }
+
+        devianceMin.x += GameManager.instance.mapRadius;
+        devianceMax.x += GameManager.instance.mapRadius;
+        float angleColliderTotal = Angle(devianceMax) - Angle(devianceMin);
+
         playerMidPoint = 360.0f / alivePlayerCount * (LivingID + 1) + GameManager.instance.mapRotationOffset - segmentOffset;
         angleDeviance = segmentOffset;
+        angleDevianceCollider = angleColliderTotal;
 
         // get the direction this paddle is facing, set its position, and have its rotation match
         facingDirection = Quaternion.Euler(0, 0, playerMidPoint) * -Vector3.up;
+    }
+
+    public void Resize(Vector3 size)
+    {
+        transform.localScale = size;
+        collider.scale = new Vector2(size.y, size.x);
+        collider.RecalculateScale();
+        CalculateLimits();
     }
 
     void CalculateAIInput()
@@ -203,7 +281,7 @@ public class Player : MonoBehaviour
         Vector2 intersectionPoint = GameManager.instance.GetCircleIntersection(targetBallPos, targetBallVel, GameManager.instance.mapRadius);
         float targetAngle = Angle(intersectionPoint);
 
-        if (targetAngle < playerMidPoint - angleDeviance || targetAngle > playerMidPoint + angleDeviance) {
+        if (targetAngle < playerMidPoint - angleDeviance + angleDevianceCollider || targetAngle > playerMidPoint + angleDeviance - angleDevianceCollider) {
             movementInput = Vector2.zero;
         } else {
             float currentAngle = Angle(transform.position);
@@ -214,9 +292,16 @@ public class Player : MonoBehaviour
                 movementInput = Quaternion.Euler(0, 0, -90) * facingDirection;
             }
 
-            if (currentAngle > playerMidPoint + angleDeviance) {
+            if (currentAngle > playerMidPoint + angleDeviance - angleDevianceCollider) {
                 movementInput *= -1;
             }
+        }
+    }
+
+    void OnCollisionEnterBall(PongCollider other, CollisionData data)
+    {
+        if (other.tag == "Ball") {
+            controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
         }
     }
     #endregion
@@ -244,15 +329,20 @@ public class Player : MonoBehaviour
         return 360 - ret;
     }
 
-    public void Release()
+    public void Release(Vector2 releaseVel)
     {
         if (heldBall)
         {
-            heldBall.Release();
+            if (heldBall.holdingPlayer != this) return;
+            heldBall.holdingPlayer = null;
+            heldBall.transform.parent = null;
+            heldBall.collider.velocity = releaseVel;
+
             heldBall = null;
             grabbing = false;
             readyToHit = true;
-            Hit();
+            animator.SetTrigger("Play Hit");
+            //Hit();
         }
         else
         {
@@ -313,26 +403,9 @@ public class Player : MonoBehaviour
         hitting = true;
         collider.addForceWhileImmovable = true;
 
-        float value;
-        float timeElapsed = 0;
-        Vector3 startingScale = transform.localScale;
-        Vector2 colliderStart = collider.scale;
+        animator.SetTrigger("Play Hit");
 
-        while (timeElapsed < hitDuration)
-        {
-            value = Mathf.Lerp(startingScale.x, startingScale.x * 2, hitAnimationCurve.Evaluate(timeElapsed / hitDuration));
-            timeElapsed += Time.fixedDeltaTime;
-
-            transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
-            collider.scale = new Vector2(transform.localScale.y, transform.localScale.x);
-            collider.RecalculateScale();
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        transform.localScale = startingScale;
-        collider.scale = colliderStart;
-        collider.RecalculateScale();
+        yield return new WaitForSeconds(hitDuration);
 
         collider.addForceWhileImmovable = false;
         hitting = false;
@@ -342,21 +415,41 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public IEnumerator GrabRoutine()
+    public IEnumerator GrabRoutine(CollisionData data)
     {
         if (!readyToGrab) yield break;
 
         EventManager.instance.ballGrabEvent.Invoke();
 
         readyToGrab = false;
+        StartCoroutine(GrabReset());
 
         float timeElapsed = 0;
 
-        yield return new WaitUntil(() => !grabbing || (timeElapsed += Time.fixedDeltaTime) >= grabDuration);
+        while (timeElapsed < grabDuration) {
+            timeElapsed += Time.deltaTime;
+            if (!grabbing) break;
 
-        Release();
+            yield return new WaitForEndOfFrame();
+        }
 
-        yield return new WaitForSeconds(grabDuration);
+        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
+        Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
+    }
+
+    IEnumerator GrabReset()
+    {
+        while (grabbing) {
+            yield return new WaitForEndOfFrame();
+        }
+
+        float grabCooldownTimer = grabCooldown;
+        while (grabCooldownTimer > 0) {
+            grabCooldownTimer -= Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
+        }
 
         readyToGrab = true;
     }

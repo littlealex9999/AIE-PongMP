@@ -13,29 +13,37 @@ MonoBehaviour:
   m_Name: TestVars
   m_EditorClassIdentifier: 
   playerSpeed: 90
-  playerSize: {x: 0.03, y: 0.03, z: 0.03}
+  playerSizes:
+  - {x: 4, y: 4, z: 4}
+  - {x: 4, y: 4, z: 4}
+  - {x: 3, y: 3, z: 3}
+  - {x: 3, y: 3, z: 3}
+  - {x: 3, y: 3, z: 3}
+  - {x: 2, y: 2, z: 2}
+  - {x: 2, y: 2, z: 2}
   playerRotationalForce: 0.8
   playerNormalBending: 2
   dashEnabled: 1
   dashDuration: 0.25
-  dashCooldown: 0.5
+  dashCooldown: 0.1
   hitEnabled: 1
-  hitDuration: 0.1
+  hitDuration: 0.3
   hitCooldown: 0.5
-  hitStrength: 0.1
+  hitStrength: 1.4
   grabEnabled: 1
   grabDuration: 1
   grabCooldown: 1
   ballCount: 1
-  ballSpeed: 4
-  ballSpeedDamp: 1.2
+  ballSpeed: 7
+  ballSpeedDamp: 5
   ballSpeedPerHit: 0
   ballSize: 0.5
   shieldBounceTowardsCenterBias: 0.3
-  shieldLives: 10
-  transformerFrequency: 0.291
+  shieldLives: 5
+  enableHitstun: 0
+  transformerFrequency: 1
   transformerPower: 1
-  enabledTransformers: 16
+  enabledTransformers: 175
   winType: 0
   useTimer: 1
   timeInSeconds: 20

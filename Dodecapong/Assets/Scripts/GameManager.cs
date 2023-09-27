@@ -5,9 +5,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Random = UnityEngine.Random;
 using Unity.VisualScripting;
 using JetBrains.Annotations;
+using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
+using Image = UnityEngine.UI.Image;
 
 public class GameManager : MonoBehaviour
 {
@@ -23,10 +25,14 @@ public class GameManager : MonoBehaviour
     public GameObject playerPrefab;
     List<GameObject> pillars = new List<GameObject>();
 
+    public GameObject healthDotPrefab;
+
     public GameVariables defaultGameVariables;
     [HideInInspector] public GameVariables gameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
+
+    [HideInInspector] public List<ControllerInputHandler> controllers;
     #endregion
 
     #region Map Settings
@@ -35,6 +41,10 @@ public class GameManager : MonoBehaviour
     public AnimationCurve elimSpeedCurve;
     public float playerElimTime = 2.0f;
     public float playerElimBallSpinSpeed = 2.0f;
+    [Range(0, 1)]
+    public float healthBlipSpread = 0.1f;
+    public float healthBlipSquishTime = 0.5f;
+    public float healthBlipDistance = 4.6f;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
@@ -57,11 +67,9 @@ public class GameManager : MonoBehaviour
 
     #region UI
     [Header("UI")]
-    public List<Image> playerImages;
-
-    public GameObject shieldTextObj;
-    public Transform shieldTextParent;
-    public List<TextMeshProUGUI> shieldText = new List<TextMeshProUGUI>();
+    public List<Image> controllerImages;
+    public List<Image> halfControllerImages;
+    public Color imageDefaultColor;
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
@@ -102,6 +110,19 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<Player> elimPlayers;
 
     [HideInInspector] public BlackHole blackHole;
+    #endregion
+
+    #region Haptics
+    [Header("Haptics")]
+    public ControllerHaptics playerJoinHaptics;
+    public ControllerHaptics shieldTouchHaptics;
+    public ControllerHaptics paddleBounceHaptics;
+    public ControllerHaptics playerElimHaptics;
+    #endregion
+
+    #region Extra Settings
+    public bool enableHaptics = true;
+    public bool enableScreenShake = true;
     #endregion
     #endregion
 
@@ -221,7 +242,7 @@ public class GameManager : MonoBehaviour
                 if (!inGame) {
                     StartGame();
                 } else {
-                    UpdateShieldText();
+                    ResetShieldDisplay();
                 }
                 break;
             case GameState.GAMEPAUSED:
@@ -277,17 +298,18 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region PLAYERS
+
     [ContextMenu("Create New Player")]
     public Player GetNewPlayer()
     {
+        if (controllers.Count > 4 || players.Count >= playerEmissives.Count) return null;
         EventManager.instance.playerJoinEvent.Invoke();
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
-        player.color = GetPlayerColor(players.Count);
+
         players.Add(player);
 
-        UpdatePlayerImages();
         return player;
     }
 
@@ -304,10 +326,11 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        //if (alivePlayers.Count <= 2) {
-        //    EndGame();
-        //    return;
-        //}
+        for (int i = 0; i < player.healthBlips.Count; i++) {
+            Destroy(player.healthBlips[i]);
+        }
+        player.healthBlips.Clear();
+
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -332,7 +355,7 @@ public class GameManager : MonoBehaviour
         SetupPillars();
         SetupMap();
         ResetBalls();
-        UpdateShieldText();
+        ResetShieldDisplay();
         SetupTransformers();
     }
 
@@ -341,6 +364,11 @@ public class GameManager : MonoBehaviour
         inGame = false;
         for (int i = 0; i < players.Count; i++) {
             players[i].gameObject.SetActive(false);
+            for (int j = 0; j < players[i].healthBlips.Count; j++) {
+                // health blips should be managed as part of the shield reset, but they managed to persist through that
+                Destroy(players[i].healthBlips[j]);
+            }
+            players[i].healthBlips.Clear();
         }
 
         for (int i = 0; i < balls.Count; i++) {
@@ -370,7 +398,6 @@ public class GameManager : MonoBehaviour
     {
         elimPlayers.Clear();
         alivePlayers.Clear();
-        foreach (Player p in players) alivePlayers.Add(p);
 
         for (int i = 0; i < players.Count; i++) {
             Player player = players[i];
@@ -378,10 +405,6 @@ public class GameManager : MonoBehaviour
             player.gameObject.SetActive(true);
 
             player.moveSpeed = gameVariables.playerSpeed;
-
-            player.transform.localScale = gameVariables.playerSize;
-            player.collider.scale = new Vector2(gameVariables.playerSize.y, gameVariables.playerSize.x);
-            player.collider.RecalculateScale();
 
             player.rotationalForce = gameVariables.playerRotationalForce;
             player.collider.normalBending = gameVariables.playerNormalBending;
@@ -398,7 +421,26 @@ public class GameManager : MonoBehaviour
 
             player.shieldHealth = gameVariables.shieldLives;
 
-            player.CalculateLimits();
+            alivePlayers.Add(player);
+        }
+        UpdateAlivePlayers();
+    }
+
+    void UpdateAlivePlayers()
+    {
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            Player player = alivePlayers[i];
+
+            player.shieldHealth = gameVariables.shieldLives;
+
+            if (alivePlayers.Count > 1) {
+                // area limits are calculated with a resize
+                player.Resize(gameVariables.playerSizes[alivePlayers.Count - 2]);
+            } else {
+                player.CalculateLimits();
+            }
+
             player.SetPosition(player.playerSectionMiddle);
         }
     }
@@ -411,7 +453,7 @@ public class GameManager : MonoBehaviour
             Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
-            b.constantVel = gameVariables.ballSpeed;
+            b.constantSpd = gameVariables.ballSpeed;
             b.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
             b.collider.radius = gameVariables.ballSize / 2;
             b.dampStrength = gameVariables.ballSpeedDamp;
@@ -422,7 +464,7 @@ public class GameManager : MonoBehaviour
 
     void ResetBalls()
     {
-        EventManager.instance.ballCountdownEvent.Invoke();
+        if (alivePlayers.Count > 1) EventManager.instance.ballCountdownEvent.Invoke();
         countdownTimer = countdownTime;
 
         for (int i = balls.Count - 1; i > gameVariables.ballCount; i--) {
@@ -436,7 +478,7 @@ public class GameManager : MonoBehaviour
             balls[i].gameObject.SetActive(true);
             balls[i].collider.enabled = true;
             balls[i].collider.immovable = true;
-            balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantVel;
+            balls[i].collider.velocity = Quaternion.Euler(0, 0, 360.0f / balls.Count * i) * dir * balls[i].constantSpd;
             balls[i].transform.position = Vector2.zero;
         }
     }
@@ -454,14 +496,14 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < players.Count; i++) {
             pillars[i].transform.SetPositionAndRotation(
-                GetTargetPointInCircle(360.0f / players.Count * i),
+                GetTargetPointInCircle(360.0f / players.Count * i) * mapRadius,
                 Quaternion.Euler(0, 0, 360.0f / players.Count * i));
         }
     }
 
     public Vector3 GetTargetPointInCircle(float angle)
-    { 
-       return Vector3.zero + Quaternion.Euler(0, 0, angle) * Vector3.up * mapRadius;
+    {
+        return Vector3.zero + Quaternion.Euler(0, 0, angle) * Vector3.up;
     }
 
     public void SetupMap()
@@ -485,7 +527,7 @@ public class GameManager : MonoBehaviour
         CleanTransformers();
     }
 
-    void CleanTransformers()
+    public void CleanTransformers(bool clearBlackHole = true)
     {
         for (int i = 0; i < activeTransformers.Count; i++) {
             if (activeTransformers[i] != null) {
@@ -502,7 +544,7 @@ public class GameManager : MonoBehaviour
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
-        if (blackHole) {
+        if (clearBlackHole && blackHole) {
             Destroy(blackHole.gameObject);
             blackHole = null;
         }
@@ -515,8 +557,19 @@ public class GameManager : MonoBehaviour
         transformerSpawnTimer += delta;
 
         if (transformerSpawnTimer > transformerSpawnTime) {
-            SpawnTransformer();
+            if (Random.Range(0, 1) < gameVariables.transformerFrequency) {
+                SpawnTransformer();
+            }
             transformerSpawnTimer = 0;
+        }
+
+        for (int i = 0; i < spawnedTransformers.Count; i++) {
+            spawnedTransformers[i].despawnTime -= delta;
+            if (spawnedTransformers[i].despawnTime <= 0.0f) {
+                Destroy(spawnedTransformers[i].gameObject);
+                spawnedTransformers.RemoveAt(i);
+                --i;
+            }
         }
 
         for (int i = 0; i < activeTransformers.Count; i++) {
@@ -570,6 +623,26 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
+            
+            for (int j = 0; j < spawnedTransformers.Count; j++)
+            {
+                if (allowedTransformers[i].GetTransformerType() == spawnedTransformers[j].GetTransformerType())
+                {
+                    allowed = false;
+                    break;
+                }
+            }
+
+            for (int j = 0; j < activeTransformers.Count; j++)
+            {
+                if (allowedTransformers[i].GetTransformerType() == activeTransformers[j].GetTransformerType())
+                {
+                    allowed = false;
+                    break;
+                }
+            }
+
+
 
             if (allowed) {
                 ++hits;
@@ -587,41 +660,96 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    void UpdatePlayerImages()
+    public void UpdatePlayerImages()
     {
-        for (int i = 0; i < playerImages.Count; i++) {
-            if (playerImages[i] != null) playerImages[i].color = Color.white;
+        for (int i = 0; i < controllerImages.Count; i++)
+        {
+            controllerImages[i].color = imageDefaultColor;
+            controllerImages[i].gameObject.SetActive(true);
         }
 
-        for (int i = 0; i < players.Count; i++) {
-            playerImages[i].color = GetPlayerColor(players[i].ID);
+        for (int i = 0; i < halfControllerImages.Count; i++)
+        {
+            halfControllerImages[i].color = imageDefaultColor;
+            halfControllerImages[i].gameObject.SetActive(false);
+        }
+
+        for (int controllerImageIndex = 0; controllerImageIndex < controllers.Count; controllerImageIndex++)
+        {
+            ControllerInputHandler controller = controllers[controllerImageIndex];
+            if (controller.splitControls)
+            {
+                int playerAIndex = controllerImageIndex * 2;
+                int playerBIndex = playerAIndex + 1;
+
+                controllerImages[controllerImageIndex].gameObject.SetActive(false);
+                halfControllerImages[playerAIndex].gameObject.SetActive(true);
+                halfControllerImages[playerBIndex].gameObject.SetActive(true);
+                halfControllerImages[playerAIndex].color = controller.playerA.color;
+                halfControllerImages[playerBIndex].color = controller.playerB.color;
+            }
+            else
+            {
+                controllerImages[controllerImageIndex].color = controller.playerA.color;
+            }
+        }
+
+
+      
+    }
+
+    private void ResetShieldDisplay()
+    {
+        for (int i = 0; i < alivePlayers.Count; i++) {
+            float angleChange = alivePlayers[i].playerAngleDeviance * healthBlipSpread / (alivePlayers[i].shieldHealth + 1) * 2;
+            float angle = alivePlayers[i].playerSectionMiddle - alivePlayers[i].playerAngleDeviance * healthBlipSpread + angleChange;
+
+            for (int j = 0; j < alivePlayers[i].shieldHealth; j++) {
+                if (alivePlayers[i].healthBlips.Count <= j) alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                angle += angleChange;
+            }
+
+            for (int j = alivePlayers[i].healthBlips.Count - 1; j >= alivePlayers[i].shieldHealth; j--) {
+                Destroy(alivePlayers[i].healthBlips[j]);
+                alivePlayers[i].healthBlips.RemoveAt(j);
+            }
         }
     }
 
-    private void UpdateShieldText()
+    IEnumerator SquishHealthBlips(Player player)
     {
-        if (shieldText.Count < alivePlayers.Count) {
-            Vector3 nextPos = Vector3.zero;
+        float timer = 0.0f;
+        int targetDestroyBlip = (int)(player.healthBlips.Count / 2.0f - 1);
 
-            for (int i = 0; i < alivePlayers.Count; i++) {
-                TextMeshProUGUI proUGUI;
-                nextPos.y = i * -50;
-                Instantiate(shieldTextObj, nextPos, Quaternion.identity).TryGetComponent(out proUGUI);
-                if (proUGUI != null) {
-                    proUGUI.transform.SetParent(shieldTextParent, false);
-                    shieldText.Add(proUGUI);
+        if (player.healthBlips.Count <= 1) {
+            ResetShieldDisplay();
+            yield break;
+        }
+
+        while (timer < healthBlipSquishTime) {
+            timer += Time.deltaTime;
+            float removalPercentage = timer / healthBlipSquishTime;
+
+            float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.healthBlips.Count - removalPercentage + 1) * 2;
+            float angle = player.playerSectionMiddle - player.playerAngleDeviance * healthBlipSpread + angleChange;
+            for (int i = 0; i < player.healthBlips.Count; i++) {
+                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                angle += angleChange;
+
+                if (i == targetDestroyBlip) {
+                    angleChange *= -1;
+                    angle = player.playerSectionMiddle + player.playerAngleDeviance * healthBlipSpread + angleChange;
                 }
             }
+
+
+            yield return new WaitForEndOfFrame();
         }
 
-        for (int i = 0; i < shieldText.Count; i++) {
-            if (i >= alivePlayers.Count) {
-                shieldText[i].gameObject.SetActive(false);
-            } else {
-                shieldText[i].gameObject.SetActive(true);
-                shieldText[i].text = i.ToString() + ": " + alivePlayers[i].shieldHealth.ToString();
-            }
-        }
+        ResetShieldDisplay();
+
+        yield return null;
     }
 
     /// <summary>
@@ -629,12 +757,13 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="alivePlayerID"></param>
     /// <returns></returns>
-    public bool OnSheildHit(int alivePlayerID)
+    public bool OnShieldHit(int alivePlayerID)
     {
         if (alivePlayerID >= alivePlayers.Count) return false;
 
         Player player = alivePlayers[alivePlayerID];
-        if (player.shieldHealth <= 0) {
+        if (player.shieldHealth <= 1) {
+            ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
         } else {
@@ -642,7 +771,8 @@ public class GameManager : MonoBehaviour
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
-            UpdateShieldText();
+            if (!player.isAI) player.controllerHandler.SetHaptics(shieldTouchHaptics);
+            StartCoroutine(SquishHealthBlips(player));
             return false;
         }
     }
@@ -656,10 +786,10 @@ public class GameManager : MonoBehaviour
     {
         if (smashingPillars) throw new Exception("Pillars are already being smashed");
 
+        smashingPillars = true;
+
         EventManager.instance?.playerEliminatedEvent?.Invoke();
         EventManager.instance?.towerMoveEvent?.Invoke();
-
-        smashingPillars = true;
 
         index %= pillars.Count;
         arcTanShaderHelper.SetTargetPlayer(index);
@@ -694,6 +824,10 @@ public class GameManager : MonoBehaviour
             balls[i].collider.enabled = false;
         }
 
+        // set haptics
+        playerElimHaptics.duration = playerElimTime;
+        if (!alivePlayers[index].isAI) alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
+
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < playerElimTime) {
             pillarSmashTimer += Time.deltaTime;
@@ -707,7 +841,7 @@ public class GameManager : MonoBehaviour
                     targetAngle = 360.0f / alivePlayers.Count * i - 360.0f / alivePlayers.Count / pseudoPlayerCount * playerRemovalPercentage * countAfter;
                 }
 
-                pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
+                pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
                 pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
             }
 
@@ -725,6 +859,21 @@ public class GameManager : MonoBehaviour
                 }
 
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
+                
+                float deviance = 180.0f / pseudoPlayerCount;
+                float targetMidsection;
+                if (i >= index) {
+                    deviance *= -1;
+                    targetMidsection = 360.0f - 360.0f / pseudoPlayerCount * (alivePlayers.Count - 1 - i) + deviance;
+                } else {
+                    targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
+                }
+                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + 1) * 2;
+                float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
+                for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
+                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                    healthAngle += angleChange;
+                }
             }
 
             for (int i = 0; i < balls.Count; i++) {
@@ -743,18 +892,17 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < pillars.Count; i++) {
             float targetAngle = 360.0f / (pillars.Count) * i;
 
-            pillars[i].transform.position = GetTargetPointInCircle(targetAngle);
+            pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
         }
 
         elimPlayers.Add(alivePlayers[index]);
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
-        for (int i = 0; i < alivePlayers.Count; i++) {
-            alivePlayers[i].CalculateLimits();
-        }
 
-        UpdateShieldText();
+        UpdateAlivePlayers();
+
+        ResetShieldDisplay();
 
         arcTanShaderHelper.colors = GenerateLivingColors();
         arcTanShaderHelper.CreateTexture();

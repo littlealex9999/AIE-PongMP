@@ -13,6 +13,7 @@ public class GameManagerEditor : Editor
         if (GameManager.instance != null) {
             if (GUILayout.Button("Create New Player")) {
                 Player p = GameManager.instance.GetNewPlayer();
+                GameManager.instance.UpdatePlayerImages();
                 p.SetAI();
             }
 
