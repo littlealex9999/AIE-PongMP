@@ -30,7 +30,7 @@ public class Ball : MonoBehaviour
         }
     }
 
-    [HideInInspector] public bool held = false;
+    [HideInInspector] public Player holdingPlayer;
     bool hitstunned = false;
 
     public ParticleSystem smallRing; 
@@ -46,6 +46,8 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollisionEnter(PongCollider other, CollisionData data)
     {
+        if (holdingPlayer != null) return;
+
         if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
         {
             if (player.grabbing && player.readyToGrab)
@@ -53,7 +55,7 @@ public class Ball : MonoBehaviour
                 transform.SetParent(player.transform);
                 StartCoroutine(player.GrabRoutine(data));
                 player.heldBall = this;
-                held = true;
+                holdingPlayer = player;
             }
             else if (player.hitting)
             {
@@ -111,7 +113,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held || hitstunned) {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || holdingPlayer != null || hitstunned) {
             collider.immovable = true;
             return;
         } else if (collider.immovable) {

@@ -33,7 +33,7 @@ public class CameraShake : MonoBehaviour
 
     private void Update()
     {
-        if (time > 0) {
+        if (GameManager.instance.enableScreenShake && time > 0) {
             time -= Time.deltaTime;
             if (time < 0) time = 0;
 

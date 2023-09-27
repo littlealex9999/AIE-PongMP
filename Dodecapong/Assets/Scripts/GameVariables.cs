@@ -153,4 +153,9 @@ public class GameVariables : ScriptableObject
     public static void SetTimerEnabled(bool enabled) { GameManager.instance.gameVariables.useTimer = enabled; }
     public static void SetTimerSeconds(float value) { GameManager.instance.gameVariables.timeInSeconds = value; }
     #endregion
+
+    #region Extra
+    public static void SetHapticsEnabled(bool enabled) { GameManager.instance.enableHaptics = enabled; }
+    public static void SetScreenShakeEnabled(bool enabled) { GameManager.instance.enableScreenShake = enabled; }
+    #endregion
 }

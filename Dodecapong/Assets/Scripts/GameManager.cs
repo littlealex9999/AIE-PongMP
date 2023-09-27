@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour
 
     #region Extra Settings
     public bool enableHaptics = true;
+    public bool enableScreenShake = true;
     #endregion
     #endregion
 

@@ -307,8 +307,8 @@ public class Player : MonoBehaviour
     {
         if (heldBall)
         {
-            if (!heldBall.held) return;
-            heldBall.held = false;
+            if (heldBall.holdingPlayer != this) return;
+            heldBall.holdingPlayer = null;
             heldBall.transform.parent = null;
             heldBall.collider.velocity = releaseVel;
 
@@ -396,6 +396,7 @@ public class Player : MonoBehaviour
         EventManager.instance.ballGrabEvent.Invoke();
 
         readyToGrab = false;
+        StartCoroutine(GrabReset());
 
         float timeElapsed = 0;
 
@@ -409,8 +410,20 @@ public class Player : MonoBehaviour
         Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
+    }
 
-        yield return new WaitForSeconds(grabCooldown);
+    IEnumerator GrabReset()
+    {
+        while (grabbing) {
+            yield return new WaitForEndOfFrame();
+        }
+
+        float grabCooldownTimer = grabCooldown;
+        while (grabCooldownTimer > 0) {
+            grabCooldownTimer -= Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
+        }
 
         readyToGrab = true;
     }
