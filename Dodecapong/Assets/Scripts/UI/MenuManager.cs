@@ -6,6 +6,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 using System.Linq;
+using UnityEngine.Events;
 
 [Serializable]
 public class MenuTextPair
@@ -68,6 +69,31 @@ public class MenuManager : MonoBehaviour
     [Space]
     public List<MenuTextPair> menuTextPairs;
 
+    // having each one be given its own variable and looked after seems to be the best way to set all values 
+    [Header("Settings UI")]
+    public UISliderPassthrough ballSpeedSlider;
+    public UISliderPassthrough ballSizeSlider;
+    public UISliderPassthrough ballCountSlider;
+    public Toggle increasingSpeedToggle;
+    public Toggle increasingSizeToggle;
+    [Space]
+    public UISliderPassthrough playerSpeedSlider;
+    public UISliderPassthrough playerSizeSlider;
+    public Toggle playerDashToggle;
+    [Space]
+    public UISliderPassthrough timerSlider;
+    public UISliderPassthrough shieldHealthSlider;
+    [Space]
+    public UISliderPassthrough transformerFrequencySlider;
+    public UISliderPassthrough transformerPowerSlider;
+    public Toggle transformerBallSizeToggle;
+    public Toggle transformerBallSpeedToggle;
+    public Toggle transformerBlackHoleToggle;
+    public Toggle transformerDashCooldownToggle;
+    public Toggle transformerPlayerSpeedToggle;
+    public Toggle transformerShieldHealthToggle;
+    public bool settingUIVars { get; private set; } = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -129,7 +155,10 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    // Buttons at top, enabling/disabling panels
+    /// <summary>
+    /// Changes the subscreen on the settings menu. Only takes effect when the settings screen is active.
+    /// </summary>
+    /// <param name="index"></param>
     void SettingsScreenCycle(int index)
     {
         if (index >= settingsSubScreens.Length) index = 0;
@@ -138,12 +167,40 @@ public class MenuManager : MonoBehaviour
         settingsSubScreens[settingsCurrentActive].SetActive(false);
         settingsSubScreens[index].SetActive(true);
         settingsCurrentActive = index;
+        eventSystem.SetSelectedGameObject(settingsDefault);
     }
 
     public void SettingsScreenPageRight() => SettingsScreenCycle(settingsCurrentActive + 1);
     public void SettingsScreenPageLeft() => SettingsScreenCycle(settingsCurrentActive - 1);
 
-    // buttons ohohoho
+    void SettingsScreenResetVariableUI()
+    {
+        settingUIVars = true;
+
+        ballSpeedSlider.SetSliderToApproximate(GameManager.instance.gameVariables.ballSpeed);
+        ballSizeSlider.SetSliderToApproximate(GameManager.instance.gameVariables.ballSize);
+        ballCountSlider.SetSliderToApproximate(GameManager.instance.gameVariables.ballCount);
+        //increasingSpeedToggle.isOn = GameManager.instance.
+        //increasingSizeToggle.isOn = GameManager.instance
+
+        playerSpeedSlider.SetSliderToApproximate(GameManager.instance.gameVariables.playerSpeed);
+        //playerSizeSlider.SetSliderToApproximate(GameManager.instance.gameVariables.playerSizes);
+        playerDashToggle.isOn = GameManager.instance.gameVariables.dashEnabled;
+
+        timerSlider.SetSliderToApproximate(GameManager.instance.gameVariables.timeInSeconds);
+        shieldHealthSlider.SetSliderToApproximate(GameManager.instance.gameVariables.shieldLives);
+
+        transformerFrequencySlider.SetSliderToApproximate(GameManager.instance.gameVariables.transformerFrequency);
+        transformerPowerSlider.SetSliderToApproximate(GameManager.instance.gameVariables.transformerPower);
+        transformerBallSizeToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSIZE) > 0;
+        transformerBallSpeedToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSPEED) > 0;
+        transformerBlackHoleToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.BLACKHOLE) > 0;
+        transformerDashCooldownToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.DASHCOOLDOWN) > 0;
+        transformerPlayerSpeedToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.PLAYERSPEED) > 0;
+        transformerShieldHealthToggle.isOn = (int)(GameManager.instance.gameVariables.enabledTransformers & Transformer.TransformerTypes.SHIELDHEALTH) > 0;
+
+        settingUIVars = false;
+    }
 
     public void StartScreen()
     {
@@ -154,6 +211,8 @@ public class MenuManager : MonoBehaviour
 
     public void SettingsScreen()
     {
+        SettingsScreenResetVariableUI();
+
         DisableAll();
         settingsScreen.SetActive(true);
         SettingsScreenCycle(0);

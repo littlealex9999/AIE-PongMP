@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Game Variables")]
@@ -19,6 +20,7 @@ public class GameVariables : ScriptableObject
         dashCooldown = gv.dashCooldown;
         hitEnabled = gv.hitEnabled;
         hitDuration = gv.hitDuration;
+        hitStrength = gv.hitStrength;
         hitCooldown = gv.hitCooldown;
         grabEnabled = gv.grabEnabled;
         grabDuration = gv.grabDuration;
@@ -32,6 +34,7 @@ public class GameVariables : ScriptableObject
         shieldBounceTowardsCenterBias = gv.shieldBounceTowardsCenterBias;
 
         shieldLives = gv.shieldLives;
+        enableHitstun = gv.enableHitstun;
 
         transformerFrequency = gv.transformerFrequency;
         transformerPower = gv.transformerPower;
@@ -105,6 +108,7 @@ public class GameVariables : ScriptableObject
     [Range(0, 1)] public float shieldBounceTowardsCenterBias;
 
     public static void SetBallCount(int value) { GameManager.instance.gameVariables.ballCount = value; }
+    public static void SetBallCount(float value) { GameManager.instance.gameVariables.ballCount = (int)value; }
     public static void SetBallSpeed(float value) { GameManager.instance.gameVariables.ballSpeed = value; }
     public static void SetBallSpeedDamp(float value) { GameManager.instance.gameVariables.ballSpeedDamp = value; }
     public static void SetBallSpeedPerHit(float value) { GameManager.instance.gameVariables.ballSpeedPerHit = value; }
@@ -114,9 +118,11 @@ public class GameVariables : ScriptableObject
 
     #region Goal & Shield
     [Header("Goal & Shield"), Min(0)] public int shieldLives = 1;
+    public bool enableHitstun = true;
 
     public static void SetShieldLives(int value) { GameManager.instance.gameVariables.shieldLives = value; }
     public static void SetShieldLives(float value) { GameManager.instance.gameVariables.shieldLives = (int)value; }
+    public static void SetHitstunEnabled(bool enabled) { GameManager.instance.gameVariables.enableHitstun = enabled; }
     #endregion
 
     #region Field
@@ -146,5 +152,10 @@ public class GameVariables : ScriptableObject
     public static void SetWinType(WinType type) { GameManager.instance.gameVariables.winType = type; }
     public static void SetTimerEnabled(bool enabled) { GameManager.instance.gameVariables.useTimer = enabled; }
     public static void SetTimerSeconds(float value) { GameManager.instance.gameVariables.timeInSeconds = value; }
+    #endregion
+
+    #region Extra
+    public static void SetHapticsEnabled(bool enabled) { GameManager.instance.enableHaptics = enabled; }
+    public static void SetScreenShakeEnabled(bool enabled) { GameManager.instance.enableScreenShake = enabled; }
     #endregion
 }

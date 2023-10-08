@@ -122,6 +122,7 @@ public class GameManager : MonoBehaviour
 
     #region Extra Settings
     public bool enableHaptics = true;
+    public bool enableScreenShake = true;
     #endregion
     #endregion
 
@@ -363,6 +364,11 @@ public class GameManager : MonoBehaviour
         inGame = false;
         for (int i = 0; i < players.Count; i++) {
             players[i].gameObject.SetActive(false);
+            for (int j = 0; j < players[i].healthBlips.Count; j++) {
+                // health blips should be managed as part of the shield reset, but they managed to persist through that
+                Destroy(players[i].healthBlips[j]);
+            }
+            players[i].healthBlips.Clear();
         }
 
         for (int i = 0; i < balls.Count; i++) {
