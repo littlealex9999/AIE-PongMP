@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -29,7 +30,8 @@ public class Ball : MonoBehaviour
         }
     }
 
-    bool held;
+    [HideInInspector] public Player holdingPlayer;
+    bool hitstunned = false;
 
     public ParticleSystem smallRing; 
     public ParticleSystem mediumRing; 
@@ -44,20 +46,26 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollisionEnter(PongCollider other, CollisionData data)
     {
-        if (other.gameObject.TryGetComponent(out Player player))
+        if (holdingPlayer != null) return;
+
+        if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
         {
-            if (player.grabbing)
+            if (player.grabbing && player.readyToGrab)
             {
                 transform.SetParent(player.transform);
-                StartCoroutine(player.GrabRoutine());
+                StartCoroutine(player.GrabRoutine(data));
                 player.heldBall = this;
-                held = true;
+                holdingPlayer = player;
             }
             else if (player.hitting)
             {
-                PlayVFX(hitPaddle, data.collisionPos, player.color);
-                EventManager.instance.ballHitEvent.Invoke();
-                mediumRing.Play();
+                if (GameManager.instance.gameVariables.enableHitstun) {
+                    StartCoroutine(HitStun(player, data, 1.0f));
+                } else {
+                    PlayVFX(hitPaddle, data.collisionPos, player.color);
+                    EventManager.instance.ballHitEvent.Invoke();
+                    mediumRing.Play();
+                }
             }
             else
             {
@@ -73,6 +81,31 @@ public class Ball : MonoBehaviour
         }
     }
 
+    IEnumerator HitStun(Player player, CollisionData data, float duration)
+    {
+        if (hitstunned) yield break;
+
+        hitstunned = true;
+        player.hitstunned = true;
+
+        collider.immovable = true;
+
+        while (duration > 0) {
+            duration -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        collider.immovable = false;
+
+        PlayVFX(hitPaddle, data.collisionPos, player.color);
+        EventManager.instance.ballHitEvent.Invoke();
+        mediumRing.Play();
+
+        player.hitstunned = false;
+        hitstunned = false;
+        yield break;
+    }
+
     private void OnGameStateChanged()
     {
         
@@ -80,7 +113,7 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held) {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || holdingPlayer != null || hitstunned) {
             collider.immovable = true;
             return;
         } else if (collider.immovable) {
@@ -112,6 +145,7 @@ public class Ball : MonoBehaviour
     {
         Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
     }
+
     void PlayVFX(GameObject particle, Vector3 pos, Color color)
     {
         GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
@@ -155,15 +189,6 @@ public class Ball : MonoBehaviour
             }
             mediumRing.Play();
         }
-    }
-
-    public void Release()
-    {
-        if (!held) return;
-        held = false;
-        transform.parent = null;
-        Vector2 dir = (Vector3.zero - transform.position).normalized;
-        collider.velocity = dir * constantSpd;
     }
 
     public void AddVelocity(Vector2 velocity)

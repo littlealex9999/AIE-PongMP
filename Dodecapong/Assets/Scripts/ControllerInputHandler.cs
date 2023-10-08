@@ -16,10 +16,7 @@ public class ControllerInputHandler : MonoBehaviour
 
     private void OnDestroy()
     {
-        GameManager.instance.controllers.Remove(this);
-        GameManager.instance.RemovePlayer(playerA);
-        GameManager.instance.RemovePlayer(playerB);
-        GameManager.instance.UpdatePlayerImages();
+        if (gamepad != null) gamepad.ResetHaptics();
     }
 
     private void Awake()
@@ -93,6 +90,11 @@ public class ControllerInputHandler : MonoBehaviour
     {
         if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
         {
+            GameManager.instance.controllers.Remove(this);
+            GameManager.instance.RemovePlayer(playerA);
+            GameManager.instance.RemovePlayer(playerB);
+            GameManager.instance.UpdatePlayerImages();
+
             Destroy(gameObject);
         }
     }

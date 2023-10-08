@@ -38,11 +38,13 @@ public class UISliderPassthrough : MonoBehaviour
 
     public void ApplyValue(int index)
     {
-        UnityEvent.Invoke(values[index - 1]);
+        if (!MenuManager.instance.settingUIVars) {
+            UnityEvent.Invoke(values[index - 1]);
+        }
     }
 
     public void ApplyValue(float index)
     {
-        UnityEvent.Invoke(values[(int)index - 1]);
+        ApplyValue((int)index);
     }
 }
