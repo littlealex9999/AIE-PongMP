@@ -95,7 +95,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         if (isAI) {
-            CalculateAIInput();
+            //CalculateAIInput();
         }
 
         Move(movementInput);
