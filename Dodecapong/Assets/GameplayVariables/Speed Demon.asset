@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2da787fa14fda7144939c590924960bd, type: 3}
-  m_Name: TestVars
+  m_Name: Speed Demon
   m_EditorClassIdentifier: 
-  playerSpeed: 90
+  playerSpeed: 150
   playerSizes:
   - {x: 4, y: 4, z: 4}
   - {x: 4, y: 4, z: 4}
@@ -25,7 +25,7 @@ MonoBehaviour:
   playerNormalBending: 2
   dashEnabled: 1
   dashDuration: 0.25
-  dashCooldown: 0.1
+  dashCooldown: 0.2
   hitEnabled: 1
   hitDuration: 0.3
   hitCooldown: 0.5
@@ -34,12 +34,12 @@ MonoBehaviour:
   grabDuration: 1
   grabCooldown: 1
   ballCount: 1
-  ballSpeed: 7
+  ballSpeed: 10
   ballSpeedDamp: 5
   ballSpeedPerHit: 0
-  ballSize: 0.5
+  ballSize: 0.3
   shieldBounceTowardsCenterBias: 0.3
-  shieldLives: 5
+  shieldLives: 3
   enableHitstun: 0
   transformerFrequency: 1
   transformerPower: 1
