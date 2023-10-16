@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     public GameObject healthDotPrefab;
 
     public List<GameVariables> gameVariables;
-    [HideInInspector] public GameVariables selectedGameVariables;
+    public GameVariables selectedGameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
 
@@ -220,7 +220,7 @@ public class GameManager : MonoBehaviour
     #region GAMESTATE
     public void UpdateGameState(GameState state)
     {
-        if (state == GameState.GAMEPLAY && players.Count < 2) return;
+        if (gameState == GameState.JOINMENU && state == GameState.PRESETSELECT && players.Count < 2) return;
         gameState = state;
         OnGameStateChange.Invoke();
     }
@@ -330,7 +330,8 @@ public class GameManager : MonoBehaviour
 
     public void EliminatePlayer(Player player)
     {
-        for (int i = 0; i < player.healthBlips.Count; i++) {
+        for (int i = 0; i < player.healthBlips.Count; i++)
+        {
             Destroy(player.healthBlips[i]);
         }
         player.healthBlips.Clear();
@@ -353,7 +354,6 @@ public class GameManager : MonoBehaviour
     #region GAMEPLAY MANAGEMENT
     void StartGame()
     {
-        selectedGameVariables = gameVariables[0];
         inGame = true;
         SetupPlayers();
         SetupBalls();
@@ -770,11 +770,13 @@ public class GameManager : MonoBehaviour
         if (alivePlayerID >= alivePlayers.Count) return false;
 
         Player player = alivePlayers[alivePlayerID];
-        if (player.shieldHealth <= 1) {
+        if (player.shieldHealth <= 1)
+        {
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
-        } else {
+        } else 
+        {
             player.shieldHealth--;
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();

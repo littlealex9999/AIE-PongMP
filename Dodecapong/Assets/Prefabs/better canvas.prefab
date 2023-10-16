@@ -1904,7 +1904,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -2694,28 +2694,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 4
   values:
   - 0.5
   - 1
   - 1.5
   - 2
   - 2.5
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetTimerSeconds
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &798258525128799931
 GameObject:
   m_ObjectHideFlags: 0
@@ -3178,28 +3163,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 5
   values:
   - 1
   - 3
   - 5
   - 10
   - 15
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetShieldLives
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &857819358167749279
 GameObject:
   m_ObjectHideFlags: 0
@@ -3819,9 +3789,9 @@ RectTransform:
   m_Father: {fileID: 4577769172512262255}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 866.08997, y: -42.665}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 191.167, y: 85.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7729131878239386868
@@ -4491,9 +4461,9 @@ RectTransform:
   m_Father: {fileID: 2047492752355696986}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 447.1885, y: -318.75}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 634.235, y: 50.005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1292778602242676315
@@ -4918,28 +4888,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 2
   values:
   - 1
   - 2
   - 3
   - 4
   - 5
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallCount
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1347690169934347340
 GameObject:
   m_ObjectHideFlags: 0
@@ -5152,6 +5107,42 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &1439014190463421713
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3074479036565359699}
+  m_Layer: 5
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &3074479036565359699
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1439014190463421713}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8516645298700831988}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1440988618466864059
 GameObject:
   m_ObjectHideFlags: 0
@@ -5365,28 +5356,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 0
   values:
   - 4
   - 5
   - 7
   - 8
   - 10
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallSpeed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &1508734482489267729
 GameObject:
   m_ObjectHideFlags: 0
@@ -7115,6 +7091,42 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 1
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &2125261328972279116
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7929874775995807555}
+  m_Layer: 5
+  m_Name: GameObject (3)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &7929874775995807555
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2125261328972279116}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8516645298700831988}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2161725089529924451
 GameObject:
   m_ObjectHideFlags: 0
@@ -7269,28 +7281,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 1
   values:
   - 0.3
   - 0.4
   - 0.5
   - 1
   - 1.2
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallSize
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &2174250356945800173
 GameObject:
   m_ObjectHideFlags: 0
@@ -8799,7 +8796,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 3
+  state: 4
 --- !u!1 &2554598309426719507
 GameObject:
   m_ObjectHideFlags: 0
@@ -9611,7 +9608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 3
+  state: 4
 --- !u!1 &2759995027336858303
 GameObject:
   m_ObjectHideFlags: 0
@@ -10249,28 +10246,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 4
   values:
-  - 15
-  - 50
-  - 100
-  - 120
-  - 150
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+  - 0.5
+  - 0.75
+  - 1
+  - 1.25
+  - 1.5
 --- !u!1 &2932149951589090826
 GameObject:
   m_ObjectHideFlags: 0
@@ -10456,9 +10438,9 @@ RectTransform:
   m_Father: {fileID: 4577769172512262255}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 132.03, y: -42.665}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 191.167, y: 85.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8841014340683267219
@@ -10805,7 +10787,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -11268,12 +11250,12 @@ GameObject:
   - component: {fileID: 5317193111606734356}
   - component: {fileID: 2769338402722736825}
   m_Layer: 5
-  m_Name: SettingsScreen
+  m_Name: EditPresetScreen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4593774272723000221
 RectTransform:
   m_ObjectHideFlags: 0
@@ -11523,9 +11505,9 @@ RectTransform:
   m_Father: {fileID: 4633427710480718675}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 866.08997, y: -42.665}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 191.167, y: 85.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7838801501801931631
@@ -11794,7 +11776,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4666690605923269683
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12466,6 +12448,12 @@ RectTransform:
   m_Children:
   - {fileID: 7885661213553539668}
   - {fileID: 4058182121043685453}
+  - {fileID: 3074479036565359699}
+  - {fileID: 8251027238881983320}
+  - {fileID: 6748475719730719275}
+  - {fileID: 7929874775995807555}
+  - {fileID: 6893688308775591207}
+  - {fileID: 167445464908756458}
   m_Father: {fileID: 2472552681447747731}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -12658,7 +12646,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 3
+  state: 4
 --- !u!1 &3707111044136255018
 GameObject:
   m_ObjectHideFlags: 0
@@ -13194,9 +13182,9 @@ RectTransform:
   m_Father: {fileID: 2047492752355696986}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 447.1885, y: -53.75}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 634.235, y: 50.005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &3988728958408137487
@@ -14163,28 +14151,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 3
   values:
   - 40
   - 60
   - 90
   - 120
   - 150
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetPlayerSpeed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &4255281331833019211
 GameObject:
   m_ObjectHideFlags: 0
@@ -14407,7 +14380,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 1
+  state: 2
 --- !u!1 &4296374149114746825
 GameObject:
   m_ObjectHideFlags: 0
@@ -15136,7 +15109,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  state: 2
+  state: 3
 --- !u!1 &4432335704964584217
 GameObject:
   m_ObjectHideFlags: 0
@@ -15912,6 +15885,42 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &4738487161930921245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8251027238881983320}
+  m_Layer: 5
+  m_Name: GameObject (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &8251027238881983320
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4738487161930921245}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8516645298700831988}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &4803120400007203427
 GameObject:
   m_ObjectHideFlags: 0
@@ -16853,28 +16862,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 0
   values:
   - 4
   - 5
   - 7
   - 8
   - 10
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallSpeed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &5146624303705537573
 GameObject:
   m_ObjectHideFlags: 0
@@ -17954,9 +17948,9 @@ RectTransform:
   m_Father: {fileID: 2047492752355696986}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 447.1885, y: -186.25}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 634.235, y: 50.005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5514017058150282349
@@ -18881,9 +18875,9 @@ RectTransform:
   m_Father: {fileID: 5041648992992686072}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 447.1885, y: -186.09349}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 634.235, y: 50.005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &5834781406334213475
@@ -19434,28 +19428,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 0
   values:
   - 4
   - 5
   - 7
   - 8
   - 10
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallSpeed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &6012954443454117666
 GameObject:
   m_ObjectHideFlags: 0
@@ -20416,9 +20395,9 @@ RectTransform:
   m_Father: {fileID: 5041648992992686072}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 447.18854, y: -314.71066}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 314.587, y: 42.448}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4867011052805967406
@@ -22066,28 +22045,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 0
   values:
   - 4
   - 5
   - 7
   - 8
   - 10
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallSpeed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &6759726985563961280
 GameObject:
   m_ObjectHideFlags: 0
@@ -22153,6 +22117,42 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &6778103876562551059
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6893688308775591207}
+  m_Layer: 5
+  m_Name: GameObject (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6893688308775591207
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6778103876562551059}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8516645298700831988}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6910693155634050532
 GameObject:
   m_ObjectHideFlags: 0
@@ -22187,9 +22187,9 @@ RectTransform:
   m_Father: {fileID: 5041648992992686072}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 447.1885, y: -53.697834}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 634.235, y: 50.005}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &6925284726191551304
@@ -22225,9 +22225,9 @@ RectTransform:
   m_Father: {fileID: 4633427710480718675}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 132.03, y: -42.665}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 191.167, y: 85.33}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5483688940721459057
@@ -24790,18 +24790,27 @@ MonoBehaviour:
   eventSystem: {fileID: 0}
   mainMenu: {fileID: 7521882064166033467}
   startScreen: {fileID: 7521882062114790253}
-  settingsScreen: {fileID: 3416601132890745067}
+  presetSelectScreen: {fileID: 3512024576463381898}
+  editPresetScreen: {fileID: 3416601132890745067}
   gameScreen: {fileID: 7521882063906400499}
   pauseScreen: {fileID: 2174250356945800173}
   endScreen: {fileID: 5710796911908846569}
-  settingsSubScreens:
+  presetSubScreens:
+  - {fileID: 1439014190463421713}
+  - {fileID: 4738487161930921245}
+  - {fileID: 8334634213226833392}
+  - {fileID: 2125261328972279116}
+  - {fileID: 6778103876562551059}
+  - {fileID: 8817792047053688104}
+  editPresetSubScreens:
   - {fileID: 5664157700129520709}
   - {fileID: 8335847239793152295}
   - {fileID: 532253031691497001}
   - {fileID: 4463835873964672808}
   mainMenuDefault: {fileID: 7521882062942111294}
   startDefault: {fileID: 8728336424204008982}
-  settingsDefault: {fileID: 2749177434638142531}
+  presetSelectDefault: {fileID: 2554453339130070007}
+  editPresetDefault: {fileID: 2749177434638142531}
   pauseDefault: {fileID: 7011704752599882865}
   endDefault: {fileID: 3703100805426825604}
   menuTextPairs:
@@ -27798,26 +27807,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 7
   values:
   - 1
   - 2
   - 3
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetTransformerPower
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &8284144824434408991
 GameObject:
   m_ObjectHideFlags: 0
@@ -28011,6 +28005,42 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 1
   m_PixelsPerUnitMultiplier: 1
+--- !u!1 &8334634213226833392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6748475719730719275}
+  m_Layer: 5
+  m_Name: GameObject (2)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6748475719730719275
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8334634213226833392}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8516645298700831988}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8335847239793152295
 GameObject:
   m_ObjectHideFlags: 0
@@ -28103,8 +28133,6 @@ GameObject:
   - component: {fileID: 7882268122570662852}
   - component: {fileID: 7812235310470054039}
   - component: {fileID: 4244106137229993912}
-  - component: {fileID: 718321608}
-  - component: {fileID: 7903297894865408885}
   m_Layer: 5
   m_Name: QuitButton
   m_TagString: Untagged
@@ -28214,9 +28242,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7903297894865408885}
-        m_TargetAssemblyTypeName: QuitGame, Assembly-CSharp
-        m_MethodName: Quit
+      - m_Target: {fileID: 7521882063367354052}
+        m_TargetAssemblyTypeName: MenuManager, Assembly-CSharp
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -28271,30 +28299,6 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
---- !u!114 &718321608
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8352825480177045544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6db25d8b85a7d7443b48375109840529, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7903297894865408885
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8352825480177045544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6db25d8b85a7d7443b48375109840529, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &8359801231674613791
 GameObject:
   m_ObjectHideFlags: 0
@@ -29199,26 +29203,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 6
   values:
   - 0
   - 0.5
   - 1
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetTransformerFrequency
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &8632249775131171915
 GameObject:
   m_ObjectHideFlags: 0
@@ -29802,7 +29791,6 @@ GameObject:
   - component: {fileID: 3575572636202969687}
   - component: {fileID: 4472004928848953427}
   - component: {fileID: 2930683860882526167}
-  - component: {fileID: 758631994}
   m_Layer: 5
   m_Name: PlayButton
   m_TagString: Untagged
@@ -29917,7 +29905,7 @@ MonoBehaviour:
         m_MethodName: UpdateState
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 758631994}
+          m_ObjectArgument: {fileID: 2930683860882526167}
           m_ObjectArgumentAssemblyTypeName: StateToChangeTo, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -29937,19 +29925,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 2
---- !u!114 &758631994
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8728336424204008982}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d4357749790f5354d8f341c7f698bae7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  state: 3
 --- !u!1 &8729615228122613208
 GameObject:
   m_ObjectHideFlags: 0
@@ -30401,6 +30376,42 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &8817792047053688104
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 167445464908756458}
+  m_Layer: 5
+  m_Name: GameObject (5)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &167445464908756458
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8817792047053688104}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8516645298700831988}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8832281434748807827
 GameObject:
   m_ObjectHideFlags: 0
@@ -30961,28 +30972,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7624b7a424a1d4ea0d0825db762b8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slider: {fileID: 0}
+  variable: 0
   values:
   - 4
   - 5
   - 7
   - 8
   - 10
-  UnityEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: acfa38f2bf84bd349bf1607cb7c2f3cc, type: 2}
-        m_TargetAssemblyTypeName: GameVariables, Assembly-CSharp
-        m_MethodName: SetBallSpeed
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!1 &8947210710010413097
 GameObject:
   m_ObjectHideFlags: 0
@@ -31094,7 +31090,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

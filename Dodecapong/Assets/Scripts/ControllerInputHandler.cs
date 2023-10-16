@@ -24,15 +24,18 @@ public class ControllerInputHandler : MonoBehaviour
         GameManager.instance.controllers.Add(this);
 
         playerInput = GetComponent<PlayerInput>();
-        if (playerInput) {
-            for (int i = 0; i < playerInput.devices.Count; i++) {
-                if (playerInput.devices[i] is Gamepad) {
+        if (playerInput)
+        {
+            for (int i = 0; i < playerInput.devices.Count; i++)
+            {
+                if (playerInput.devices[i] is Gamepad)
+                {
                     gamepad = (Gamepad)playerInput.devices[i];
                     break;
                 }
             }
         }
-        
+
         JoinPlayer(out playerA);
     }
 
@@ -144,30 +147,42 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void PageRight(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.PRESETSELECT)
+        if (context.canceled)
         {
-            MenuManager.instance.SettingsScreenPageRight();
+            if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT ||
+            GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
+            {
+                MenuManager.instance.PageRight();
+            }
         }
     }
     public void PageLeft(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.PRESETSELECT)
+        if (context.canceled)
         {
-            MenuManager.instance.SettingsScreenPageLeft();
+            if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT ||
+            GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
+            {
+                MenuManager.instance.PageLeft();
+            }
         }
     }
 
     public IEnumerator SetHaptics(float lowFrequency, float highFrequency, float duration)
     {
-        if (gamepad != null && !hapticsRunning && GameManager.instance.enableHaptics) {
+        if (gamepad != null && !hapticsRunning && GameManager.instance.enableHaptics)
+        {
             hapticsRunning = true;
             gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
             gamepad.ResumeHaptics();
-        } else {
+        }
+        else
+        {
             yield return null;
         }
 
-        while (duration > 0.0f) {
+        while (duration > 0.0f)
+        {
             duration -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
@@ -180,7 +195,8 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void SetHaptics(ControllerHaptics haptics, bool resetHaptics = true)
     {
-        if (resetHaptics) {
+        if (resetHaptics)
+        {
             gamepad.ResetHaptics();
             hapticsRunning = false;
             StopAllCoroutines();

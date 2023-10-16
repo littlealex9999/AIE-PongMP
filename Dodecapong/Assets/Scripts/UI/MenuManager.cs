@@ -4,6 +4,7 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
+using System.Xml.Serialization;
 
 [Serializable]
 public class MenuTextPair
@@ -45,19 +46,23 @@ public class MenuManager : MonoBehaviour
     [Header("Screens")]
     public GameObject mainMenu;
     public GameObject startScreen;
-    public GameObject presetScreen;
+    public GameObject presetSelectScreen;
+    public GameObject editPresetScreen;
     public GameObject gameScreen;
     public GameObject pauseScreen;
     public GameObject endScreen;
 
-    [Header("Settings Screens")]
-    public GameObject[] settingsSubScreens;
-    int settingsCurrentActive = 0;
+    public GameObject[] presetSubScreens;
+    int presetCurrentActive = 0;
+
+    public GameObject[] editPresetSubScreens;
+    int editPresetCurrentActive = 0;
 
     [Header("Default Buttons")]
     public GameObject mainMenuDefault;
     public GameObject startDefault;
-    public GameObject presetDefault;
+    public GameObject presetSelectDefault;
+    public GameObject editPresetDefault;
     public GameObject pauseDefault;
     public GameObject endDefault;
 
@@ -66,19 +71,20 @@ public class MenuManager : MonoBehaviour
 
     // having each one be given its own variable and looked after seems to be the best way to set all values 
     [Header("Settings UI")]
+    // ball
     public UISliderPassthrough ballSpeedSlider;
     public UISliderPassthrough ballSizeSlider;
     public UISliderPassthrough ballCountSlider;
     public Toggle increasingSpeedToggle;
     public Toggle increasingSizeToggle;
-    [Space]
+    [Space] // player
     public UISliderPassthrough playerSpeedSlider;
     public UISliderPassthrough playerSizeSlider;
     public Toggle playerDashToggle;
-    [Space]
+    [Space] // score
     public UISliderPassthrough timerSlider;
     public UISliderPassthrough shieldHealthSlider;
-    [Space]
+    [Space] // morph
     public UISliderPassthrough transformerFrequencySlider;
     public UISliderPassthrough transformerPowerSlider;
     public Toggle transformerBallSizeToggle;
@@ -107,7 +113,8 @@ public class MenuManager : MonoBehaviour
 
     public void DisableAll()
     {
-        presetScreen.SetActive(false);
+        editPresetScreen.SetActive(false);
+        presetSelectScreen.SetActive(false);
         startScreen.SetActive(false);
         mainMenu.SetActive(false);
         gameScreen.SetActive(false);
@@ -136,10 +143,10 @@ public class MenuManager : MonoBehaviour
                 StartScreen();
                 break;
             case GameManager.GameState.PRESETSELECT:
-                SettingsScreen();
+                PresetSelectScreen();
                 break;
             case GameManager.GameState.EDITPRESET:
-                SettingsScreen();
+                EditPresetScreen();
                 break;
             case GameManager.GameState.GAMEPLAY:
                 GameScreen();
@@ -157,51 +164,56 @@ public class MenuManager : MonoBehaviour
     /// Changes the subscreen on the settings menu. Only takes effect when the settings screen is active.
     /// </summary>
     /// <param name="index"></param>
-    void SettingsScreenCycle(int index)
+    void PresetSelectScreenCycle(int index)
     {
-        if (index >= settingsSubScreens.Length) index = 0;
-        if (index < 0) index = settingsSubScreens.Length - 1;
+        if (index >= presetSubScreens.Length) index = 0;
+        if (index < 0) index = presetSubScreens.Length - 1;
 
-        settingsSubScreens[settingsCurrentActive].SetActive(false);
-        settingsSubScreens[index].SetActive(true);
-        settingsCurrentActive = index;
-        eventSystem.SetSelectedGameObject(presetDefault);
+        presetSubScreens[presetCurrentActive].SetActive(false);
+        presetSubScreens[index].SetActive(true);
+        presetCurrentActive = index;
+        eventSystem.SetSelectedGameObject(presetSelectDefault);
     }
 
-    public void SettingsScreenPageRight()
+    void EditPresetSelectScreenCycle(int index)
+    {
+        if (index >= editPresetSubScreens.Length) index = 0;
+        if (index < 0) index = editPresetSubScreens.Length - 1;
+
+        editPresetSubScreens[editPresetCurrentActive].SetActive(false);
+        editPresetSubScreens[index].SetActive(true);
+        editPresetCurrentActive = index;
+        eventSystem.SetSelectedGameObject(editPresetDefault);
+    }
+
+    public void PageRight()
     { 
-        SettingsScreenCycle(settingsCurrentActive + 1);
+        if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT)
+        {
+            PresetSelectScreenCycle(presetCurrentActive + 1);
+            eventSystem.SetSelectedGameObject(presetSelectDefault);
+            GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+        }
+        else if (GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
+        {
+            EditPresetSelectScreenCycle(editPresetCurrentActive + 1);
+            eventSystem.SetSelectedGameObject(editPresetDefault);
+        }
     }
-        
-    public void SettingsScreenPageLeft() => SettingsScreenCycle(settingsCurrentActive - 1);
 
-    void SettingsScreenResetVariableUI()
+    public void PageLeft()
     {
-        settingUIVars = true;
-
-        ballSpeedSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.ballSpeed);
-        ballSizeSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.ballSize);
-        ballCountSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.ballCount);
-        //increasingSpeedToggle.isOn = GameManager.instance.
-        //increasingSizeToggle.isOn = GameManager.instance
-
-        playerSpeedSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.playerSpeed);
-        //playerSizeSlider.SetSliderToApproximate(GameManager.instance.currentGameVariables.playerSizes);
-        playerDashToggle.isOn = GameManager.instance.selectedGameVariables.dashEnabled;
-
-        timerSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.timeInSeconds);
-        shieldHealthSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.shieldLives);
-
-        transformerFrequencySlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerFrequency);
-        transformerPowerSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerPower);
-        transformerBallSizeToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSIZE) > 0;
-        transformerBallSpeedToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSPEED) > 0;
-        transformerBlackHoleToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BLACKHOLE) > 0;
-        transformerDashCooldownToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.DASHCOOLDOWN) > 0;
-        transformerPlayerSpeedToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.PLAYERSPEED) > 0;
-        transformerShieldHealthToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.SHIELDHEALTH) > 0;
-
-        settingUIVars = false;
+        if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT)
+        {
+            PresetSelectScreenCycle(presetCurrentActive - 1);
+            eventSystem.SetSelectedGameObject(presetSelectDefault);
+            GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+        }
+        else if (GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
+        {
+            EditPresetSelectScreenCycle(editPresetCurrentActive - 1);
+            eventSystem.SetSelectedGameObject(editPresetDefault);
+        }
     }
 
     public void StartScreen()
@@ -211,14 +223,28 @@ public class MenuManager : MonoBehaviour
         eventSystem.SetSelectedGameObject(startDefault);
     }
 
-    public void SettingsScreen()
+    public void PresetSelectScreen()
     {
-        SettingsScreenResetVariableUI();
-
+        GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
         DisableAll();
-        presetScreen.SetActive(true);
-        SettingsScreenCycle(0);
-        eventSystem.SetSelectedGameObject(presetDefault);
+        presetSelectScreen.SetActive(true);
+        PresetSelectScreenCycle(presetCurrentActive);
+        eventSystem.SetSelectedGameObject(presetSelectDefault);
+    }
+
+    public void EditPresetScreen()
+    {
+        if (GameManager.instance.selectedGameVariables == null)
+        {
+            GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+        }
+        SettingsScreenUpdateVariableUI();
+
+        editPresetCurrentActive = 0;
+        DisableAll();
+        editPresetScreen.SetActive(true);
+        EditPresetSelectScreenCycle(editPresetCurrentActive);
+        eventSystem.SetSelectedGameObject(editPresetDefault);
     }
 
     public void GameScreen()
@@ -256,5 +282,43 @@ public class MenuManager : MonoBehaviour
     public void SubmitButton()
     {
         EventManager.instance?.selectUIEvent?.Invoke();
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        Debug.Log("Application Quit");
+#endif
+
+        Application.Quit();
+    }
+
+    void SettingsScreenUpdateVariableUI()
+    {
+        settingUIVars = true;
+
+        ballSpeedSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.ballSpeed);
+        ballSizeSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.ballSize);
+        ballCountSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.ballCount);
+        //increasingSpeedToggle.isOn = GameManager.instance.
+        //increasingSizeToggle.isOn = GameManager.instance
+
+        playerSpeedSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.playerSpeed);
+        //playerSizeSlider.SetSliderToApproximate(GameManager.instance.currentGameVariables.playerSizes);
+        playerDashToggle.isOn = GameManager.instance.selectedGameVariables.dashEnabled;
+
+        timerSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.timeInSeconds);
+        shieldHealthSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.shieldLives);
+
+        transformerFrequencySlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerFrequency);
+        transformerPowerSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerPower);
+        transformerBallSizeToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSIZE) > 0;
+        transformerBallSpeedToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSPEED) > 0;
+        transformerBlackHoleToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BLACKHOLE) > 0;
+        transformerDashCooldownToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.DASHCOOLDOWN) > 0;
+        transformerPlayerSpeedToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.PLAYERSPEED) > 0;
+        transformerShieldHealthToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.SHIELDHEALTH) > 0;
+
+        settingUIVars = false;
     }
 }
