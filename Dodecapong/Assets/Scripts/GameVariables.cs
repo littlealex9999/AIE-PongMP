@@ -9,7 +9,12 @@ public class GameVariables : ScriptableObject
     // comments will be placed on the same line for things that may not be implemented
 
     public GameVariables() { }
-    public GameVariables(GameVariables gv)
+    //public GameVariables(GameVariables gv)
+    //{
+    //    Copy(gv);
+    //}
+
+    public void Copy(GameVariables gv)
     {
         playerSpeed = gv.playerSpeed;
         playerSizes = gv.playerSizes;

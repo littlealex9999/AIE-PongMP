@@ -41,13 +41,15 @@ public class UISliderPassthrough : MonoBehaviour
             }
 
             if (!slider) slider = GetComponent<Slider>();
-            slider.value = i;
+            slider.value = i + 1;
             break;
         }
     }
 
     public void ApplyValue(int index)
     {
+        if (MenuManager.instance.settingUIVars) return;
+
         switch (variable)
         {
             case SliderVariables.BALLSPEED:

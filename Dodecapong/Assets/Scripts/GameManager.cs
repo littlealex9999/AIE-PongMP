@@ -135,6 +135,7 @@ public class GameManager : MonoBehaviour
         else Destroy(this);
 
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
+        selectedGameVariables = ScriptableObject.CreateInstance<GameVariables>();
 
         OnGameStateChange += OnGameStateChanged;
 

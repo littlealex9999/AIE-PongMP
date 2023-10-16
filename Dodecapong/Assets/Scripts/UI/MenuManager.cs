@@ -192,7 +192,8 @@ public class MenuManager : MonoBehaviour
         {
             PresetSelectScreenCycle(presetCurrentActive + 1);
             eventSystem.SetSelectedGameObject(presetSelectDefault);
-            GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+            //GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+            GameManager.instance.selectedGameVariables.Copy(GameManager.instance.gameVariables[presetCurrentActive]);
         }
         else if (GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
         {
@@ -207,7 +208,8 @@ public class MenuManager : MonoBehaviour
         {
             PresetSelectScreenCycle(presetCurrentActive - 1);
             eventSystem.SetSelectedGameObject(presetSelectDefault);
-            GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+            //GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+            GameManager.instance.selectedGameVariables.Copy(GameManager.instance.gameVariables[presetCurrentActive]);
         }
         else if (GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
         {
@@ -225,7 +227,8 @@ public class MenuManager : MonoBehaviour
 
     public void PresetSelectScreen()
     {
-        GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+        //GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+        GameManager.instance.selectedGameVariables.Copy(GameManager.instance.gameVariables[presetCurrentActive]);
         DisableAll();
         presetSelectScreen.SetActive(true);
         PresetSelectScreenCycle(presetCurrentActive);
@@ -236,7 +239,8 @@ public class MenuManager : MonoBehaviour
     {
         if (GameManager.instance.selectedGameVariables == null)
         {
-            GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+            //GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
+            GameManager.instance.selectedGameVariables.Copy(GameManager.instance.gameVariables[presetCurrentActive]);
         }
         SettingsScreenUpdateVariableUI();
 
