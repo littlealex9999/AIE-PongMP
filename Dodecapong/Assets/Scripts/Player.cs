@@ -105,6 +105,7 @@ public class Player : MonoBehaviour
     #region Functions
     public void Dash()
     {
+        if (!isActiveAndEnabled) return;
         StartCoroutine(DashRoutine());
     }
 

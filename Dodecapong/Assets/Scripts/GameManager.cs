@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
     public GameObject healthDotPrefab;
 
     public List<GameVariables> gameVariables;
-    [HideInInspector] public GameVariables currentGameVariables;
+    [HideInInspector] public GameVariables selectedGameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
 
@@ -87,7 +87,8 @@ public class GameManager : MonoBehaviour
     {
         MAINMENU,
         JOINMENU,
-        SETTINGSMENU,
+        PRESETSELECT,
+        EDITPRESET,
         GAMEPLAY,
         GAMEPAUSED,
         GAMEOVER,
@@ -135,8 +136,6 @@ public class GameManager : MonoBehaviour
 
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
 
-        if (gameVariables[0]) currentGameVariables = new(gameVariables[0]);
-
         OnGameStateChange += OnGameStateChanged;
 
         SetupGameEndData();
@@ -145,11 +144,13 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        switch (gameState) {
+        switch (gameState)
+        {
             case GameState.GAMEPLAY:
-                if (!holdGameplay) {
+                if (!holdGameplay)
+                {
                     gameEndTimer -= Time.deltaTime;
-                    if (currentGameVariables.useTimer && gameEndTimer <= 0) 
+                    if (selectedGameVariables.useTimer && gameEndTimer <= 0) 
                     {
                         // UpdateGameState(GameState.GAMEOVER);
                     }
@@ -233,7 +234,10 @@ public class GameManager : MonoBehaviour
             case GameState.JOINMENU:
                 EventManager.instance?.menuEvent.Invoke();
                 break;
-            case GameState.SETTINGSMENU:
+            case GameState.PRESETSELECT:
+                EventManager.instance?.menuEvent.Invoke();
+                break;
+            case GameState.EDITPRESET:
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
@@ -349,6 +353,7 @@ public class GameManager : MonoBehaviour
     #region GAMEPLAY MANAGEMENT
     void StartGame()
     {
+        selectedGameVariables = gameVariables[0];
         inGame = true;
         SetupPlayers();
         SetupBalls();
@@ -404,22 +409,22 @@ public class GameManager : MonoBehaviour
 
             player.gameObject.SetActive(true);
 
-            player.moveSpeed = currentGameVariables.playerSpeed;
+            player.moveSpeed = selectedGameVariables.playerSpeed;
 
-            player.rotationalForce = currentGameVariables.playerRotationalForce;
-            player.collider.normalBending = currentGameVariables.playerNormalBending;
+            player.rotationalForce = selectedGameVariables.playerRotationalForce;
+            player.collider.normalBending = selectedGameVariables.playerNormalBending;
 
-            player.dashCooldown = currentGameVariables.dashCooldown;
-            player.dashDuration = currentGameVariables.dashDuration;
+            player.dashCooldown = selectedGameVariables.dashCooldown;
+            player.dashDuration = selectedGameVariables.dashDuration;
 
-            player.hitCooldown = currentGameVariables.hitCooldown;
-            player.hitDuration = currentGameVariables.hitDuration;
-            player.hitStrength = currentGameVariables.hitStrength;
+            player.hitCooldown = selectedGameVariables.hitCooldown;
+            player.hitDuration = selectedGameVariables.hitDuration;
+            player.hitStrength = selectedGameVariables.hitStrength;
 
-            player.grabCooldown = currentGameVariables.grabCooldown;
-            player.grabDuration = currentGameVariables.grabDuration;
+            player.grabCooldown = selectedGameVariables.grabCooldown;
+            player.grabDuration = selectedGameVariables.grabDuration;
 
-            player.shieldHealth = currentGameVariables.shieldLives;
+            player.shieldHealth = selectedGameVariables.shieldLives;
 
             alivePlayers.Add(player);
         }
@@ -432,11 +437,11 @@ public class GameManager : MonoBehaviour
         {
             Player player = alivePlayers[i];
 
-            player.shieldHealth = currentGameVariables.shieldLives;
+            player.shieldHealth = selectedGameVariables.shieldLives;
 
             if (alivePlayers.Count > 1) {
                 // area limits are calculated with a resize
-                player.Resize(currentGameVariables.playerSizes[alivePlayers.Count - 2]);
+                player.Resize(selectedGameVariables.playerSizes[alivePlayers.Count - 2]);
             } else {
                 player.CalculateLimits();
             }
@@ -449,15 +454,15 @@ public class GameManager : MonoBehaviour
     {
         EventManager.instance.ballCountdownEvent.Invoke();
 
-        for (int i = 0; i < currentGameVariables.ballCount; i++) {
+        for (int i = 0; i < selectedGameVariables.ballCount; i++) {
             Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
-            b.constantSpd = currentGameVariables.ballSpeed;
-            b.transform.localScale = new Vector3(currentGameVariables.ballSize, currentGameVariables.ballSize, currentGameVariables.ballSize);
-            b.collider.radius = currentGameVariables.ballSize / 2;
-            b.dampStrength = currentGameVariables.ballSpeedDamp;
-            b.shieldBounceTowardsCenterBias = currentGameVariables.shieldBounceTowardsCenterBias;
+            b.constantSpd = selectedGameVariables.ballSpeed;
+            b.transform.localScale = new Vector3(selectedGameVariables.ballSize, selectedGameVariables.ballSize, selectedGameVariables.ballSize);
+            b.collider.radius = selectedGameVariables.ballSize / 2;
+            b.dampStrength = selectedGameVariables.ballSpeedDamp;
+            b.shieldBounceTowardsCenterBias = selectedGameVariables.shieldBounceTowardsCenterBias;
             balls.Add(b);
         }
     }
@@ -467,7 +472,7 @@ public class GameManager : MonoBehaviour
         if (alivePlayers.Count > 1) EventManager.instance.ballCountdownEvent.Invoke();
         countdownTimer = countdownTime;
 
-        for (int i = balls.Count - 1; i > currentGameVariables.ballCount; i--) {
+        for (int i = balls.Count - 1; i > selectedGameVariables.ballCount; i--) {
             Destroy(balls[i]);
             balls.RemoveAt(i);
         }
@@ -519,7 +524,7 @@ public class GameManager : MonoBehaviour
     void SetupTransformers()
     {
         for (int i = 0; i < transformers.Count; i++) {
-            if ((transformers[i].GetTransformerType() & currentGameVariables.enabledTransformers) != 0) {
+            if ((transformers[i].GetTransformerType() & selectedGameVariables.enabledTransformers) != 0) {
                 allowedTransformers.Add(transformers[i]);
             }
         }
@@ -557,7 +562,7 @@ public class GameManager : MonoBehaviour
         transformerSpawnTimer += delta;
 
         if (transformerSpawnTimer > transformerSpawnTime) {
-            if (Random.Range(0, 1) < currentGameVariables.transformerFrequency) {
+            if (Random.Range(0, 1) < selectedGameVariables.transformerFrequency) {
                 SpawnTransformer();
             }
             transformerSpawnTimer = 0;

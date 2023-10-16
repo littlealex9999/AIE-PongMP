@@ -144,14 +144,14 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void PageRight(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.PRESETSELECT)
         {
             MenuManager.instance.SettingsScreenPageRight();
         }
     }
     public void PageLeft(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
+        if (context.performed && GameManager.instance.gameState == GameManager.GameState.PRESETSELECT)
         {
             MenuManager.instance.SettingsScreenPageLeft();
         }

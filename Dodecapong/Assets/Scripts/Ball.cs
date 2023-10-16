@@ -59,7 +59,7 @@ public class Ball : MonoBehaviour
             }
             else if (player.hitting)
             {
-                if (GameManager.instance.gameVariables.enableHitstun) {
+                if (GameManager.instance.selectedGameVariables.enableHitstun) {
                     StartCoroutine(HitStun(player, data, 1.0f));
                 } else {
                     PlayVFX(hitPaddle, data.collisionPos, player.color);

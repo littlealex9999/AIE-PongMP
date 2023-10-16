@@ -47,6 +47,8 @@ public class BlackHole : MonoBehaviour
         {
             pullEnabled = false;
 
+            collider.enabled = false;
+
             other.gameObject.SetActive(false);
             other.transform.position = new Vector3(transform.position.x, transform.position.y, other.transform.position.z);
             other.velocity = Random.insideUnitCircle * ball.constantSpd * ballLaunchMult;

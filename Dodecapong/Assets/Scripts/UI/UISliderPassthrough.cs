@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Slider))]
 public class UISliderPassthrough : MonoBehaviour
 {
-    public Slider slider;
+    Slider slider;
     public float[] values;
     public UnityEvent<float> UnityEvent;
 

@@ -82,21 +82,37 @@ public class GameVariables : ScriptableObject
     public float grabDuration = 1;
     public float grabCooldown = 1;
 
-    public static void SetPlayerSpeed(float value) { GameManager.instance.gameVariables.playerSpeed = value; }
-    public static void SetPlayersSize(List<Vector3> value) { GameManager.instance.gameVariables.playerSizes = value; }
-    
-    public static void SetPlayerRotationalForce(float value) { GameManager.instance.gameVariables.playerRotationalForce = value; }
-    public static void SetPlayerNormalBending(float value) { GameManager.instance.gameVariables.playerNormalBending = value; }
-    public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.gameVariables.dashEnabled = enabled; }
-    public static void SetPlayerDashDuration(float value) { GameManager.instance.gameVariables.dashDuration = value; }
-    public static void SetPlayerDashCooldown(float value) { GameManager.instance.gameVariables.dashCooldown = value; }
-    public static void SetPlayerHitEnabled(bool enabled) { GameManager.instance.gameVariables.hitEnabled = enabled; }
-    public static void SetPlayerHitDuration(float value) { GameManager.instance.gameVariables.hitDuration = value; }
-    public static void SetPlayerHitCooldown(float value) { GameManager.instance.gameVariables.hitCooldown = value; }
-    public static void SetPlayerHitStrength(float value) { GameManager.instance.gameVariables.hitStrength = value; }
-    public static void SetPlayerGrabEnabled(bool enabled) { GameManager.instance.gameVariables.hitEnabled = enabled; }
-    public static void SetPlayerGrabDuration(float value) { GameManager.instance.gameVariables.hitDuration = value; }
-    public static void SetPlayerGrabCooldown(float value) { GameManager.instance.gameVariables.hitCooldown = value; }
+    public static void SetPlayerSpeed(float value) { GameManager.instance.customVariables.playerSpeed = value; }
+    public static void SetPlayersSize(float value)
+    {
+        List<Vector3> list = GameManager.instance.customVariables.playerSizes;
+
+        float min = 0.5f;
+        float max = 1.5f;
+
+        if (value < min) value = min;
+        if (value > max) value = max;
+
+        for (int i = 0; i < list.Count; i++)
+        {
+            list[i] *= value;
+        }
+
+        GameManager.instance.customVariables.playerSizes = list;
+    }
+
+    public static void SetPlayerRotationalForce(float value) { GameManager.instance.customVariables.playerRotationalForce = value; }
+    public static void SetPlayerNormalBending(float value) { GameManager.instance.customVariables.playerNormalBending = value; }
+    public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.customVariables.dashEnabled = enabled; }
+    public static void SetPlayerDashDuration(float value) { GameManager.instance.customVariables.dashDuration = value; }
+    public static void SetPlayerDashCooldown(float value) { GameManager.instance.customVariables.dashCooldown = value; }
+    public static void SetPlayerHitEnabled(bool enabled) { GameManager.instance.customVariables.hitEnabled = enabled; }
+    public static void SetPlayerHitDuration(float value) { GameManager.instance.customVariables.hitDuration = value; }
+    public static void SetPlayerHitCooldown(float value) { GameManager.instance.customVariables.hitCooldown = value; }
+    public static void SetPlayerHitStrength(float value) { GameManager.instance.customVariables.hitStrength = value; }
+    public static void SetPlayerGrabEnabled(bool enabled) { GameManager.instance.customVariables.hitEnabled = enabled; }
+    public static void SetPlayerGrabDuration(float value) { GameManager.instance.customVariables.hitDuration = value; }
+    public static void SetPlayerGrabCooldown(float value) { GameManager.instance.customVariables.hitCooldown = value; }
     #endregion
 
     #region Ball
@@ -107,22 +123,22 @@ public class GameVariables : ScriptableObject
     public float ballSize = 0.5f;
     [Range(0, 1)] public float shieldBounceTowardsCenterBias;
 
-    public static void SetBallCount(int value) { GameManager.instance.gameVariables.ballCount = value; }
-    public static void SetBallCount(float value) { GameManager.instance.gameVariables.ballCount = (int)value; }
-    public static void SetBallSpeed(float value) { GameManager.instance.gameVariables.ballSpeed = value; }
-    public static void SetBallSpeedDamp(float value) { GameManager.instance.gameVariables.ballSpeedDamp = value; }
-    public static void SetBallSpeedPerHit(float value) { GameManager.instance.gameVariables.ballSpeedPerHit = value; }
-    public static void SetBallSize(float value) { GameManager.instance.gameVariables.ballSize = value; }
-    public static void SetShieldBounceBias(float value) { GameManager.instance.gameVariables.shieldBounceTowardsCenterBias = value; }
+    public static void SetBallCount(int value) { GameManager.instance.customVariables.ballCount = value; }
+    public static void SetBallCount(float value) { GameManager.instance.customVariables.ballCount = (int)value; }
+    public static void SetBallSpeed(float value) { GameManager.instance.customVariables.ballSpeed = value; }
+    public static void SetBallSpeedDamp(float value) { GameManager.instance.customVariables.ballSpeedDamp = value; }
+    public static void SetBallSpeedPerHit(float value) { GameManager.instance.customVariables.ballSpeedPerHit = value; }
+    public static void SetBallSize(float value) { GameManager.instance.customVariables.ballSize = value; }
+    public static void SetShieldBounceBias(float value) { GameManager.instance.customVariables.shieldBounceTowardsCenterBias = value; }
     #endregion
 
     #region Goal & Shield
     [Header("Goal & Shield"), Min(0)] public int shieldLives = 1;
     public bool enableHitstun = true;
 
-    public static void SetShieldLives(int value) { GameManager.instance.gameVariables.shieldLives = value; }
-    public static void SetShieldLives(float value) { GameManager.instance.gameVariables.shieldLives = (int)value; }
-    public static void SetHitstunEnabled(bool enabled) { GameManager.instance.gameVariables.enableHitstun = enabled; }
+    public static void SetShieldLives(int value) { GameManager.instance.customVariables.shieldLives = value; }
+    public static void SetShieldLives(float value) { GameManager.instance.customVariables.shieldLives = (int)value; }
+    public static void SetHitstunEnabled(bool enabled) { GameManager.instance.customVariables.enableHitstun = enabled; }
     #endregion
 
     #region Field
@@ -130,18 +146,18 @@ public class GameVariables : ScriptableObject
     public float transformerPower = 1.0f;
     public Transformer.TransformerTypes enabledTransformers;
 
-    public static void SetTransformerFrequency(float value) { GameManager.instance.gameVariables.transformerFrequency = value; }
-    public static void SetTransformerPower(float value) { GameManager.instance.gameVariables.transformerPower = value; }
+    public static void SetTransformerFrequency(float value) { GameManager.instance.customVariables.transformerFrequency = value; }
+    public static void SetTransformerPower(float value) { GameManager.instance.customVariables.transformerPower = value; }
     public void SetBits(Transformer.TransformerTypes mask, bool add) { enabledTransformers = add ? enabledTransformers | mask : enabledTransformers & ~mask; }
 
-    public static void SetBallSpeedTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BALLSPEED, enabled); }
-    public static void SetBallSizeTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BALLSIZE, enabled); }
-    public static void SetPlayerSpeedTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.PLAYERSPEED, enabled); }
-    public static void SetPlayerSizeTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.PLAYERSIZE, enabled); }
-    public static void SetDashCooldownTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.DASHCOOLDOWN, enabled); }
-    public static void SetShieldLivesTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.SHIELDHEALTH, enabled); }
-    public static void SetBallCountTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BALLCOUNT, enabled); }
-    public static void SetBlackHoleTransformer(bool enabled) { GameManager.instance.gameVariables.SetBits(Transformer.TransformerTypes.BLACKHOLE, enabled); }
+    public static void SetBallSpeedTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.BALLSPEED, enabled); }
+    public static void SetBallSizeTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.BALLSIZE, enabled); }
+    public static void SetPlayerSpeedTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.PLAYERSPEED, enabled); }
+    public static void SetPlayerSizeTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.PLAYERSIZE, enabled); }
+    public static void SetDashCooldownTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.DASHCOOLDOWN, enabled); }
+    public static void SetShieldLivesTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.SHIELDHEALTH, enabled); }
+    public static void SetBallCountTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.BALLCOUNT, enabled); }
+    public static void SetBlackHoleTransformer(bool enabled) { GameManager.instance.customVariables.SetBits(Transformer.TransformerTypes.BLACKHOLE, enabled); }
     #endregion
 
     #region Victory
@@ -149,9 +165,9 @@ public class GameVariables : ScriptableObject
     public bool useTimer = true;
     public float timeInSeconds = 20.0f;
 
-    public static void SetWinType(WinType type) { GameManager.instance.gameVariables.winType = type; }
-    public static void SetTimerEnabled(bool enabled) { GameManager.instance.gameVariables.useTimer = enabled; }
-    public static void SetTimerSeconds(float value) { GameManager.instance.gameVariables.timeInSeconds = value; }
+    public static void SetWinType(WinType type) { GameManager.instance.customVariables.winType = type; }
+    public static void SetTimerEnabled(bool enabled) { GameManager.instance.customVariables.useTimer = enabled; }
+    public static void SetTimerSeconds(float value) { GameManager.instance.customVariables.timeInSeconds = value; }
     #endregion
 
     #region Extra
