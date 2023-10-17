@@ -169,7 +169,7 @@ public class MenuManager : MonoBehaviour
         if (index >= presetSubScreens.Length) index = 0;
         if (index < 0) index = presetSubScreens.Length - 1;
 
-        presetSubScreens[presetCurrentActive].SetActive(false);
+        foreach (GameObject screen in presetSubScreens) screen.SetActive(false);
         presetSubScreens[index].SetActive(true);
         presetCurrentActive = index;
         eventSystem.SetSelectedGameObject(presetSelectDefault);
@@ -180,7 +180,7 @@ public class MenuManager : MonoBehaviour
         if (index >= editPresetSubScreens.Length) index = 0;
         if (index < 0) index = editPresetSubScreens.Length - 1;
 
-        editPresetSubScreens[editPresetCurrentActive].SetActive(false);
+        foreach (GameObject screen in editPresetSubScreens) screen.SetActive(false);
         editPresetSubScreens[index].SetActive(true);
         editPresetCurrentActive = index;
         eventSystem.SetSelectedGameObject(editPresetDefault);

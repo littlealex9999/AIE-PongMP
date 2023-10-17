@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
+    [SerializeField] List<Texture> playerShapes = new List<Texture>();
     #endregion
 
     #region Transformers
@@ -426,6 +427,12 @@ public class GameManager : MonoBehaviour
             player.grabDuration = selectedGameVariables.grabDuration;
 
             player.shieldHealth = selectedGameVariables.shieldLives;
+
+            player.meshRenderer.material = new(player.meshRenderer.material)
+            {
+                mainTexture = playerShapes[i]
+            };
+            player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
             alivePlayers.Add(player);
         }
