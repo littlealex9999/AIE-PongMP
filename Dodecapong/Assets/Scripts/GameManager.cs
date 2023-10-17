@@ -316,6 +316,8 @@ public class GameManager : MonoBehaviour
 
         players.Add(player);
 
+        MenuManager.instance.CheckPlayerCount();
+
         return player;
     }
 
@@ -326,6 +328,8 @@ public class GameManager : MonoBehaviour
 
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
+
+        MenuManager.instance.CheckPlayerCount();
 
         UpdatePlayerImages();
     }
