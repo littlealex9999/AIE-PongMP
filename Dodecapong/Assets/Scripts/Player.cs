@@ -68,6 +68,8 @@ public class Player : MonoBehaviour
 
     [SerializeField] private Animator animator;
 
+    public MeshRenderer meshRenderer;
+
     public enum ControlType
     {
         MIDSECTION,
@@ -85,6 +87,8 @@ public class Player : MonoBehaviour
         if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
 
         collider.OnCollisionEnter += OnCollisionEnterBall;
+
+        
     }
 
     private void OnDestroy()

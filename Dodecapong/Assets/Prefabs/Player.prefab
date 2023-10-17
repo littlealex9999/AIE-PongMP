@@ -65,7 +65,7 @@ GameObject:
   - component: {fileID: 2481306137406478795}
   - component: {fileID: 8348195646772282906}
   m_Layer: 0
-  m_Name: NewCollisionPlayer
+  m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -184,6 +184,7 @@ MonoBehaviour:
   controllerHandler: {fileID: 0}
   healthBlips: []
   animator: {fileID: 6108231517275231207}
+  meshRenderer: {fileID: 7660811406392108423}
   controlType: 3
 --- !u!114 &8348195646772282906
 MonoBehaviour:
@@ -263,14 +264,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6662552890490358035}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: -0.082}
   m_LocalScale: {x: 0.09, y: 0.09, z: 0.09}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3769693338607014792}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
 --- !u!33 &8319483752082081672
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -299,7 +300,6 @@ MeshRenderer:
   m_RenderingLayerMask: 257
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0f77d2d3d882cfa46a74d238f6d5d6b2, type: 2}
   - {fileID: 2100000, guid: 772c16a8d01a9954eb8ddb38c3dcbe8f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
