@@ -152,6 +152,7 @@ public class ControllerInputHandler : MonoBehaviour
             if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT ||
             GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
             {
+                EventManager.instance.scrollPageEvent.Invoke();
                 MenuManager.instance.PageRight();
             }
         }
@@ -163,6 +164,7 @@ public class ControllerInputHandler : MonoBehaviour
             if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT ||
             GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
             {
+                EventManager.instance.scrollPageEvent.Invoke();
                 MenuManager.instance.PageLeft();
             }
         }

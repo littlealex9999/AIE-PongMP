@@ -50,6 +50,8 @@ public class UISliderPassthrough : MonoBehaviour
     {
         if (MenuManager.instance.settingUIVars) return;
 
+        EventManager.instance.hoverUIEvent.Invoke();
+
         switch (variable)
         {
             case SliderVariables.BALLSPEED:
