@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     #region Game Objects
     [Header("Game Objects")]
- 
+
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
@@ -27,8 +27,8 @@ public class GameManager : MonoBehaviour
 
     public GameObject healthDotPrefab;
 
-    public GameVariables defaultGameVariables;
-    [HideInInspector] public GameVariables gameVariables;
+    public List<GameVariables> gameVariables;
+    public GameVariables selectedGameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
 
@@ -52,6 +52,8 @@ public class GameManager : MonoBehaviour
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
+    [SerializeField] List<ParticleSystem.MinMaxGradient> particleColors;
+    [SerializeField] List<Texture> playerShapes = new List<Texture>();
     #endregion
 
     #region Transformers
@@ -87,7 +89,8 @@ public class GameManager : MonoBehaviour
     {
         MAINMENU,
         JOINMENU,
-        SETTINGSMENU,
+        PRESETSELECT,
+        EDITPRESET,
         GAMEPLAY,
         GAMEPAUSED,
         GAMEOVER,
@@ -122,6 +125,7 @@ public class GameManager : MonoBehaviour
 
     #region Extra Settings
     public bool enableHaptics = true;
+    public bool enableScreenShake = true;
     #endregion
     #endregion
 
@@ -133,9 +137,7 @@ public class GameManager : MonoBehaviour
         else Destroy(this);
 
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
-
-        if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
-        else gameVariables = new GameVariables();
+        selectedGameVariables = ScriptableObject.CreateInstance<GameVariables>();
 
         OnGameStateChange += OnGameStateChanged;
 
@@ -145,11 +147,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        switch (gameState) {
+        switch (gameState)
+        {
             case GameState.GAMEPLAY:
-                if (!holdGameplay) {
+                if (!holdGameplay)
+                {
                     gameEndTimer -= Time.deltaTime;
-                    if (gameVariables.useTimer && gameEndTimer <= 0) {
+                    if (selectedGameVariables.useTimer && gameEndTimer <= 0) 
+                    {
                         // UpdateGameState(GameState.GAMEOVER);
                     }
 
@@ -169,6 +174,12 @@ public class GameManager : MonoBehaviour
     {
         if (index < playerEmissives.Count) return playerEmissives[index];
         else return playerEmissives[playerEmissives.Count - 1];
+    }
+
+    public ParticleSystem.MinMaxGradient GetPlayerParticleColor(int index)
+    {
+        if (index < particleColors.Count) return particleColors[index];
+        else return particleColors[particleColors.Count - 1];
     }
 
     public Vector2 GetCircleIntersection(Vector2 startPos, Vector2 direction, float radius)
@@ -218,7 +229,7 @@ public class GameManager : MonoBehaviour
     #region GAMESTATE
     public void UpdateGameState(GameState state)
     {
-        if (state == GameState.GAMEPLAY && players.Count < 2) return;
+        if (gameState == GameState.JOINMENU && state == GameState.PRESETSELECT && players.Count < 2) return;
         gameState = state;
         OnGameStateChange.Invoke();
     }
@@ -232,7 +243,10 @@ public class GameManager : MonoBehaviour
             case GameState.JOINMENU:
                 EventManager.instance?.menuEvent.Invoke();
                 break;
-            case GameState.SETTINGSMENU:
+            case GameState.PRESETSELECT:
+                EventManager.instance?.menuEvent.Invoke();
+                break;
+            case GameState.EDITPRESET:
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
@@ -309,6 +323,8 @@ public class GameManager : MonoBehaviour
 
         players.Add(player);
 
+        MenuManager.instance.CheckPlayerCount();
+
         return player;
     }
 
@@ -320,12 +336,15 @@ public class GameManager : MonoBehaviour
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
 
+        MenuManager.instance.CheckPlayerCount();
+
         UpdatePlayerImages();
     }
 
     public void EliminatePlayer(Player player)
     {
-        for (int i = 0; i < player.healthBlips.Count; i++) {
+        for (int i = 0; i < player.healthBlips.Count; i++)
+        {
             Destroy(player.healthBlips[i]);
         }
         player.healthBlips.Clear();
@@ -363,6 +382,11 @@ public class GameManager : MonoBehaviour
         inGame = false;
         for (int i = 0; i < players.Count; i++) {
             players[i].gameObject.SetActive(false);
+            for (int j = 0; j < players[i].healthBlips.Count; j++) {
+                // health blips should be managed as part of the shield reset, but they managed to persist through that
+                Destroy(players[i].healthBlips[j]);
+            }
+            players[i].healthBlips.Clear();
         }
 
         for (int i = 0; i < balls.Count; i++) {
@@ -398,22 +422,28 @@ public class GameManager : MonoBehaviour
 
             player.gameObject.SetActive(true);
 
-            player.moveSpeed = gameVariables.playerSpeed;
+            player.moveSpeed = selectedGameVariables.playerSpeed;
 
-            player.rotationalForce = gameVariables.playerRotationalForce;
-            player.collider.normalBending = gameVariables.playerNormalBending;
+            player.rotationalForce = selectedGameVariables.playerRotationalForce;
+            player.collider.normalBending = selectedGameVariables.playerNormalBending;
 
-            player.dashCooldown = gameVariables.dashCooldown;
-            player.dashDuration = gameVariables.dashDuration;
+            player.dashCooldown = selectedGameVariables.dashCooldown;
+            player.dashDuration = selectedGameVariables.dashDuration;
 
-            player.hitCooldown = gameVariables.hitCooldown;
-            player.hitDuration = gameVariables.hitDuration;
-            player.hitStrength = gameVariables.hitStrength;
+            player.hitCooldown = selectedGameVariables.hitCooldown;
+            player.hitDuration = selectedGameVariables.hitDuration;
+            player.hitStrength = selectedGameVariables.hitStrength;
 
-            player.grabCooldown = gameVariables.grabCooldown;
-            player.grabDuration = gameVariables.grabDuration;
+            player.grabCooldown = selectedGameVariables.grabCooldown;
+            player.grabDuration = selectedGameVariables.grabDuration;
 
-            player.shieldHealth = gameVariables.shieldLives;
+            player.shieldHealth = selectedGameVariables.shieldLives;
+
+            player.meshRenderer.material = new(player.meshRenderer.material)
+            {
+                mainTexture = playerShapes[i]
+            };
+            player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
             alivePlayers.Add(player);
         }
@@ -426,11 +456,11 @@ public class GameManager : MonoBehaviour
         {
             Player player = alivePlayers[i];
 
-            player.shieldHealth = gameVariables.shieldLives;
+            player.shieldHealth = selectedGameVariables.shieldLives;
 
             if (alivePlayers.Count > 1) {
                 // area limits are calculated with a resize
-                player.Resize(gameVariables.playerSizes[alivePlayers.Count - 2]);
+                player.Resize(selectedGameVariables.playerSizes[alivePlayers.Count - 2]);
             } else {
                 player.CalculateLimits();
             }
@@ -443,15 +473,15 @@ public class GameManager : MonoBehaviour
     {
         EventManager.instance.ballCountdownEvent.Invoke();
 
-        for (int i = 0; i < gameVariables.ballCount; i++) {
+        for (int i = 0; i < selectedGameVariables.ballCount; i++) {
             Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
-            b.constantSpd = gameVariables.ballSpeed;
-            b.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
-            b.collider.radius = gameVariables.ballSize / 2;
-            b.dampStrength = gameVariables.ballSpeedDamp;
-            b.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
+            b.constantSpd = selectedGameVariables.ballSpeed;
+            b.transform.localScale = new Vector3(selectedGameVariables.ballSize, selectedGameVariables.ballSize, selectedGameVariables.ballSize);
+            b.collider.radius = selectedGameVariables.ballSize / 2;
+            b.dampStrength = selectedGameVariables.ballSpeedDamp;
+            b.shieldBounceTowardsCenterBias = selectedGameVariables.shieldBounceTowardsCenterBias;
             balls.Add(b);
         }
     }
@@ -461,7 +491,7 @@ public class GameManager : MonoBehaviour
         if (alivePlayers.Count > 1) EventManager.instance.ballCountdownEvent.Invoke();
         countdownTimer = countdownTime;
 
-        for (int i = balls.Count - 1; i > gameVariables.ballCount; i--) {
+        for (int i = balls.Count - 1; i > selectedGameVariables.ballCount; i--) {
             Destroy(balls[i]);
             balls.RemoveAt(i);
         }
@@ -513,7 +543,7 @@ public class GameManager : MonoBehaviour
     void SetupTransformers()
     {
         for (int i = 0; i < transformers.Count; i++) {
-            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
+            if ((transformers[i].GetTransformerType() & selectedGameVariables.enabledTransformers) != 0) {
                 allowedTransformers.Add(transformers[i]);
             }
         }
@@ -551,7 +581,7 @@ public class GameManager : MonoBehaviour
         transformerSpawnTimer += delta;
 
         if (transformerSpawnTimer > transformerSpawnTime) {
-            if (Random.Range(0, 1) < gameVariables.transformerFrequency) {
+            if (Random.Range(0, 1) < selectedGameVariables.transformerFrequency) {
                 SpawnTransformer();
             }
             transformerSpawnTimer = 0;
@@ -694,17 +724,20 @@ public class GameManager : MonoBehaviour
 
     private void ResetShieldDisplay()
     {
-        for (int i = 0; i < alivePlayers.Count; i++) {
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
             float angleChange = alivePlayers[i].playerAngleDeviance * healthBlipSpread / (alivePlayers[i].shieldHealth + 1) * 2;
             float angle = alivePlayers[i].playerSectionMiddle - alivePlayers[i].playerAngleDeviance * healthBlipSpread + angleChange;
 
-            for (int j = 0; j < alivePlayers[i].shieldHealth; j++) {
+            for (int j = 0; j < alivePlayers[i].shieldHealth; j++)
+            {
                 if (alivePlayers[i].healthBlips.Count <= j) alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
                 alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
                 angle += angleChange;
             }
 
-            for (int j = alivePlayers[i].healthBlips.Count - 1; j >= alivePlayers[i].shieldHealth; j--) {
+            for (int j = alivePlayers[i].healthBlips.Count - 1; j >= alivePlayers[i].shieldHealth; j--)
+            {
                 Destroy(alivePlayers[i].healthBlips[j]);
                 alivePlayers[i].healthBlips.RemoveAt(j);
             }
@@ -756,16 +789,18 @@ public class GameManager : MonoBehaviour
         if (alivePlayerID >= alivePlayers.Count) return false;
 
         Player player = alivePlayers[alivePlayerID];
-        if (player.shieldHealth <= 1) {
+        if (player.shieldHealth <= 1)
+        {
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
-        } else {
+        } else 
+        {
             player.shieldHealth--;
 
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
-            player.controllerHandler.SetHaptics(shieldTouchHaptics);
+            if (!player.isAI) player.controllerHandler.SetHaptics(shieldTouchHaptics);
             StartCoroutine(SquishHealthBlips(player));
             return false;
         }
@@ -820,7 +855,7 @@ public class GameManager : MonoBehaviour
 
         // set haptics
         playerElimHaptics.duration = playerElimTime;
-        alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
+        if (!alivePlayers[index].isAI) alivePlayers[index].controllerHandler.SetHaptics(playerElimHaptics);
 
         // move pillars over time & handle ArcTanShader shrinkage
         while (pillarSmashTimer < playerElimTime) {

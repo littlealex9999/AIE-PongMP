@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,6 +14,12 @@ public class Ball : MonoBehaviour
     [Range(0f, 1f), Tooltip("a value of 0 will have no effect. a value of 1 will make the ball go through the center every bounce")]
     public float shieldBounceTowardsCenterBias;
 
+    public GameObject bouncePillar;
+    public GameObject bounceShield;
+    public GameObject bouncePaddle;
+    public GameObject hitPaddle;
+    public GameObject playerDies;
+
     float distFromCenter { get { return Vector2.Distance(transform.position, Vector2.zero); } }
     public float radius {
         get {
@@ -23,7 +30,8 @@ public class Ball : MonoBehaviour
         }
     }
 
-    bool held;
+    [HideInInspector] public Player holdingPlayer;
+    bool hitstunned = false;
 
     public ParticleSystem smallRing; 
     public ParticleSystem mediumRing; 
@@ -38,31 +46,64 @@ public class Ball : MonoBehaviour
 
     private void OnPaddleCollisionEnter(PongCollider other, CollisionData data)
     {
-        if (other.gameObject.TryGetComponent(out Player player))
+        if (holdingPlayer != null) return;
+
+        if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
         {
-            smallRing.Play();
-            if (player.grabbing)
+            if (player.grabbing && player.readyToGrab)
             {
-                StartCoroutine(player.GrabRoutine());
+                transform.SetParent(player.transform);
+                StartCoroutine(player.GrabRoutine(data));
                 player.heldBall = this;
-                transform.parent = player.transform;
-                held = true;
+                holdingPlayer = player;
             }
             else if (player.hitting)
             {
-                EventManager.instance.ballHitEvent.Invoke();
-                mediumRing.Play();
+                if (GameManager.instance.selectedGameVariables.enableHitstun) {
+                    StartCoroutine(HitStun(player, data, 1.0f));
+                } else {
+                    PlayVFX(hitPaddle, data.collisionPos, player.particleColor);
+                    EventManager.instance.ballHitEvent.Invoke();
+                    mediumRing.Play();
+                }
             }
             else
             {
+                PlayVFX(bouncePaddle, data.collisionPos, player.particleColor);
                 EventManager.instance.ballBounceEvent.Invoke();
                 smallRing.Play();
             }
         }
-        else if (other.gameObject.tag == "Pillar")
+        else if (other.gameObject.CompareTag("Pillar"))
         {
+            PlayVFX(bouncePillar,data.collisionPos, Color.white);
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
+    }
+
+    IEnumerator HitStun(Player player, CollisionData data, float duration)
+    {
+        if (hitstunned) yield break;
+
+        hitstunned = true;
+        player.hitstunned = true;
+
+        collider.immovable = true;
+
+        while (duration > 0) {
+            duration -= Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+        }
+
+        collider.immovable = false;
+
+        PlayVFX(hitPaddle, data.collisionPos, player.particleColor);
+        EventManager.instance.ballHitEvent.Invoke();
+        mediumRing.Play();
+
+        player.hitstunned = false;
+        hitstunned = false;
+        yield break;
     }
 
     private void OnGameStateChanged()
@@ -70,18 +111,9 @@ public class Ball : MonoBehaviour
         
     }
 
-    private void Bounce(float centerBias, Vector2 bounceNormal)
-    {
-        Vector2 forward = collider.velocity.normalized;
-        Vector2 bounceDir = Vector2.Reflect(forward, bounceNormal).normalized;
-        Vector2 finalBounceDir = Vector2.Lerp(bounceDir, bounceNormal, centerBias).normalized;
-        collider.velocity = finalBounceDir * targetSpd;
-        transform.position = (Vector3.zero - (Vector3)bounceNormal) * (GameManager.instance.mapRadius - radius);
-    }
-
     private void FixedUpdate()
     {
-        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || held) {
+        if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || holdingPlayer != null || hitstunned) {
             collider.immovable = true;
             return;
         } else if (collider.immovable) {
@@ -109,6 +141,32 @@ public class Ball : MonoBehaviour
         }
     }
 
+    void PlayVFX(GameObject particle, Vector3 pos)
+    {
+        Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+    }
+
+    void PlayVFX(GameObject particle, Vector3 pos, Color color)
+    {
+        GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
+
+        ParticleSystem.MinMaxGradient startColor = new()
+        {
+            mode = ParticleSystemGradientMode.Color,
+            color = color
+        };
+        vfxColorSetter.SetStartColor(startColor);
+    }
+
+    void PlayVFX(GameObject particle, Vector3 pos, ParticleSystem.MinMaxGradient color)
+    {
+        GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
+
+        vfxColorSetter.SetLifetimeColor(color);
+    }
+
     private void CheckIfHitBounds()
     {
         if (distFromCenter + radius > GameManager.instance.mapRadius)
@@ -119,28 +177,26 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
+                PlayVFX(bounceShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 mediumRing.Play();
+
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
-                Bounce(shieldBounceTowardsCenterBias, shieldNormal);
+                Vector2 forward = collider.velocity.normalized;
+                Vector2 bounceDir = Vector2.Reflect(forward, shieldNormal).normalized;
+                Vector2 finalBounceDir = Vector2.Lerp(bounceDir, shieldNormal, shieldBounceTowardsCenterBias).normalized;
+                collider.velocity = finalBounceDir * targetSpd;
+                transform.position = (Vector3.zero - (Vector3)shieldNormal) * (GameManager.instance.mapRadius - radius);
                 transform.position = transform.position.normalized * (GameManager.instance.mapRadius - radius);
                
             }
             else // if player dies
             {
+                PlayVFX(playerDies, transform.position, GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 largeRing.Play();
                 return;
             }
             mediumRing.Play();
         }
-    }
-
-    public void Release()
-    {
-        if (!held) return;
-        held = false;
-        transform.parent = null;
-        Vector2 dir = (Vector3.zero - transform.position).normalized;
-        collider.velocity = dir * constantSpd;
     }
 
     public void AddVelocity(Vector2 velocity)

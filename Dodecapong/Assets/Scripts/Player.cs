@@ -4,6 +4,7 @@ using System.Collections;
 using System.Linq;
 using Unity.VisualScripting;
 using System.Collections.Generic;
+using UnityEditor;
 
 public class Player : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public int shieldHealth;
 
     [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
+    [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get { return GameManager.instance.GetPlayerParticleColor(ID); } private set { } }
 
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
@@ -28,7 +30,7 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public float grabDuration;
     [HideInInspector] public float grabCooldown;
-    bool readyToGrab = true;
+    [HideInInspector] public bool readyToGrab = true;
 
     new public PongConvexHullCollider collider;
 
@@ -44,7 +46,7 @@ public class Player : MonoBehaviour
 
     public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
-    public float pushStrength = 3.0f;
+    [Range(0, 1)] public float deadzone = 0.01f;
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
@@ -55,14 +57,28 @@ public class Player : MonoBehaviour
 
     public AnimationCurve hitAnimationCurve;
     [HideInInspector] public bool hitting = false;
-    [HideInInspector] public float hitStrength;
+    public float hitStrength;
 
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
+    [HideInInspector] public bool hitstunned = false;
 
     public ControllerInputHandler controllerHandler;
 
     [HideInInspector] public List<GameObject> healthBlips = new List<GameObject>();
+
+    [SerializeField] private Animator animator;
+
+    public MeshRenderer meshRenderer;
+
+    public enum ControlType
+    {
+        MIDSECTION,
+        PADDLE,
+        MIDSECTION_NORMALIZED,
+        PADDLE_NORMALIZED,
+    }
+    public ControlType controlType;
     #endregion
 
     #region Unity
@@ -72,7 +88,10 @@ public class Player : MonoBehaviour
         if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
 
         collider.OnCollisionEnter += OnCollisionEnterBall;
+
+        
     }
+
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -81,7 +100,7 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         if (isAI) {
-            CalculateAIInput();
+            //CalculateAIInput();
         }
 
         Move(movementInput);
@@ -91,12 +110,13 @@ public class Player : MonoBehaviour
     #region Functions
     public void Dash()
     {
+        if (!isActiveAndEnabled) return;
         StartCoroutine(DashRoutine());
     }
 
     public void Hit()
     {
-        StartCoroutine(HitRoutine());
+        //StartCoroutine(HitRoutine());
     }
 
     public void Grab(InputAction.CallbackContext context)
@@ -107,7 +127,8 @@ public class Player : MonoBehaviour
         }
         else if (context.canceled)
         {
-            Release();
+            //Release();
+            grabbing = false;
         }
     }
 
@@ -122,11 +143,45 @@ public class Player : MonoBehaviour
         if (input == Vector2.zero) {
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay) {
+        } else if (GameManager.instance.holdGameplay || hitstunned) {
             return;
         }
 
-        float moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection) * input.magnitude * moveSpeed;
+        float moveTarget;
+
+        switch (controlType) {
+            case ControlType.MIDSECTION:
+            case ControlType.MIDSECTION_NORMALIZED:
+            default:
+
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection);
+                break;
+            case ControlType.PADDLE:
+            case ControlType.PADDLE_NORMALIZED:
+
+                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
+                break;
+        }
+
+        if (moveTarget < deadzone && moveTarget > -deadzone) {
+            collider.velocity = Vector2.zero;
+            return;
+        }
+
+        switch (controlType) {
+            case ControlType.MIDSECTION_NORMALIZED:
+            case ControlType.PADDLE_NORMALIZED:
+
+                if (moveTarget > deadzone) {
+                    moveTarget = 1.0f;
+                } else {
+                    moveTarget = -1.0f;
+                }
+                break;
+        }
+
+        moveTarget *= input.magnitude * moveSpeed;
+
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
         Vector3 startPos = transform.position;
@@ -280,15 +335,20 @@ public class Player : MonoBehaviour
         return 360 - ret;
     }
 
-    public void Release()
+    public void Release(Vector2 releaseVel)
     {
         if (heldBall)
         {
-            heldBall.Release();
+            if (heldBall.holdingPlayer != this) return;
+            heldBall.holdingPlayer = null;
+            heldBall.transform.parent = null;
+            heldBall.collider.velocity = releaseVel;
+
             heldBall = null;
             grabbing = false;
             readyToHit = true;
-            Hit();
+            animator.SetTrigger("Play Hit");
+            //Hit();
         }
         else
         {
@@ -349,27 +409,9 @@ public class Player : MonoBehaviour
         hitting = true;
         collider.addForceWhileImmovable = true;
 
-        float value;
-        float timeElapsed = 0;
-        Vector3 startingScale = transform.localScale;
-        Vector2 colliderStart = collider.scale;
+        animator.SetTrigger("Play Hit");
 
-        collider.scale = new Vector2(colliderStart.x, startingScale.x * 2);
-        collider.RecalculateScale();
-
-        while (timeElapsed < hitDuration)
-        {
-            value = Mathf.Lerp(startingScale.x, startingScale.x * 2, hitAnimationCurve.Evaluate(timeElapsed / hitDuration));
-            timeElapsed += Time.fixedDeltaTime;
-
-            transform.localScale = new Vector3(value, startingScale.y, startingScale.z);
-
-            yield return new WaitForFixedUpdate();
-        }
-
-        transform.localScale = startingScale;
-        collider.scale = colliderStart;
-        collider.RecalculateScale();
+        yield return new WaitForSeconds(hitDuration);
 
         collider.addForceWhileImmovable = false;
         hitting = false;
@@ -379,21 +421,41 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public IEnumerator GrabRoutine()
+    public IEnumerator GrabRoutine(CollisionData data)
     {
         if (!readyToGrab) yield break;
 
         EventManager.instance.ballGrabEvent.Invoke();
 
         readyToGrab = false;
+        StartCoroutine(GrabReset());
 
         float timeElapsed = 0;
 
-        yield return new WaitUntil(() => !grabbing || (timeElapsed += Time.fixedDeltaTime) >= grabDuration);
+        while (timeElapsed < grabDuration) {
+            timeElapsed += Time.deltaTime;
+            if (!grabbing) break;
 
-        Release();
+            yield return new WaitForEndOfFrame();
+        }
 
-        yield return new WaitForSeconds(grabDuration);
+        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
+        Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
+    }
+
+    IEnumerator GrabReset()
+    {
+        while (grabbing) {
+            yield return new WaitForEndOfFrame();
+        }
+
+        float grabCooldownTimer = grabCooldown;
+        while (grabCooldownTimer > 0) {
+            grabCooldownTimer -= Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
+        }
 
         readyToGrab = true;
     }

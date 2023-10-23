@@ -36,6 +36,7 @@ public class EventManager : MonoBehaviour
     [Header("UI Clips")]
     [SerializeField] AudioClip selectUI;
     [SerializeField] AudioClip hoverUI;
+    [SerializeField] AudioClip scrollPageUI;
     [SerializeField] AudioClip playerJoin;
     [SerializeField] AudioClip playerLeave;
 
@@ -54,6 +55,7 @@ public class EventManager : MonoBehaviour
 
     [HideInInspector] public UnityEvent selectUIEvent; //
     [HideInInspector] public UnityEvent hoverUIEvent; //
+    [HideInInspector] public UnityEvent scrollPageEvent; //
     [HideInInspector] public UnityEvent playerJoinEvent; //
     [HideInInspector] public UnityEvent playerLeaveEvent; //
 
@@ -77,6 +79,7 @@ public class EventManager : MonoBehaviour
 
         selectUIEvent ??= new UnityEvent();
         hoverUIEvent ??= new UnityEvent();
+        scrollPageEvent ??= new UnityEvent();
         playerJoinEvent ??= new UnityEvent();
         playerLeaveEvent ??= new UnityEvent();
 
@@ -99,6 +102,7 @@ public class EventManager : MonoBehaviour
 
         selectUIEvent.AddListener(SelectUICallback);
         hoverUIEvent.AddListener(HoverUICallback);
+        scrollPageEvent.AddListener(ScrollPageUICallback);
         playerJoinEvent.AddListener(PlayerJoinCallback);
         playerLeaveEvent.AddListener(PlayerLeaveCallback);
 
@@ -126,6 +130,7 @@ public class EventManager : MonoBehaviour
 
     void SelectUICallback() => SafePlayOneShot(audioSource, selectUI);
     void HoverUICallback() => SafePlayOneShot(audioSource, hoverUI);
+    void ScrollPageUICallback() => SafePlayOneShot(audioSource, scrollPageUI);
     void PlayerJoinCallback() => SafePlayOneShot(audioSource, playerJoin);
     void PlayerLeaveCallback() => SafePlayOneShot(audioSource, playerLeave);
 
