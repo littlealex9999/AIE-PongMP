@@ -2663,8 +2663,20 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.ctime0
+      value: 13107
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.ctime1
-      value: 65535
+      value: 26792
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.ctime2
+      value: 37972
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.ctime3
+      value: 49730
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.key0.a
@@ -2672,11 +2684,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.key0.b
-      value: 0.7490196
+      value: 0.9843137
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.key0.g
-      value: 0.03137255
+      value: 0.02745098
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.key1.a
@@ -2684,11 +2696,35 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.key1.b
-      value: 0.7490196
+      value: 0.7921569
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.key1.g
-      value: 0.03137255
+      value: 0.50980395
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.key1.r
+      value: 0.019607844
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.key2.b
+      value: 0.5803922
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.key2.g
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.key3.b
+      value: 0.7924528
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.key3.g
+      value: 0.55655926
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[0].m_GradientMax.key3.r
+      value: 0.15325737
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMin.atime1
@@ -2704,6 +2740,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.ctime1
+      value: 17155
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.ctime2
+      value: 28913
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.ctime3
+      value: 39457
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.ctime4
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2712,7 +2760,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key0.b
-      value: 0.023529412
+      value: 0.0379858
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key0.g
@@ -2720,7 +2768,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key0.r
-      value: 0.7490196
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key1.a
@@ -2728,15 +2776,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key1.b
-      value: 0.023529412
+      value: 0.12646852
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key1.g
-      value: 0
+      value: 0.14706361
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.key1.r
-      value: 0.7490196
+      value: 0.9245283
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key2.b
+      value: 0.20714669
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key2.g
+      value: 0.2295194
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key2.r
+      value: 0.8962264
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key3.b
+      value: 0.12927197
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key3.g
+      value: 0.15063624
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key3.r
+      value: 0.7830189
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key4.g
+      value: 0.04265044
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[1].m_GradientMax.key4.r
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMin.atime1
@@ -2751,8 +2831,28 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.ctime0
+      value: 4433
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.ctime1
-      value: 65535
+      value: 15806
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.ctime2
+      value: 26407
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.ctime3
+      value: 40670
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.ctime4
+      value: 49344
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.ctime5
+      value: 56476
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key0.a
@@ -2764,11 +2864,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key0.g
-      value: 0.7490196
+      value: 0.6901961
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key0.r
-      value: 0.047058824
+      value: 0.21960784
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key1.a
@@ -2776,15 +2876,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key1.b
-      value: 0
+      value: 0.13725491
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key1.g
-      value: 0.7490196
+      value: 0.29411766
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.key1.r
-      value: 0.047058824
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key2.g
+      value: 0.8784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key2.r
+      value: 0.4392157
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key3.g
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key4.b
+      value: 0.07271269
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key4.g
+      value: 0.8113208
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key4.r
+      value: 0.36282992
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key5.b
+      value: 0.08099826
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[2].m_GradientMax.key5.g
+      value: 0.33430097
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMin.atime1
@@ -2799,7 +2931,31 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.ctime0
+      value: 2506
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.ctime1
+      value: 17926
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.ctime2
+      value: 31997
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.ctime3
+      value: 42405
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.ctime4
+      value: 55705
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.ctime5
+      value: 63608
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.ctime6
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2808,15 +2964,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.key0.b
-      value: 0
+      value: 0.08940027
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.key0.g
-      value: 0.7294118
+      value: 0.8772841
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.key0.r
-      value: 0.7490196
+      value: 0.91167253
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.key1.a
@@ -2828,11 +2984,71 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.key1.g
-      value: 0.7294118
+      value: 0.6136042
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.key1.r
-      value: 0.7490196
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key2.b
+      value: 0.033018887
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key2.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key2.r
+      value: 0.97421366
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key3.b
+      value: 0.34901956
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key3.g
+      value: 0.7642801
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key3.r
+      value: 0.93333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key4.b
+      value: 0.27475297
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key4.g
+      value: 0.831308
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key4.r
+      value: 0.9680806
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key5.b
+      value: 0.46666667
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key5.g
+      value: 0.9647059
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key5.r
+      value: 0.9361935
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key6.b
+      value: 0.88235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key6.g
+      value: 0.98039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[3].m_GradientMax.key6.r
+      value: 0.9529412
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMin.atime1
@@ -2848,6 +3064,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.ctime1
+      value: 9059
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.ctime2
+      value: 19468
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.ctime3
+      value: 32382
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.ctime4
+      value: 43176
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.ctime5
+      value: 54356
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.ctime6
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2864,7 +3100,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.key0.r
-      value: 0.06666667
+      value: 0.5764706
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.key1.a
@@ -2872,15 +3108,71 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.key1.b
-      value: 0.7490196
+      value: 0.9716981
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.key1.g
-      value: 0
+      value: 0.49043253
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.key1.r
-      value: 0.06666667
+      value: 0.86083055
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key2.b
+      value: 0.7490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key2.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key2.r
+      value: 0.5764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key3.b
+      value: 0.9056604
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key3.g
+      value: 0.72196513
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key3.r
+      value: 0.8639115
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key4.b
+      value: 0.7490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key4.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key4.r
+      value: 0.5764706
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key5.b
+      value: 0.8113208
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key5.g
+      value: 0.21048418
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key5.r
+      value: 0.672908
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key6.b
+      value: 0.7490196
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[4].m_GradientMax.key6.r
+      value: 0.5764706
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMin.atime1
@@ -2896,6 +3188,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.ctime1
+      value: 11372
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.ctime2
+      value: 22166
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.ctime3
+      value: 40478
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.ctime4
+      value: 52814
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.ctime5
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2904,11 +3212,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.key0.b
-      value: 0.67058825
+      value: 0.9245283
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.key0.g
-      value: 0.7490196
+      value: 0.80554456
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key0.r
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.key1.a
@@ -2916,10 +3228,54 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.key1.b
-      value: 0.67058825
+      value: 0.7554871
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.key1.g
+      value: 0.5736853
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key1.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key2.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key2.g
+      value: 0.32924554
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key2.r
+      value: 0.2783019
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key3.b
+      value: 0.895288
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key3.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key3.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key4.b
+      value: 0.94847614
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key4.g
+      value: 0.52695584
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key5.b
+      value: 0.67058825
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[5].m_GradientMax.key5.g
       value: 0.7490196
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2935,7 +3291,31 @@ PrefabInstance:
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.ctime0
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.ctime1
+      value: 11180
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.ctime2
+      value: 23130
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.ctime3
+      value: 42212
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.ctime4
+      value: 54163
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.ctime5
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.ctime6
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2944,15 +3324,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key0.b
-      value: 0
+      value: 0.09019605
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key0.g
-      value: 0.09019608
+      value: 0.5442522
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key0.r
-      value: 0.7490196
+      value: 0.9098039
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key1.a
@@ -2960,15 +3340,75 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key1.b
-      value: 0
+      value: 0.46666667
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key1.g
-      value: 0.09019608
+      value: 0.9647059
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.key1.r
-      value: 0.7490196
+      value: 0.9361935
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key2.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key2.g
+      value: 0.6136042
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key2.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key3.b
+      value: 0.124061674
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key3.g
+      value: 0.42608333
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key3.r
+      value: 0.870517
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key4.b
+      value: 0.41236037
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key4.g
+      value: 0.87932885
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key4.r
+      value: 0.92578316
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key5.b
+      value: 0.11053756
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key5.g
+      value: 0.4048216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key5.r
+      value: 0.8679245
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key6.b
+      value: 0.88235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key6.g
+      value: 0.98039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[6].m_GradientMax.key6.r
+      value: 0.9529412
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMin.atime1
@@ -2984,6 +3424,26 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.ctime1
+      value: 12529
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.ctime2
+      value: 30069
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.ctime3
+      value: 48188
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.ctime4
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.ctime5
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.ctime6
       value: 65535
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
@@ -2992,15 +3452,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key0.b
-      value: 0.7490196
+      value: 0.68279725
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key0.g
-      value: 0
+      value: 0.13105197
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key0.r
-      value: 0.5764706
+      value: 0.8962264
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key1.a
@@ -3008,15 +3468,75 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key1.b
-      value: 0.7490196
+      value: 0.9747353
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key1.g
-      value: 0
+      value: 0.7882353
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.key1.r
-      value: 0.5764706
+      value: 0.99215686
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key2.b
+      value: 0.7860048
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key2.g
+      value: 0.2078431
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key2.r
+      value: 0.93333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key3.b
+      value: 0.9811321
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key3.g
+      value: 0.7080812
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key3.r
+      value: 0.950244
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key4.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key4.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key4.r
+      value: 0.9230771
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key5.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key5.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key5.r
+      value: 0.9230771
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key6.b
+      value: 0.88235295
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key6.g
+      value: 0.98039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: particleColors.Array.data[7].m_GradientMax.key6.r
+      value: 0.9529412
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMin.atime1
@@ -3032,7 +3552,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[0].m_GradientMin.m_NumAlphaKeys
@@ -3048,7 +3568,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[1].m_GradientMin.m_NumAlphaKeys
@@ -3064,7 +3584,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[2].m_GradientMin.m_NumAlphaKeys
@@ -3080,7 +3600,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[3].m_GradientMin.m_NumAlphaKeys
@@ -3096,7 +3616,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[4].m_GradientMin.m_NumAlphaKeys
@@ -3112,7 +3632,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[5].m_GradientMin.m_NumAlphaKeys
@@ -3128,7 +3648,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[6].m_GradientMin.m_NumAlphaKeys
@@ -3144,7 +3664,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMax.m_NumColorKeys
-      value: 2
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.data[7].m_GradientMin.m_NumAlphaKeys
