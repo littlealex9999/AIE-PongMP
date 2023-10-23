@@ -95,6 +95,8 @@ public class MenuManager : MonoBehaviour
     public Toggle transformerShieldHealthToggle;
     public bool settingUIVars { get; private set; } = true;
 
+    public GameObject startGameButton;
+    public GameObject notEnoughPlayersButton;
     // Start is called before the first frame update
     void Start()
     {
@@ -215,6 +217,22 @@ public class MenuManager : MonoBehaviour
         {
             EditPresetSelectScreenCycle(editPresetCurrentActive - 1);
             eventSystem.SetSelectedGameObject(editPresetDefault);
+        }
+    }
+
+    public void CheckPlayerCount()
+    {
+        if (GameManager.instance.players.Count >= 2)
+        {
+            startGameButton.SetActive(true);
+            notEnoughPlayersButton.SetActive(false);
+            eventSystem.SetSelectedGameObject(startGameButton);
+        }
+        else
+        {
+            startGameButton.SetActive(false);
+            notEnoughPlayersButton.SetActive(true);
+            eventSystem.SetSelectedGameObject(notEnoughPlayersButton);
         }
     }
 

@@ -62,14 +62,14 @@ public class Ball : MonoBehaviour
                 if (GameManager.instance.selectedGameVariables.enableHitstun) {
                     StartCoroutine(HitStun(player, data, 1.0f));
                 } else {
-                    PlayVFX(hitPaddle, data.collisionPos, player.color);
+                    PlayVFX(hitPaddle, data.collisionPos, player.particleColor);
                     EventManager.instance.ballHitEvent.Invoke();
                     mediumRing.Play();
                 }
             }
             else
             {
-                PlayVFX(bouncePaddle, data.collisionPos, player.color);
+                PlayVFX(bouncePaddle, data.collisionPos, player.particleColor);
                 EventManager.instance.ballBounceEvent.Invoke();
                 smallRing.Play();
             }
@@ -97,7 +97,7 @@ public class Ball : MonoBehaviour
 
         collider.immovable = false;
 
-        PlayVFX(hitPaddle, data.collisionPos, player.color);
+        PlayVFX(hitPaddle, data.collisionPos, player.particleColor);
         EventManager.instance.ballHitEvent.Invoke();
         mediumRing.Play();
 
@@ -159,6 +159,14 @@ public class Ball : MonoBehaviour
         vfxColorSetter.SetStartColor(startColor);
     }
 
+    void PlayVFX(GameObject particle, Vector3 pos, ParticleSystem.MinMaxGradient color)
+    {
+        GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
+
+        vfxColorSetter.SetLifetimeColor(color);
+    }
+
     private void CheckIfHitBounds()
     {
         if (distFromCenter + radius > GameManager.instance.mapRadius)
@@ -169,7 +177,7 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
-                PlayVFX(bounceShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
+                PlayVFX(bounceShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 mediumRing.Play();
 
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
@@ -183,7 +191,7 @@ public class Ball : MonoBehaviour
             }
             else // if player dies
             {
-                PlayVFX(playerDies, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
+                PlayVFX(playerDies, transform.position, GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 largeRing.Play();
                 return;
             }

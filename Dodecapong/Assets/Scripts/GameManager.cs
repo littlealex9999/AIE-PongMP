@@ -52,6 +52,7 @@ public class GameManager : MonoBehaviour
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
+    [SerializeField] List<ParticleSystem.MinMaxGradient> particleColors;
     [SerializeField] List<Texture> playerShapes = new List<Texture>();
     #endregion
 
@@ -173,6 +174,12 @@ public class GameManager : MonoBehaviour
     {
         if (index < playerEmissives.Count) return playerEmissives[index];
         else return playerEmissives[playerEmissives.Count - 1];
+    }
+
+    public ParticleSystem.MinMaxGradient GetPlayerParticleColor(int index)
+    {
+        if (index < particleColors.Count) return particleColors[index];
+        else return particleColors[particleColors.Count - 1];
     }
 
     public Vector2 GetCircleIntersection(Vector2 startPos, Vector2 direction, float radius)
@@ -316,6 +323,8 @@ public class GameManager : MonoBehaviour
 
         players.Add(player);
 
+        MenuManager.instance.CheckPlayerCount();
+
         return player;
     }
 
@@ -326,6 +335,8 @@ public class GameManager : MonoBehaviour
 
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
+
+        MenuManager.instance.CheckPlayerCount();
 
         UpdatePlayerImages();
     }

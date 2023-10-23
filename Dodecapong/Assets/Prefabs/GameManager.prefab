@@ -307,6 +307,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: hoverUI
+      value: 
+      objectReference: {fileID: 8300000, guid: f322d44a6432c0b499c4ba813b25f2bd, type: 3}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
+      propertyPath: scrollPageUI
+      value: 
+      objectReference: {fileID: 8300000, guid: 3d7cd41c83b954a4491d8a61175ff8ad, type: 3}
+    - target: {fileID: 4273386352708368395, guid: 88b4d5c98198a074dbd32be2edaa4575, type: 3}
       propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.size
       value: 2
       objectReference: {fileID: 0}
