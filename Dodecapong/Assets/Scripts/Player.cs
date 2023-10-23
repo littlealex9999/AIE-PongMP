@@ -18,6 +18,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public int shieldHealth;
 
     [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
+    [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get { return GameManager.instance.GetPlayerParticleColor(ID); } private set { } }
 
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
