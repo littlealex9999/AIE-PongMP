@@ -95,6 +95,10 @@ public class MenuManager : MonoBehaviour
     public Toggle transformerShieldHealthToggle;
     public bool settingUIVars { get; private set; } = true;
 
+    public List<Selectable> applyButtonUps;
+    public List<Selectable> applyButtonDowns;
+    public Button applyButton;
+
     public GameObject startGameButton;
     public GameObject notEnoughPlayersButton;
     // Start is called before the first frame update
@@ -183,9 +187,18 @@ public class MenuManager : MonoBehaviour
         if (index < 0) index = editPresetSubScreens.Length - 1;
 
         foreach (GameObject screen in editPresetSubScreens) screen.SetActive(false);
+
+        Navigation navigation = new()
+        {
+            mode = Navigation.Mode.Explicit,
+            selectOnDown = applyButtonDowns[index].GetComponent<Selectable>(),
+            selectOnUp = applyButtonUps[index].GetComponent<Selectable>()
+        };
+        applyButton.navigation = navigation;
+
         editPresetSubScreens[index].SetActive(true);
         editPresetCurrentActive = index;
-        eventSystem.SetSelectedGameObject(editPresetDefault);
+        eventSystem.SetSelectedGameObject(applyButton.gameObject);
     }
 
     public void PageRight()
@@ -304,6 +317,11 @@ public class MenuManager : MonoBehaviour
     public void SubmitButton()
     {
         EventManager.instance?.selectUIEvent?.Invoke();
+    }
+
+    public void Apply()
+    {
+        eventSystem.SetSelectedGameObject(editPresetDefault);
     }
 
     public void QuitGame()
