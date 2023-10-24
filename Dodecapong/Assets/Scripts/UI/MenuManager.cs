@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 using System.Xml.Serialization;
+using UnityEngine.InputSystem;
 
 [Serializable]
 public class MenuTextPair
@@ -42,6 +43,7 @@ public class MenuManager : MonoBehaviour
     #endregion
 
     public EventSystem eventSystem;
+    public PlayerInputManager playerInputManager;
 
     [Header("Screens")]
     public GameObject mainMenu;
@@ -253,6 +255,7 @@ public class MenuManager : MonoBehaviour
     {
         DisableAll();
         startScreen.SetActive(true);
+        playerInputManager.EnableJoining();
         eventSystem.SetSelectedGameObject(startDefault);
     }
 
@@ -299,6 +302,7 @@ public class MenuManager : MonoBehaviour
     {
         DisableAll();
         mainMenu.SetActive(true);
+        playerInputManager.DisableJoining();
         eventSystem.SetSelectedGameObject(mainMenuDefault);
     }
 

@@ -427,8 +427,9 @@ public class GameManager : MonoBehaviour
             player.rotationalForce = selectedGameVariables.playerRotationalForce;
             player.collider.normalBending = selectedGameVariables.playerNormalBending;
 
-            player.dashCooldown = selectedGameVariables.dashCooldown;
+            player.dashDistance = selectedGameVariables.dashDistance;
             player.dashDuration = selectedGameVariables.dashDuration;
+            player.dashCooldown = selectedGameVariables.dashCooldown;
 
             player.hitCooldown = selectedGameVariables.hitCooldown;
             player.hitDuration = selectedGameVariables.hitDuration;
