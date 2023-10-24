@@ -54,7 +54,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void Dash(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -68,7 +68,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void SplitDash(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls) playerA.Dash();
         }
@@ -104,14 +104,14 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void SplitHit(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls) playerA.Hit();
         }
     }
     public void Hit(InputAction.CallbackContext context)
     {
-        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -125,7 +125,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void Grab(InputAction.CallbackContext context)
     {
-        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -139,7 +139,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void SplitGrab(InputAction.CallbackContext context)
     {
-        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay )
         {
             if (splitControls) playerA.Grab(context);
         }
