@@ -20,6 +20,8 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public int shieldHealth;
 
+    public bool dead;
+
     [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
     [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get { return GameManager.instance.GetPlayerParticleColor(ID); } private set { } }
 
@@ -32,7 +34,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public float hitCooldown;
     bool readyToHit = true;
 
-    public bool grabAttractoin;
+    public bool grabAttraction;
     public float grabAttractionForce;
     [HideInInspector] public float grabDuration;
     [HideInInspector] public float grabCooldown;
@@ -108,13 +110,15 @@ public class Player : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (dead) return;
+
         if (isAI) {
             //CalculateAIInput();
         }
 
         Move();
 
-        if (!grabAttractoin) return;
+        if (!grabAttraction) return;
 
         if (grabbing && heldBall == null && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
@@ -137,7 +141,7 @@ public class Player : MonoBehaviour
     #region Functions
     public void Dash()
     {
-        if (!isActiveAndEnabled) return;
+        if (!isActiveAndEnabled || dead) return;
         StartCoroutine(DashRoutine());
     }
 
@@ -148,6 +152,7 @@ public class Player : MonoBehaviour
 
     public void Grab(InputAction.CallbackContext context)
     {
+        if (dead) return;
         if (context.started)
         {
             grabParticles.gameObject.GetComponent<VFXColorSetter>().SetStartColor(color);
@@ -213,10 +218,12 @@ public class Player : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(bool clampSpeed = true)
     {
-        if (movementInput == Vector2.zero) {
+        if (movementInput == Vector2.zero)
+        {
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay || hitstunned) {
+        } else if (GameManager.instance.holdGameplay || hitstunned)
+        {
             return;
         }
 

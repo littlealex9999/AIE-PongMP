@@ -25,14 +25,18 @@ public class BlackHole : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!ball) {
+        if (!ball) 
+        {
             duration -= Time.fixedDeltaTime;
-            if (duration <= 0) {
+            if (duration <= 0)
+            {
                 StartCoroutine(DestroyHole(null));
             }
 
-            if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
-                for (int i = 0; i < GameManager.instance.balls.Count; i++) {
+            if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) 
+            {
+                for (int i = 0; i < GameManager.instance.balls.Count; i++) 
+                {
                     Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
                     Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
                     GameManager.instance.balls[i].collider.velocity += gravity * gravityStrength;
