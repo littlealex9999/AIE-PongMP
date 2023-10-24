@@ -427,8 +427,9 @@ public class GameManager : MonoBehaviour
             player.rotationalForce = selectedGameVariables.playerRotationalForce;
             player.collider.normalBending = selectedGameVariables.playerNormalBending;
 
-            player.dashCooldown = selectedGameVariables.dashCooldown;
+            player.dashDistance = selectedGameVariables.dashDistance;
             player.dashDuration = selectedGameVariables.dashDuration;
+            player.dashCooldown = selectedGameVariables.dashCooldown;
 
             player.hitCooldown = selectedGameVariables.hitCooldown;
             player.hitDuration = selectedGameVariables.hitDuration;
@@ -444,6 +445,8 @@ public class GameManager : MonoBehaviour
                 mainTexture = playerShapes[i]
             };
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
+
+            player.dead = false;
 
             alivePlayers.Add(player);
         }
@@ -791,13 +794,13 @@ public class GameManager : MonoBehaviour
         Player player = alivePlayers[alivePlayerID];
         if (player.shieldHealth <= 1)
         {
+            player.dead = true;
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
         } else 
         {
             player.shieldHealth--;
-
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
             if (!player.isAI) player.controllerHandler.SetHaptics(shieldTouchHaptics);

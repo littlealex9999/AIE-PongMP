@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 865092517651285189}
   - component: {fileID: 4809125511536170512}
   - component: {fileID: 3454404019003372070}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Trails
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5181,6 +5181,7 @@ MonoBehaviour:
   trigger: 1
   immovable: 1
   addForceWhileImmovable: 1
+  collidingWith: []
   radius: 0.25
 --- !u!114 &2545408316406588544
 MonoBehaviour:
@@ -5194,9 +5195,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9ca32c5a59b6d54f86130bfb7bab6eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pointer: {fileID: 0}
   gravityStrength: 0.1
   duration: 10
   destroyTime: 3.5
+  ballLaunchMult: 4
   pullEnabled: 1
 --- !u!82 &5922263977324351972
 AudioSource:
@@ -5413,13 +5416,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1316112969400888432}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Swirls_Purple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1316112969400888432
 Transform:
   m_ObjectHideFlags: 0
@@ -5585,7 +5588,7 @@ GameObject:
   - component: {fileID: 8387133042906903342}
   - component: {fileID: 1871488185096986161}
   - component: {fileID: 1001401881266309491}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Particles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15232,6 +15235,10 @@ PrefabInstance:
     - target: {fileID: 2949507685277616168, guid: 673c84c3df030b148900a9ea80a9eaa8, type: 3}
       propertyPath: m_Name
       value: PRT_BlackHolePins
+      objectReference: {fileID: 0}
+    - target: {fileID: 2949507685277616168, guid: 673c84c3df030b148900a9ea80a9eaa8, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2949507685277616170, guid: 673c84c3df030b148900a9ea80a9eaa8, type: 3}
       propertyPath: ShapeModule.arc.speed.scalar

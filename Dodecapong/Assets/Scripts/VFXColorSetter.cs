@@ -14,7 +14,6 @@ public class VFXColorSetter : MonoBehaviour
 
     private void OnValidate()
     {
-        
         ApplyValues();
     }
 

@@ -21,6 +21,7 @@ public class GameVariables : ScriptableObject
         playerRotationalForce = gv.playerRotationalForce;
         playerNormalBending = gv.playerNormalBending;
         dashEnabled = gv.dashEnabled;
+        dashDistance = gv.dashDistance;
         dashDuration = gv.dashDuration;
         dashCooldown = gv.dashCooldown;
         hitEnabled = gv.hitEnabled;
@@ -73,6 +74,7 @@ public class GameVariables : ScriptableObject
 
     [Space()]
     public bool dashEnabled = true;
+    public float dashDistance = 0.5f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 1;
 
@@ -92,6 +94,7 @@ public class GameVariables : ScriptableObject
     public static void SetPlayerRotationalForce(float value) { GameManager.instance.selectedGameVariables.playerRotationalForce = value; }
     public static void SetPlayerNormalBending(float value) { GameManager.instance.selectedGameVariables.playerNormalBending = value; }
     public static void SetPlayerDashEnabled(bool enabled) { GameManager.instance.selectedGameVariables.dashEnabled = enabled; }
+    public static void SetPlayerDashDistance(float value) { GameManager.instance.selectedGameVariables.dashDistance = value; }
     public static void SetPlayerDashDuration(float value) { GameManager.instance.selectedGameVariables.dashDuration = value; }
     public static void SetPlayerDashCooldown(float value) { GameManager.instance.selectedGameVariables.dashCooldown = value; }
     public static void SetPlayerHitEnabled(bool enabled) { GameManager.instance.selectedGameVariables.hitEnabled = enabled; }
