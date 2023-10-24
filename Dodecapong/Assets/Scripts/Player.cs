@@ -120,9 +120,17 @@ public class Player : MonoBehaviour
         {
             for (int i = 0; i < GameManager.instance.balls.Count; i++)
             {
-                Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
-                Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
-                GameManager.instance.balls[i].collider.velocity += gravity * grabAttractionForce;
+                Ball ball = GameManager.instance.balls[i];
+
+                float distance = Vector3.Distance(ball.transform.position, transform.position);
+
+                Debug.Log(distance);
+
+                if (distance > 2.0f) continue;
+
+                Vector2 deltaPos = transform.position - ball.transform.position;
+                Vector2 gravity = deltaPos.normalized * (6.67f * ball.collider.mass * collider.mass / deltaPos.sqrMagnitude);
+                ball.collider.velocity += gravity * grabAttractionForce;
             }
         }
     }
