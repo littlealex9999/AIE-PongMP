@@ -446,6 +446,8 @@ public class GameManager : MonoBehaviour
             };
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
+            player.dead = false;
+
             alivePlayers.Add(player);
         }
         UpdateAlivePlayers();
@@ -792,13 +794,13 @@ public class GameManager : MonoBehaviour
         Player player = alivePlayers[alivePlayerID];
         if (player.shieldHealth <= 1)
         {
+            player.dead = true;
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
         } else 
         {
             player.shieldHealth--;
-
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
             if (!player.isAI) player.controllerHandler.SetHaptics(shieldTouchHaptics);

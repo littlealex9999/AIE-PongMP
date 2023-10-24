@@ -47,7 +47,7 @@ public class MenuManager : MonoBehaviour
 
     [Header("Screens")]
     public GameObject mainMenu;
-    public GameObject startScreen;
+    public GameObject joinScreen;
     public GameObject presetSelectScreen;
     public GameObject editPresetScreen;
     public GameObject gameScreen;
@@ -62,7 +62,8 @@ public class MenuManager : MonoBehaviour
 
     [Header("Default Buttons")]
     public GameObject mainMenuDefault;
-    public GameObject startDefault;
+    public GameObject joinScreenStart;
+    public GameObject joinScreenNEP;
     public GameObject presetSelectDefault;
     public GameObject editPresetDefault;
     public GameObject pauseDefault;
@@ -123,7 +124,7 @@ public class MenuManager : MonoBehaviour
     {
         editPresetScreen.SetActive(false);
         presetSelectScreen.SetActive(false);
-        startScreen.SetActive(false);
+        joinScreen.SetActive(false);
         mainMenu.SetActive(false);
         gameScreen.SetActive(false);
         pauseScreen.SetActive(false);
@@ -148,7 +149,7 @@ public class MenuManager : MonoBehaviour
                 MainMenu();
                 break;
             case GameManager.GameState.JOINMENU:
-                StartScreen();
+                JoinScreen();
                 break;
             case GameManager.GameState.PRESETSELECT:
                 PresetSelectScreen();
@@ -251,12 +252,15 @@ public class MenuManager : MonoBehaviour
         }
     }
 
-    public void StartScreen()
+    public void JoinScreen()
     {
         DisableAll();
-        startScreen.SetActive(true);
+        joinScreen.SetActive(true);
         playerInputManager.EnableJoining();
-        eventSystem.SetSelectedGameObject(startDefault);
+
+        if (joinScreenNEP.activeSelf) eventSystem.SetSelectedGameObject(joinScreenNEP);
+        else if (joinScreenStart.activeSelf) eventSystem.SetSelectedGameObject(joinScreenStart);
+
     }
 
     public void PresetSelectScreen()

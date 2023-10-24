@@ -48,25 +48,28 @@ public class Ball : MonoBehaviour
     {
         if (holdingPlayer != null) return;
 
-        if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
+        if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
         {
+            if (player.unhittable) return;
             if (player.grabbing && player.readyToGrab)
             {
                 transform.SetParent(player.transform);
-                StartCoroutine(player.GrabRoutine(data));
                 player.heldBall = this;
+                StartCoroutine(player.GrabRoutine(data));
                 holdingPlayer = player;
             }
-            else if (player.hitting)
-            {
-                if (GameManager.instance.selectedGameVariables.enableHitstun) {
-                    StartCoroutine(HitStun(player, data, 1.0f));
-                } else {
-                    PlayVFX(hitPaddle, data.collisionPos, Quaternion.Euler(Vector3.back), player.particleColor);
-                    EventManager.instance.ballHitEvent.Invoke();
-                    mediumRing.Play();
-                }
-            }
+            //else if (player.hitting)
+            //{
+            //    if (GameManager.instance.selectedGameVariables.enableHitstun)
+            //    {
+            //        StartCoroutine(HitStun(player, data, 1.0f));
+            //    } else
+            //    {
+            //        PlayVFX(hitPaddle, data.collisionPos, Quaternion.Euler(Vector3.back), player.particleColor);
+            //        EventManager.instance.ballHitEvent.Invoke();
+            //        mediumRing.Play();
+            //    }
+            //}
             else
             {
                 PlayVFX(bouncePaddle, data.collisionPos, Quaternion.Euler(Vector3.back), player.particleColor);
@@ -141,6 +144,11 @@ public class Ball : MonoBehaviour
         }
     }
 
+    public void HitVFX()
+    {
+        PlayVFX(hitPaddle, transform.position, Quaternion.Euler(Vector3.back), holdingPlayer.particleColor);
+    }
+
     void PlayVFX(GameObject particle, Vector3 pos, Quaternion rot)
     {
         Instantiate(particle, pos, rot);
@@ -177,6 +185,8 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
+                StartCoroutine(GameManager.instance.alivePlayers[alivePlayerID].UnHittable());
+
                 PlayVFX(bounceShield, transform.position, Quaternion.Euler(Vector3.back), GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 mediumRing.Play();
 

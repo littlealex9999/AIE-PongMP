@@ -56988,7 +56988,7 @@ MonoBehaviour:
   eventSystem: {fileID: 0}
   playerInputManager: {fileID: 0}
   mainMenu: {fileID: 7521882064166033467}
-  startScreen: {fileID: 7521882062114790253}
+  joinScreen: {fileID: 7521882062114790253}
   presetSelectScreen: {fileID: 3512024576463381898}
   editPresetScreen: {fileID: 3416601132890745067}
   gameScreen: {fileID: 7521882063906400499}
@@ -57007,7 +57007,8 @@ MonoBehaviour:
   - {fileID: 532253031691497001}
   - {fileID: 4463835873964672808}
   mainMenuDefault: {fileID: 7521882062942111294}
-  startDefault: {fileID: 7650945474825963369}
+  joinScreenStart: {fileID: 8728336424204008982}
+  joinScreenNEP: {fileID: 7650945474825963369}
   presetSelectDefault: {fileID: 2554453339130070007}
   editPresetDefault: {fileID: 2749177434638142531}
   pauseDefault: {fileID: 7011704752599882865}
