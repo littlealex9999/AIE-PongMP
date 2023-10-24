@@ -32,6 +32,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public float hitCooldown;
     bool readyToHit = true;
 
+    public bool grabAttractoin;
+    public float grabAttractionForce;
     [HideInInspector] public float grabDuration;
     [HideInInspector] public float grabCooldown;
     [HideInInspector] public bool readyToGrab = true;
@@ -54,8 +56,10 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Vector3 facingDirection = Vector3.right;
 
+    public ParticleSystem grabParticles;
     public GameObject dashTrailObj;
     private TrailRenderer dashTrail;
+
     public AnimationCurve dashAnimationCurve;
     [HideInInspector] public bool dashing = false;
 
@@ -63,6 +67,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool hitting = false;
     public float hitStrength;
 
+    [SerializeField] private Transform paddleFace;
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
     [HideInInspector] public bool hitstunned = false;
@@ -108,6 +113,18 @@ public class Player : MonoBehaviour
         }
 
         Move();
+
+        if (!grabAttractoin) return;
+
+        if (grabbing && heldBall == null && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
+        {
+            for (int i = 0; i < GameManager.instance.balls.Count; i++)
+            {
+                Vector2 deltaPos = transform.position - GameManager.instance.balls[i].transform.position;
+                Vector2 gravity = deltaPos.normalized * (6.67f * GameManager.instance.balls[i].collider.mass * collider.mass / deltaPos.sqrMagnitude);
+                GameManager.instance.balls[i].collider.velocity += gravity * grabAttractionForce;
+            }
+        }
     }
     #endregion
 
@@ -127,10 +144,13 @@ public class Player : MonoBehaviour
     {
         if (context.started)
         {
+            grabParticles.gameObject.GetComponent<VFXColorSetter>().SetStartColor(color);
+            grabParticles.Play();
             grabbing = true;
         }
         else if (context.canceled)
         {
+            grabParticles.Stop();
             //Release();
             grabbing = false;
         }
@@ -356,6 +376,7 @@ public class Player : MonoBehaviour
         if (heldBall)
         {
             if (heldBall.holdingPlayer != this) return;
+            heldBall.HitVFX();
             heldBall.holdingPlayer = null;
             heldBall.transform.parent = null;
             heldBall.collider.velocity = releaseVel;
@@ -364,6 +385,7 @@ public class Player : MonoBehaviour
             grabbing = false;
             readyToHit = true;
             animator.SetTrigger("Play Hit");
+
             //Hit();
         }
         else
@@ -488,15 +510,16 @@ public class Player : MonoBehaviour
     public IEnumerator GrabRoutine(CollisionData data)
     {
         if (!readyToGrab) yield break;
+        readyToGrab = false;
 
         EventManager.instance.ballGrabEvent.Invoke();
 
-        readyToGrab = false;
-        StartCoroutine(GrabReset());
+        heldBall.transform.localPosition = paddleFace.localPosition;
 
         float timeElapsed = 0;
 
-        while (timeElapsed < grabDuration) {
+        while (timeElapsed < grabDuration)
+        {
             timeElapsed += Time.deltaTime;
             if (!grabbing) break;
 
@@ -506,22 +529,24 @@ public class Player : MonoBehaviour
         Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
-    }
 
-    IEnumerator GrabReset()
-    {
-        while (grabbing) {
-            yield return new WaitForEndOfFrame();
-        }
+        if (grabParticles.isPlaying) grabParticles.Stop();
 
-        float grabCooldownTimer = grabCooldown;
-        while (grabCooldownTimer > 0) {
-            grabCooldownTimer -= Time.deltaTime;
-
-            yield return new WaitForEndOfFrame();
-        }
+        yield return new WaitForSeconds(grabCooldown);
 
         readyToGrab = true;
+    }
+
+    public bool unhittable;
+    public IEnumerator UnHittable()
+    {
+        if (unhittable) yield break;
+
+        unhittable = true;
+
+        yield return new WaitForSeconds(0.5f);
+
+        unhittable = false;
     }
     #endregion
 }
