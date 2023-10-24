@@ -124,8 +124,6 @@ public class Player : MonoBehaviour
 
                 float distance = Vector3.Distance(ball.transform.position, transform.position);
 
-                Debug.Log(distance);
-
                 if (distance > 2.0f) continue;
 
                 Vector2 deltaPos = transform.position - ball.transform.position;

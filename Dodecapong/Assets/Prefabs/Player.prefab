@@ -142,7 +142,7 @@ MonoBehaviour:
   dashCooldown: 0
   hitDuration: 0
   hitCooldown: 0
-  grabAttractoin: 1
+  grabAttractoin: 0
   grabAttractionForce: 0.2
   grabDuration: 0
   grabCooldown: 0
@@ -443,7 +443,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5005483506681432917, guid: 2e5685d2534bfd5439f143fd65cb20bd, type: 3}
       propertyPath: moveWithTransform
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5005483506681432917, guid: 2e5685d2534bfd5439f143fd65cb20bd, type: 3}
       propertyPath: ColorModule.enabled
@@ -455,7 +455,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5005483506681432917, guid: 2e5685d2534bfd5439f143fd65cb20bd, type: 3}
       propertyPath: ShapeModule.radius.value
-      value: 4
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5005483506681432917, guid: 2e5685d2534bfd5439f143fd65cb20bd, type: 3}
       propertyPath: ShapeModule.radiusThickness
@@ -571,7 +571,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5005483506681432919, guid: 2e5685d2534bfd5439f143fd65cb20bd, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.115
+      value: -0.031
       objectReference: {fileID: 0}
     - target: {fileID: 5005483506681432919, guid: 2e5685d2534bfd5439f143fd65cb20bd, type: 3}
       propertyPath: m_LocalPosition.y
