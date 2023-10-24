@@ -4972,6 +4972,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  enableColorOverLifeTime: 0
   colorOverLifetime:
     m_Mode: 0
     m_GradientMin:
@@ -5034,6 +5035,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  ignoredSystems: []
 --- !u!1 &5005483506681432918
 GameObject:
   m_ObjectHideFlags: 0
@@ -6254,7 +6256,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   ColorModule:
-    enabled: 1
+    enabled: 0
     gradient:
       serializedVersion: 2
       minMaxState: 0
@@ -9856,6 +9858,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  enableColorOverLifeTime: 0
   colorOverLifetime:
     m_Mode: 0
     m_GradientMin:
@@ -9918,6 +9921,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  ignoredSystems: []
 --- !u!1 &5005483506693465094
 GameObject:
   m_ObjectHideFlags: 0
@@ -14890,6 +14894,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  enableColorOverLifeTime: 0
   colorOverLifetime:
     m_Mode: 0
     m_GradientMin:
@@ -14952,6 +14957,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  ignoredSystems: []
 --- !u!1 &5005483507455674845
 GameObject:
   m_ObjectHideFlags: 0
@@ -19924,6 +19930,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  enableColorOverLifeTime: 0
   colorOverLifetime:
     m_Mode: 0
     m_GradientMin:
@@ -19986,3 +19993,4 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0, g: 0, b: 0, a: 0}
+  ignoredSystems: []
