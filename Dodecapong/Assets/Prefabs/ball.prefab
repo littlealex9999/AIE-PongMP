@@ -330,6 +330,7 @@ MonoBehaviour:
   bouncePaddle: {fileID: 3511931716861035794, guid: 10d5cb06056bd7b438d93c9505c96fe9, type: 3}
   hitPaddle: {fileID: 5765492447424006579, guid: 5fbbe5b806791d546807abe803adec48, type: 3}
   playerDies: {fileID: 8154808341645599611, guid: 75db88388e7966748936800ba66aefef, type: 3}
+  holdingPlayer: {fileID: 0}
   smallRing: {fileID: 4661124823747825990}
   mediumRing: {fileID: 3241484898122013697}
   largeRing: {fileID: 3209633161082959168}
@@ -404,6 +405,26 @@ PrefabInstance:
     - target: {fileID: 502101259093651934, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime2
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime3
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key2.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.m_NumAlphaKeys
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4707880850601546829, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
       propertyPath: m_Name

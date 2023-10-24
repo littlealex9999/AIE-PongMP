@@ -5,6 +5,9 @@ using System.Linq;
 using Unity.VisualScripting;
 using System.Collections.Generic;
 using UnityEditor;
+using static UnityEngine.Rendering.DebugUI;
+using UnityEngine.Windows;
+using UnityEngine.UIElements;
 
 public class Player : MonoBehaviour
 {
@@ -20,6 +23,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
     [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get { return GameManager.instance.GetPlayerParticleColor(ID); } private set { } }
 
+    [HideInInspector] public float dashDistance;
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
     bool readyToDash = true;
@@ -103,7 +107,7 @@ public class Player : MonoBehaviour
             //CalculateAIInput();
         }
 
-        Move(movementInput);
+        Move();
     }
     #endregion
 
@@ -132,55 +136,67 @@ public class Player : MonoBehaviour
         }
     }
 
+    float CalculateMoveTarget()
+    {
+        float moveTarget;
+
+        switch (controlType)
+        {
+            case ControlType.MIDSECTION:
+            case ControlType.MIDSECTION_NORMALIZED:
+            default:
+
+                moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 90) * facingDirection);
+                break;
+            case ControlType.PADDLE:
+            case ControlType.PADDLE_NORMALIZED:
+
+                moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
+                break;
+        }
+
+        if (moveTarget < deadzone && moveTarget > -deadzone)
+        {
+            collider.velocity = Vector2.zero;
+            return 0;
+        }
+
+        switch (controlType)
+        {
+            case ControlType.MIDSECTION_NORMALIZED:
+            case ControlType.PADDLE_NORMALIZED:
+
+                if (moveTarget > deadzone)
+                {
+                    moveTarget = 1.0f;
+                }
+                else
+                {
+                    moveTarget = -1.0f;
+                }
+                break;
+        }
+
+        return moveTarget;
+    }
+
     /// <summary>
     /// Use a Vector3 input from a controller and dot it with the direction this paddle is facing 
     /// to get a move input based on the direction that was input and the direction you can move
     /// </summary>
-    /// <param name="input"></param>
     /// <param name="clampSpeed"></param>
-    public void Move(Vector2 input, bool clampSpeed = true)
+    public void Move(bool clampSpeed = true)
     {
-        if (input == Vector2.zero) {
+        if (movementInput == Vector2.zero) {
             collider.velocity = Vector2.zero;
             return;
         } else if (GameManager.instance.holdGameplay || hitstunned) {
             return;
         }
 
-        float moveTarget;
+        float moveTarget = CalculateMoveTarget();
 
-        switch (controlType) {
-            case ControlType.MIDSECTION:
-            case ControlType.MIDSECTION_NORMALIZED:
-            default:
-
-                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 90) * facingDirection);
-                break;
-            case ControlType.PADDLE:
-            case ControlType.PADDLE_NORMALIZED:
-
-                moveTarget = Vector2.Dot(input, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
-                break;
-        }
-
-        if (moveTarget < deadzone && moveTarget > -deadzone) {
-            collider.velocity = Vector2.zero;
-            return;
-        }
-
-        switch (controlType) {
-            case ControlType.MIDSECTION_NORMALIZED:
-            case ControlType.PADDLE_NORMALIZED:
-
-                if (moveTarget > deadzone) {
-                    moveTarget = 1.0f;
-                } else {
-                    moveTarget = -1.0f;
-                }
-                break;
-        }
-
-        moveTarget *= input.magnitude * moveSpeed;
+        moveTarget *= movementInput.magnitude * moveSpeed;
 
         if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
 
@@ -189,9 +205,9 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
+        float angle = Angle(transform.position);
         float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
         float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
-        float angle = Angle(transform.position);
 
         if (angle > maxDev || angle < minDev) {
             if (playerMidPoint >= 180.0f) {
@@ -379,17 +395,65 @@ public class Player : MonoBehaviour
         dashTrailObj.transform.localPosition = Vector3.zero;
         dashTrail.enabled = true;
 
-        float value;
+        //float value;
         float timeElapsed = 0;
+
+        float dashAngle = 360f / GameManager.instance.alivePlayers.Count * dashDistance;
+        float startingAngle = Angle(transform.position);
+
+        float dir = -CalculateMoveTarget();
+        float targetAngle = startingAngle + dashAngle * dir;
 
         while (timeElapsed < dashDuration)
         {
-            value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
+            float currentAngle = Mathf.Lerp(targetAngle, startingAngle, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
+            float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
+            float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
+
+            if (currentAngle > maxDev || currentAngle < minDev)
+            {
+                if (playerMidPoint >= 180.0f)
+                {
+                    float oppositePoint = playerMidPoint - 180.0f;
+                    if (currentAngle < oppositePoint || currentAngle > maxDev)
+                    {
+                        // player is closer to max
+                        SetPosition(maxDev);
+                    }
+                    else
+                    {
+                        // player is closer to min
+                        SetPosition(minDev);
+                    }
+                }
+                else
+                {
+                    float oppositePoint = playerMidPoint + 180.0f;
+                    if (currentAngle < oppositePoint && currentAngle > maxDev)
+                    {
+                        // player is closer to max
+                        SetPosition(maxDev);
+                    }
+                    else
+                    {
+                        // player is closer to min
+                        SetPosition(minDev);
+                    }
+                }
+            }
+            else
+            {
+                SetPosition(currentAngle);
+            }
             timeElapsed += Time.fixedDeltaTime;
-
-            Move(dashInput * value, false);
-
             yield return new WaitForFixedUpdate();
+
+            //value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
+            //timeElapsed += Time.fixedDeltaTime;
+
+            //Move(dashInput * value, false);
+
+            //yield return new WaitForFixedUpdate();
         }
 
         dashing = false;

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 using UnityEngine.EventSystems;
 using System.Xml.Serialization;
+using UnityEngine.InputSystem;
 
 [Serializable]
 public class MenuTextPair
@@ -42,6 +43,7 @@ public class MenuManager : MonoBehaviour
     #endregion
 
     public EventSystem eventSystem;
+    public PlayerInputManager playerInputManager;
 
     [Header("Screens")]
     public GameObject mainMenu;
@@ -94,6 +96,10 @@ public class MenuManager : MonoBehaviour
     public Toggle transformerPlayerSpeedToggle;
     public Toggle transformerShieldHealthToggle;
     public bool settingUIVars { get; private set; } = true;
+
+    public List<Selectable> applyButtonUps;
+    public List<Selectable> applyButtonDowns;
+    public Button applyButton;
 
     public GameObject startGameButton;
     public GameObject notEnoughPlayersButton;
@@ -183,9 +189,18 @@ public class MenuManager : MonoBehaviour
         if (index < 0) index = editPresetSubScreens.Length - 1;
 
         foreach (GameObject screen in editPresetSubScreens) screen.SetActive(false);
+
+        Navigation navigation = new()
+        {
+            mode = Navigation.Mode.Explicit,
+            selectOnDown = applyButtonDowns[index].GetComponent<Selectable>(),
+            selectOnUp = applyButtonUps[index].GetComponent<Selectable>()
+        };
+        applyButton.navigation = navigation;
+
         editPresetSubScreens[index].SetActive(true);
         editPresetCurrentActive = index;
-        eventSystem.SetSelectedGameObject(editPresetDefault);
+        eventSystem.SetSelectedGameObject(applyButton.gameObject);
     }
 
     public void PageRight()
@@ -240,6 +255,7 @@ public class MenuManager : MonoBehaviour
     {
         DisableAll();
         startScreen.SetActive(true);
+        playerInputManager.EnableJoining();
         eventSystem.SetSelectedGameObject(startDefault);
     }
 
@@ -286,6 +302,7 @@ public class MenuManager : MonoBehaviour
     {
         DisableAll();
         mainMenu.SetActive(true);
+        playerInputManager.DisableJoining();
         eventSystem.SetSelectedGameObject(mainMenuDefault);
     }
 
@@ -304,6 +321,11 @@ public class MenuManager : MonoBehaviour
     public void SubmitButton()
     {
         EventManager.instance?.selectUIEvent?.Invoke();
+    }
+
+    public void Apply()
+    {
+        eventSystem.SetSelectedGameObject(editPresetDefault);
     }
 
     public void QuitGame()
