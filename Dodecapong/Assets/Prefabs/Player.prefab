@@ -137,12 +137,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   movementInput: {x: 0, y: 0}
   shieldHealth: 0
+  dead: 0
   dashDistance: 0
   dashDuration: 0
   dashCooldown: 0
   hitDuration: 0
   hitCooldown: 0
-  grabAttractoin: 0
+  grabAttraction: 0
   grabAttractionForce: 0.2
   grabDuration: 0
   grabCooldown: 0
