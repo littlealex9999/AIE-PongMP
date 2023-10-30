@@ -772,7 +772,10 @@ public class GameManager : MonoBehaviour
 
             for (int j = 0; j < alivePlayers[i].shieldHealth; j++)
             {
-                if (alivePlayers[i].healthBlips.Count <= j) alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                if (alivePlayers[i].healthBlips.Count <= j) {
+                    alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                    alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].name = "Player " + i + " Blip " + j;
+                }
                 alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
                 angle += angleChange;
             }
@@ -930,6 +933,10 @@ public class GameManager : MonoBehaviour
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
                 
                 float deviance = 180.0f / pseudoPlayerCount;
+                if (i == index) {
+                    deviance = 360.0f - deviance * i;
+                }
+
                 float targetMidsection;
                 if (i >= index) {
                     deviance *= -1;
@@ -963,6 +970,15 @@ public class GameManager : MonoBehaviour
 
             pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+        }
+
+        for (int i = 0; i < players.Count; i++) {
+            for (int j = 0; j < players[i].healthBlips.Count; j++) {
+                // health blips are immortal somehow. this forcibly destroys them all and replaces them
+                Destroy(players[i].healthBlips[j]);
+            }
+
+            players[i].healthBlips.Clear();
         }
 
         elimPlayers.Add(alivePlayers[index]);
