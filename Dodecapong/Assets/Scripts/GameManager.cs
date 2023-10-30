@@ -348,7 +348,7 @@ public class GameManager : MonoBehaviour
             Destroy(player.healthBlips[i]);
         }
         player.healthBlips.Clear();
-
+        player.dead = true;
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -794,7 +794,6 @@ public class GameManager : MonoBehaviour
         Player player = alivePlayers[alivePlayerID];
         if (player.shieldHealth <= 1)
         {
-            player.dead = true;
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
