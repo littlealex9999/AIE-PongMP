@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
-    float countdownTimer = 0.0f;
+    [HideInInspector] public float countdownTimer = 0.0f;
     #endregion
 
     #region Gameplay Settings

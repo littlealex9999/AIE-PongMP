@@ -222,7 +222,7 @@ public class Player : MonoBehaviour
         {
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay || hitstunned)
+        } else if (GameManager.instance.holdGameplay && !(GameManager.instance.countdownTimer > 0) || hitstunned)
         {
             return;
         }
