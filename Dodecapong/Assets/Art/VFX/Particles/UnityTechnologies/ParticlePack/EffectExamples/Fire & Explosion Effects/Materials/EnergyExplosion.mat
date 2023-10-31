@@ -11,7 +11,6 @@ Material:
   m_Shader: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
   m_ValidKeywords:
   - _ALPHABLEND_ON
-  - _FADING_ON
   - _REQUIRE_UV2
   m_InvalidKeywords: []
   m_LightmapFlags: 0
@@ -96,7 +95,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
-    - _SoftParticlesEnabled: 1
+    - _SoftParticlesEnabled: 0
     - _SoftParticlesFarFadeDistance: 2
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
@@ -110,5 +109,5 @@ Material:
     - _Color: {r: 5.99216, g: 5.99216, b: 5.99216, a: 1}
     - _ColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 1.2551911, b: 2.6792455, a: 1}
-    - _SoftParticleFadeParams: {r: 0, g: 0.5, b: 0, a: 0}
+    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
