@@ -83,6 +83,8 @@ public class Player : MonoBehaviour
     public MeshRenderer meshRenderer;
 
     public Transform rawInput;
+    Material ballMat;
+
     public enum ControlType
     {
         MIDSECTION,
@@ -100,8 +102,6 @@ public class Player : MonoBehaviour
         if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
 
         collider.OnCollisionEnter += OnCollisionEnterBall;
-
-        
     }
 
     private void OnDestroy()
@@ -237,6 +237,8 @@ public class Player : MonoBehaviour
         Vector3 startPos = transform.position;
 
         rawInput.position = movementInput.normalized * 4;
+        float ghostAngle = Angle(rawInput.position);
+
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
@@ -262,6 +264,38 @@ public class Player : MonoBehaviour
                 } else {
                     // player is closer to min
                     SetPosition(minDev);
+                }
+            }
+        }
+
+        if (ghostAngle > maxDev || ghostAngle < minDev)
+        {
+            if (playerMidPoint >= 180.0f)
+            {
+                float oppositePoint = playerMidPoint - 180.0f;
+                if (ghostAngle < oppositePoint || ghostAngle > maxDev)
+                {
+                    // player is closer to max
+                    rawInput.position = GetPositionFromAngle(maxDev);
+                }
+                else
+                {
+                    // player is closer to min
+                    rawInput.position = GetPositionFromAngle(minDev);
+                }
+            }
+            else
+            {
+                float oppositePoint = playerMidPoint + 180.0f;
+                if (ghostAngle < oppositePoint && ghostAngle > maxDev)
+                {
+                    // player is closer to max
+                    rawInput.position = GetPositionFromAngle(maxDev);
+                }
+                else
+                {
+                    // player is closer to min
+                    rawInput.position = GetPositionFromAngle(minDev);
                 }
             }
         }
@@ -368,6 +402,11 @@ public class Player : MonoBehaviour
     {
         transform.position = GameManager.instance.GetTargetPointInCircle(angle).normalized * GameManager.instance.playerDistance;
         transform.rotation = Quaternion.Euler(0, 0, angle + 90);
+    }
+
+    public Vector3 GetPositionFromAngle(float angle)
+    {
+        return GameManager.instance.GetTargetPointInCircle(angle).normalized * GameManager.instance.playerDistance;
     }
 
     public static float Angle(Vector2 vector2)
