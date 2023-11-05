@@ -82,6 +82,7 @@ public class Player : MonoBehaviour
 
     public MeshRenderer meshRenderer;
 
+    public Transform rawInput;
     public enum ControlType
     {
         MIDSECTION,
@@ -235,6 +236,7 @@ public class Player : MonoBehaviour
 
         Vector3 startPos = transform.position;
 
+        rawInput.position = movementInput.normalized * 4;
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
