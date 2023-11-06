@@ -1054,6 +1054,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GlassDisk
       objectReference: {fileID: 0}
+    - target: {fileID: 5328447236496701285, guid: d537797b8b650834c93564d2f2c41ce8, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d537797b8b650834c93564d2f2c41ce8, type: 3}
 --- !u!114 &1003599227 stripped
@@ -1655,7 +1659,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4978664918616112736, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -25.187073
+      value: -25.187012
       objectReference: {fileID: 0}
     - target: {fileID: 5201704720294338234, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.y
