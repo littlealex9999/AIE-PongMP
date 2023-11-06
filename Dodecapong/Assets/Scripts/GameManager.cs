@@ -53,7 +53,10 @@ public class GameManager : MonoBehaviour
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
     [SerializeField] List<ParticleSystem.MinMaxGradient> particleColors;
-    [SerializeField] List<Texture> playerShapes = new List<Texture>();
+
+    [SerializeField] List<Texture> playerShapeTextures = new();
+    [SerializeField] List<Sprite> playerShapeGlowSprites = new();
+    [SerializeField] List<Sprite> playerShapeLineSprites = new();
     #endregion
 
     #region Transformers
@@ -71,11 +74,19 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public List<Image> controllerImages;
     public List<Image> halfControllerImages;
+
+    public List<Image> fullPlayerShapeGlow;
+    public List<Image> fullPlayerShapeLine;
+
+    public List<Image> halfPlayerShapeGlow;
+    public List<Image> halfPlayerShapeLine;
     public Color imageDefaultColor;
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
     public List<Image> endGamePlayerImages = new List<Image>();
+    public List<Image> endGameShapeGlowImages = new();
+    public List<Image> endGameShapeLineImages = new();
     public List<int> endGamePlayerEnableThresholds = new List<int>();
     public Transform endGameAlternatePosition;
     Vector3 endGameRestorePosition;
@@ -103,7 +114,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
-    float countdownTimer = 0.0f;
+    [HideInInspector] public float countdownTimer = 0.0f;
     #endregion
 
     #region Gameplay Settings
@@ -271,8 +282,15 @@ public class GameManager : MonoBehaviour
 
                 EventManager.instance?.menuEvent?.Invoke();
 
-                for (int i = 0; i < elimPlayers.Count && i < endGamePlayerImages.Count; i++) {
-                    endGamePlayerImages[i].color = elimPlayers[elimPlayers.Count - (i + 1)].color;
+                for (int i = 0; i < elimPlayers.Count && i < endGamePlayerImages.Count; i++)
+                {
+                    Player player = elimPlayers[elimPlayers.Count - (i + 1)];
+                    endGamePlayerImages[i].color = player.color;
+                    endGameShapeGlowImages[i].sprite = playerShapeGlowSprites[player.ID];
+                    endGameShapeLineImages[i].sprite = playerShapeLineSprites[player.ID];
+                    endGameShapeGlowImages[i].color = player.color;
+                    endGameShapeLineImages[i].color = Color.white;
+
                 }
 
                 if (elimPlayers.Count == 2) {
@@ -348,7 +366,7 @@ public class GameManager : MonoBehaviour
             Destroy(player.healthBlips[i]);
         }
         player.healthBlips.Clear();
-
+        player.dead = true;
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -442,7 +460,7 @@ public class GameManager : MonoBehaviour
 
             player.meshRenderer.material = new(player.meshRenderer.material)
             {
-                mainTexture = playerShapes[i]
+                mainTexture = playerShapeTextures[i]
             };
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
@@ -693,36 +711,56 @@ public class GameManager : MonoBehaviour
         {
             controllerImages[i].color = imageDefaultColor;
             controllerImages[i].gameObject.SetActive(true);
+            fullPlayerShapeGlow[i].sprite = null;
+            fullPlayerShapeLine[i].sprite = null;
+            fullPlayerShapeGlow[i].color = Color.clear;
+            fullPlayerShapeLine[i].color = Color.clear;
         }
 
         for (int i = 0; i < halfControllerImages.Count; i++)
         {
             halfControllerImages[i].color = imageDefaultColor;
             halfControllerImages[i].gameObject.SetActive(false);
+            halfPlayerShapeGlow[i].sprite = null;
+            halfPlayerShapeLine[i].sprite = null;
+            halfPlayerShapeGlow[i].color = Color.clear;
+            halfPlayerShapeLine[i].color = Color.clear;
         }
 
         for (int controllerImageIndex = 0; controllerImageIndex < controllers.Count; controllerImageIndex++)
         {
             ControllerInputHandler controller = controllers[controllerImageIndex];
+            int playerAIndex = controllerImageIndex * 2;
+            int playerBIndex = playerAIndex + 1;
             if (controller.splitControls)
             {
-                int playerAIndex = controllerImageIndex * 2;
-                int playerBIndex = playerAIndex + 1;
 
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
                 halfControllerImages[playerBIndex].gameObject.SetActive(true);
                 halfControllerImages[playerAIndex].color = controller.playerA.color;
                 halfControllerImages[playerBIndex].color = controller.playerB.color;
+
+                halfPlayerShapeGlow[playerAIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
+                halfPlayerShapeLine[playerAIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
+                halfPlayerShapeGlow[playerAIndex].color = controller.playerA.color;
+                halfPlayerShapeLine[playerAIndex].color = Color.white;
+
+                halfPlayerShapeGlow[playerBIndex].sprite = playerShapeGlowSprites[controller.playerB.ID];
+                halfPlayerShapeLine[playerBIndex].sprite = playerShapeLineSprites[controller.playerB.ID];
+                halfPlayerShapeGlow[playerBIndex].color = controller.playerB.color;
+                halfPlayerShapeLine[playerBIndex].color = Color.white;
             }
             else
             {
                 controllerImages[controllerImageIndex].color = controller.playerA.color;
+
+                fullPlayerShapeGlow[controllerImageIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
+                fullPlayerShapeLine[controllerImageIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
+                fullPlayerShapeGlow[controllerImageIndex].color = controller.playerA.color;
+                fullPlayerShapeLine[controllerImageIndex].color = Color.white;
             }
         }
-
-
-      
     }
 
     private void ResetShieldDisplay()
@@ -794,7 +832,6 @@ public class GameManager : MonoBehaviour
         Player player = alivePlayers[alivePlayerID];
         if (player.shieldHealth <= 1)
         {
-            player.dead = true;
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;

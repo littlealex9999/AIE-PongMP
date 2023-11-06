@@ -222,7 +222,7 @@ public class Player : MonoBehaviour
         {
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay || hitstunned)
+        } else if (GameManager.instance.holdGameplay && !(GameManager.instance.countdownTimer > 0) || hitstunned)
         {
             return;
         }
@@ -418,8 +418,6 @@ public class Player : MonoBehaviour
     {
         if (!readyToDash || dashing || movementInput == Vector2.zero) yield break;
 
-        Vector2 dashInput = movementInput;
-
         EventManager.instance.dashEvent.Invoke();
 
         readyToDash = false;
@@ -439,49 +437,57 @@ public class Player : MonoBehaviour
         float dir = -CalculateMoveTarget();
         float targetAngle = startingAngle + dashAngle * dir;
 
+        float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
+        float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
+
         while (timeElapsed < dashDuration)
         {
             float currentAngle = Mathf.Lerp(targetAngle, startingAngle, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
-            float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
-            float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
 
-            if (currentAngle > maxDev || currentAngle < minDev)
-            {
-                if (playerMidPoint >= 180.0f)
-                {
-                    float oppositePoint = playerMidPoint - 180.0f;
-                    if (currentAngle < oppositePoint || currentAngle > maxDev)
-                    {
-                        // player is closer to max
-                        SetPosition(maxDev);
-                    }
-                    else
-                    {
-                        // player is closer to min
-                        SetPosition(minDev);
-                    }
-                }
-                else
-                {
-                    float oppositePoint = playerMidPoint + 180.0f;
-                    if (currentAngle < oppositePoint && currentAngle > maxDev)
-                    {
-                        // player is closer to max
-                        SetPosition(maxDev);
-                    }
-                    else
-                    {
-                        // player is closer to min
-                        SetPosition(minDev);
-                    }
-                }
-            }
-            else
-            {
-                SetPosition(currentAngle);
-            }
+            if (currentAngle > maxDev) SetPosition(maxDev);
+            else if (currentAngle < minDev) SetPosition(minDev);
+            else SetPosition(currentAngle);
+
             timeElapsed += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
+
+            //if (currentAngle > maxDev || currentAngle < minDev)
+            //{
+            //    if (playerMidPoint >= 180.0f)
+            //    {
+            //        float oppositePoint = playerMidPoint - 180.0f;
+            //        if (currentAngle < oppositePoint || currentAngle > maxDev)
+            //        {
+            //            // player is closer to max
+            //            SetPosition(maxDev);
+            //        }
+            //        else
+            //        {
+            //            // player is closer to min
+            //            SetPosition(minDev);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        float oppositePoint = playerMidPoint + 180.0f;
+            //        if (currentAngle < oppositePoint && currentAngle > maxDev)
+            //        {
+            //            // player is closer to max
+            //            SetPosition(maxDev);
+            //        }
+            //        else
+            //        {
+            //            // player is closer to min
+            //            SetPosition(minDev);
+            //        }
+            //    }
+            //}
+            //else
+            //{
+            //    SetPosition(currentAngle);
+            //}
+            //timeElapsed += Time.fixedDeltaTime;
+            //yield return new WaitForFixedUpdate();
 
             //value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
             //timeElapsed += Time.fixedDeltaTime;
