@@ -84,6 +84,9 @@ public class Player : MonoBehaviour
 
     public Transform rawInput;
     Material ballMat;
+    float startTime;
+    public float fadeDuration;
+    public AnimationCurve fadeCurve;
 
     public enum ControlType
     {
@@ -102,6 +105,10 @@ public class Player : MonoBehaviour
         if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
 
         collider.OnCollisionEnter += OnCollisionEnterBall;
+
+        ballMat = rawInput.gameObject.GetComponent<MeshRenderer>().material;
+
+        startTime = Time.time;
     }
 
     private void OnDestroy()
@@ -112,6 +119,13 @@ public class Player : MonoBehaviour
     void FixedUpdate()
     {
         if (dead) return;
+
+
+        float timeElapsed = Time.time - startTime;
+
+        float alpha = Mathf.Lerp(0, 1, dashAnimationCurve.Evaluate(timeElapsed / fadeDuration));
+
+        ballMat.color = new Color(ballMat.color.r, ballMat.color.g, ballMat.color.b, alpha);
 
         if (isAI) {
             //CalculateAIInput();

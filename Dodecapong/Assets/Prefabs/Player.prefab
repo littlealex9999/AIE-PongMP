@@ -95,7 +95,6 @@ GameObject:
   - component: {fileID: 6281065546682397420}
   - component: {fileID: 1069576420236183191}
   - component: {fileID: 6735725515947701882}
-  - component: {fileID: 3198363187892163254}
   m_Layer: 0
   m_Name: target
   m_TagString: Untagged
@@ -168,26 +167,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!95 &3198363187892163254
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3825075376402951088}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b05f51ab163b632498397a0147ad30b6, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4539453341973377358
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,6 +309,31 @@ MonoBehaviour:
   animator: {fileID: 6108231517275231207}
   meshRenderer: {fileID: 7660811406392108423}
   rawInput: {fileID: 6281065546682397420}
+  fadeDuration: 20
+  fadeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: -1
+      outSlope: -1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   controlType: 3
   unhittable: 0
 --- !u!114 &8348195646772282906
