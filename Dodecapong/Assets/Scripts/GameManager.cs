@@ -439,6 +439,7 @@ public class GameManager : MonoBehaviour
             Player player = players[i];
 
             player.gameObject.SetActive(true);
+            player.ResetStartValues();
 
             player.moveSpeed = selectedGameVariables.playerSpeed;
 
