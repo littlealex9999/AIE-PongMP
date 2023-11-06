@@ -772,7 +772,10 @@ public class GameManager : MonoBehaviour
 
             for (int j = 0; j < alivePlayers[i].shieldHealth; j++)
             {
-                if (alivePlayers[i].healthBlips.Count <= j) alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                if (alivePlayers[i].healthBlips.Count <= j) {
+                    alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                    alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].name = "Player " + i + " Blip " + j;
+                }
                 alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
                 angle += angleChange;
             }
@@ -882,6 +885,14 @@ public class GameManager : MonoBehaviour
             if (i == index) {
                 // player being eliminated
                 playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
+
+                // ensure elim player has exactly 1 health blip
+                for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
+                    Destroy(alivePlayers[i].healthBlips[j]);
+                }
+                alivePlayers[i].healthBlips.Clear();
+
+                alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
             } else {
                 playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
@@ -930,10 +941,14 @@ public class GameManager : MonoBehaviour
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
                 
                 float deviance = 180.0f / pseudoPlayerCount;
+
                 float targetMidsection;
-                if (i >= index) {
+                if (i > index) {
                     deviance *= -1;
                     targetMidsection = 360.0f - 360.0f / pseudoPlayerCount * (alivePlayers.Count - 1 - i) + deviance;
+                } else if (i == index) {
+                    deviance = 0;
+                    targetMidsection = 360.0f / pseudoPlayerCount * i + 360.0f / pseudoPlayerCount * ((1 - playerRemovalPercentage) / 2);
                 } else {
                     targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
                 }
@@ -963,6 +978,15 @@ public class GameManager : MonoBehaviour
 
             pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+        }
+
+        for (int i = 0; i < players.Count; i++) {
+            for (int j = 0; j < players[i].healthBlips.Count; j++) {
+                // health blips are immortal somehow. this forcibly destroys them all and replaces them
+                Destroy(players[i].healthBlips[j]);
+            }
+
+            players[i].healthBlips.Clear();
         }
 
         elimPlayers.Add(alivePlayers[index]);
