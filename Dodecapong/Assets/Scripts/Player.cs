@@ -181,7 +181,7 @@ public class Player : MonoBehaviour
 
     public void Grab(InputAction.CallbackContext context)
     {
-        //if (dead) return;
+        if (dead) return;
         if (context.started)
         {
             grabParticles.gameObject.GetComponent<VFXColorSetter>().SetStartColor(color);
@@ -595,7 +595,12 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public IEnumerator GrabRoutine(CollisionData data)
+    public void Grab(CollisionData data)
+    {
+        StartCoroutine(GrabRoutine(data));
+    }
+
+    IEnumerator GrabRoutine(CollisionData data)
     {
         if (!readyToGrab) yield break;
         readyToGrab = false;
@@ -614,7 +619,7 @@ public class Player : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 hitVel = hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
