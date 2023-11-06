@@ -181,7 +181,7 @@ public class Player : MonoBehaviour
 
     public void Grab(InputAction.CallbackContext context)
     {
-        if (dead) return;
+        //if (dead) return;
         if (context.started)
         {
             grabParticles.gameObject.GetComponent<VFXColorSetter>().SetStartColor(color);
