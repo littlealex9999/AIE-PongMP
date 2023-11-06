@@ -55,7 +55,7 @@ public class Ball : MonoBehaviour
             {
                 transform.SetParent(player.transform);
                 player.heldBall = this;
-                StartCoroutine(player.GrabRoutine(data));
+                player.Grab(data);
                 holdingPlayer = player;
             }
             //else if (player.hitting)
