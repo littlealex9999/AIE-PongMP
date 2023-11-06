@@ -84,9 +84,12 @@ public class Player : MonoBehaviour
 
     public Transform rawInput;
     Material ballMat;
-    float startTime;
+    [HideInInspector] public float startTime;
     public float fadeDuration;
     public AnimationCurve fadeCurve;
+
+    public GameObject leftPilar;
+    public GameObject rightPilar;
 
     public enum ControlType
     {
@@ -108,7 +111,7 @@ public class Player : MonoBehaviour
 
         ballMat = rawInput.gameObject.GetComponent<MeshRenderer>().material;
 
-        startTime = Time.time;
+        
     }
 
     private void OnDestroy()
@@ -120,6 +123,17 @@ public class Player : MonoBehaviour
     {
         if (dead) return;
 
+        leftPilar.transform.position = GameManager.instance.pillars[LivingID].transform.position;
+
+        if (GameManager.instance.pillars.Count - 1 == LivingID)
+        {   
+            rightPilar.transform.position = GameManager.instance.pillars[0].transform.position;
+        }
+        else
+        {
+            rightPilar.transform.position = GameManager.instance.pillars[LivingID + 1].transform.position;
+        }
+       
 
         float timeElapsed = Time.time - startTime;
 
@@ -581,7 +595,12 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public IEnumerator GrabRoutine(CollisionData data)
+    public void Grab(CollisionData data)
+    {
+        StartCoroutine(GrabRoutine(data));
+    }
+
+    IEnumerator GrabRoutine(CollisionData data)
     {
         if (!readyToGrab) yield break;
         readyToGrab = false;
@@ -600,7 +619,7 @@ public class Player : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 hitVel = hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
