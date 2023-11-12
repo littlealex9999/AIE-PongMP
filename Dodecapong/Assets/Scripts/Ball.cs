@@ -48,35 +48,38 @@ public class Ball : MonoBehaviour
     {
         if (holdingPlayer != null) return;
 
-        if (other.tag == "Player" && other.gameObject.TryGetComponent(out Player player))
+        if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
         {
+            if (player.unhittable) return;
             if (player.grabbing && player.readyToGrab)
             {
                 transform.SetParent(player.transform);
-                StartCoroutine(player.GrabRoutine(data));
                 player.heldBall = this;
+                player.Grab(data);
                 holdingPlayer = player;
             }
-            else if (player.hitting)
-            {
-                if (GameManager.instance.gameVariables.enableHitstun) {
-                    StartCoroutine(HitStun(player, data, 1.0f));
-                } else {
-                    PlayVFX(hitPaddle, data.collisionPos, player.color);
-                    EventManager.instance.ballHitEvent.Invoke();
-                    mediumRing.Play();
-                }
-            }
+            //else if (player.hitting)
+            //{
+            //    if (GameManager.instance.selectedGameVariables.enableHitstun)
+            //    {
+            //        StartCoroutine(HitStun(player, data, 1.0f));
+            //    } else
+            //    {
+            //        PlayVFX(hitPaddle, data.collisionPos, Quaternion.Euler(Vector3.back), player.particleColor);
+            //        EventManager.instance.ballHitEvent.Invoke();
+            //        mediumRing.Play();
+            //    }
+            //}
             else
             {
-                PlayVFX(bouncePaddle, data.collisionPos, player.color);
+                PlayVFX(bouncePaddle, data.collisionPos, Quaternion.Euler(Vector3.back), player.particleColor);
                 EventManager.instance.ballBounceEvent.Invoke();
                 smallRing.Play();
             }
         }
         else if (other.gameObject.CompareTag("Pillar"))
         {
-            PlayVFX(bouncePillar,data.collisionPos, Color.white);
+            PlayVFX(bouncePillar, data.collisionPos, Quaternion.LookRotation((transform.position - Vector3.zero).normalized, Vector3.forward));
             EventManager.instance.ballHitPillarEvent.Invoke();
         }
     }
@@ -97,7 +100,7 @@ public class Ball : MonoBehaviour
 
         collider.immovable = false;
 
-        PlayVFX(hitPaddle, data.collisionPos, player.color);
+        PlayVFX(hitPaddle, data.collisionPos, Quaternion.Euler(Vector3.back), player.particleColor);
         EventManager.instance.ballHitEvent.Invoke();
         mediumRing.Play();
 
@@ -141,14 +144,19 @@ public class Ball : MonoBehaviour
         }
     }
 
-    void PlayVFX(GameObject particle, Vector3 pos)
+    public void HitVFX()
     {
-        Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        PlayVFX(hitPaddle, transform.position, Quaternion.Euler(Vector3.back), holdingPlayer.particleColor);
     }
 
-    void PlayVFX(GameObject particle, Vector3 pos, Color color)
+    void PlayVFX(GameObject particle, Vector3 pos, Quaternion rot)
     {
-        GameObject obj = Instantiate(particle, pos, Quaternion.Euler(Vector3.back));
+        Instantiate(particle, pos, rot);
+    }
+
+    void PlayVFX(GameObject particle, Vector3 pos, Quaternion rot, Color color)
+    {
+        GameObject obj = Instantiate(particle, pos, rot);
         VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
 
         ParticleSystem.MinMaxGradient startColor = new()
@@ -157,6 +165,14 @@ public class Ball : MonoBehaviour
             color = color
         };
         vfxColorSetter.SetStartColor(startColor);
+    }
+
+    void PlayVFX(GameObject particle, Vector3 pos, Quaternion rot, ParticleSystem.MinMaxGradient color)
+    {
+        GameObject obj = Instantiate(particle, pos, rot);
+        VFXColorSetter vfxColorSetter = obj.GetComponent<VFXColorSetter>();
+
+        vfxColorSetter.SetLifetimeColor(color);
     }
 
     private void CheckIfHitBounds()
@@ -169,7 +185,9 @@ public class Ball : MonoBehaviour
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
-                PlayVFX(bounceShield, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
+                StartCoroutine(GameManager.instance.alivePlayers[alivePlayerID].UnHittable());
+
+                PlayVFX(bounceShield, transform.position, Quaternion.Euler(Vector3.back), GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 mediumRing.Play();
 
                 Vector2 shieldNormal = (Vector3.zero - transform.position).normalized;
@@ -183,7 +201,7 @@ public class Ball : MonoBehaviour
             }
             else // if player dies
             {
-                PlayVFX(playerDies, transform.position, GameManager.instance.alivePlayers[alivePlayerID].color);
+                PlayVFX(playerDies, transform.position, Quaternion.LookRotation((Vector3.zero - transform.position).normalized, Vector3.forward), GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 largeRing.Play();
                 return;
             }

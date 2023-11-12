@@ -6,13 +6,14 @@ public class VFXColorSetter : MonoBehaviour
 {
     [SerializeField] private ParticleSystem.MinMaxGradient startColor;
 
+    [SerializeField] private bool enableColorOverLifeTime;
     [SerializeField] private ParticleSystem.MinMaxGradient colorOverLifetime;
 
     ParticleSystem[] particleSystems;
     [SerializeField] private ParticleSystem[] ignoredSystems;
+
     private void OnValidate()
     {
-        
         ApplyValues();
     }
 
@@ -29,6 +30,13 @@ public class VFXColorSetter : MonoBehaviour
         ApplyValues();
     }
 
+    public void SetLifetimeColor(ParticleSystem.MinMaxGradient colorOverLifetime)
+    {
+        this.colorOverLifetime = colorOverLifetime;
+
+        ApplyValues();
+    }
+
     void ApplyValues()
     {
         particleSystems ??= GetComponentsInChildren<ParticleSystem>();
@@ -37,8 +45,10 @@ public class VFXColorSetter : MonoBehaviour
         {
             if (ignoredSystems.Contains(p)) continue;
             ParticleSystem.MainModule main = p.main;
-            ParticleSystem.ColorOverLifetimeModule colorOverLifetimeModule = p.colorOverLifetime;
             main.startColor = startColor;
+
+            ParticleSystem.ColorOverLifetimeModule colorOverLifetimeModule = p.colorOverLifetime;
+            colorOverLifetimeModule.enabled = enableColorOverLifeTime;
             colorOverLifetimeModule.color = colorOverLifetime;
         }
     }

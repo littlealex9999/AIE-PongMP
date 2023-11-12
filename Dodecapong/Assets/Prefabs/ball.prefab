@@ -25,14 +25,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6614045097114177558}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 1.118, z: -0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8301239450588043014}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!108 &8105570283621616643
 Light:
   m_ObjectHideFlags: 0
@@ -42,12 +42,12 @@ Light:
   m_GameObject: {fileID: 6614045097114177558}
   m_Enabled: 1
   serializedVersion: 10
-  m_Type: 2
+  m_Type: 0
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1.0091809
-  m_Range: 3.94
-  m_SpotAngle: 30
+  m_Intensity: 2.4049742
+  m_Range: 14.16
+  m_SpotAngle: 90
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -87,7 +87,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 2
   m_AreaSize: {x: 0.5, y: 0.5}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 41.04
   m_ColorTemperature: 6570
   m_UseColorTemperature: 1
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7a68c43fe1f2a47cfa234b5eeaa98012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Intensity: 12.681742
+  m_Intensity: 4.42588
   m_EnableSpotReflector: 1
   m_LuxAtDistance: 1
   m_InnerSpotPercent: 0
@@ -123,7 +123,7 @@ MonoBehaviour:
   m_ShapeWidth: 0.5
   m_ShapeHeight: 0.5
   m_AspectRatio: 1
-  m_ShapeRadius: 0.025
+  m_ShapeRadius: 0
   m_SoftnessScale: 1
   m_UseCustomSpotLightShadowCone: 0
   m_CustomSpotLightShadowCone: 30
@@ -273,7 +273,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8301239450588043011}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -287,6 +287,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 7783dd7c6889d61478010088fbf085fc, type: 2}
+  - {fileID: 2100000, guid: 36a48a64e1f23eb4486276b6457ccbf2, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -327,9 +328,10 @@ MonoBehaviour:
   shieldBounceTowardsCenterBias: 0
   bouncePillar: {fileID: 4344030160298166289, guid: 67f6b10afaac02f448754ca1cda76ac0, type: 3}
   bounceShield: {fileID: 1173357965376637556, guid: 3bb0471d8d40b0b4e86c8f6d7edea48e, type: 3}
-  bouncePaddle: {fileID: 3511931716861035794, guid: 10d5cb06056bd7b438d93c9505c96fe9, type: 3}
-  hitPaddle: {fileID: 5765492447424006579, guid: 5fbbe5b806791d546807abe803adec48, type: 3}
+  bouncePaddle: {fileID: 5765492447424006579, guid: 5fbbe5b806791d546807abe803adec48, type: 3}
+  hitPaddle: {fileID: 3511931716861035794, guid: 10d5cb06056bd7b438d93c9505c96fe9, type: 3}
   playerDies: {fileID: 8154808341645599611, guid: 75db88388e7966748936800ba66aefef, type: 3}
+  holdingPlayer: {fileID: 0}
   smallRing: {fileID: 4661124823747825990}
   mediumRing: {fileID: 3241484898122013697}
   largeRing: {fileID: 3209633161082959168}
@@ -404,6 +406,26 @@ PrefabInstance:
     - target: {fileID: 502101259093651934, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: LifetimeByEmitterSpeedModule.enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime2
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.atime3
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.key2.a
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4193602905814113000, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
+      propertyPath: ColorModule.gradient.maxGradient.m_NumAlphaKeys
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4707880850601546829, guid: c1f1e67f9b8088146b2a549a3a992426, type: 3}
       propertyPath: m_Name

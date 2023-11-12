@@ -17,18 +17,18 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     #region Game Objects
     [Header("Game Objects")]
- 
+
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
     public GameObject pillarPrefab;
     public GameObject playerPrefab;
-    List<GameObject> pillars = new List<GameObject>();
+    [HideInInspector] public  List<GameObject> pillars = new List<GameObject>();
 
     public GameObject healthDotPrefab;
 
-    public GameVariables defaultGameVariables;
-    [HideInInspector] public GameVariables gameVariables;
+    public List<GameVariables> gameVariables;
+    public GameVariables selectedGameVariables;
 
     public ArcTanShaderHelper arcTanShaderHelper;
 
@@ -52,6 +52,11 @@ public class GameManager : MonoBehaviour
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
+    [SerializeField] List<ParticleSystem.MinMaxGradient> particleColors;
+
+    [SerializeField] List<Texture> playerShapeTextures = new();
+    [SerializeField] List<Sprite> playerShapeGlowSprites = new();
+    [SerializeField] List<Sprite> playerShapeLineSprites = new();
     #endregion
 
     #region Transformers
@@ -69,11 +74,19 @@ public class GameManager : MonoBehaviour
     [Header("UI")]
     public List<Image> controllerImages;
     public List<Image> halfControllerImages;
+
+    public List<Image> fullPlayerShapeGlow;
+    public List<Image> fullPlayerShapeLine;
+
+    public List<Image> halfPlayerShapeGlow;
+    public List<Image> halfPlayerShapeLine;
     public Color imageDefaultColor;
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
     public List<Image> endGamePlayerImages = new List<Image>();
+    public List<Image> endGameShapeGlowImages = new();
+    public List<Image> endGameShapeLineImages = new();
     public List<int> endGamePlayerEnableThresholds = new List<int>();
     public Transform endGameAlternatePosition;
     Vector3 endGameRestorePosition;
@@ -87,7 +100,8 @@ public class GameManager : MonoBehaviour
     {
         MAINMENU,
         JOINMENU,
-        SETTINGSMENU,
+        PRESETSELECT,
+        EDITPRESET,
         GAMEPLAY,
         GAMEPAUSED,
         GAMEOVER,
@@ -100,7 +114,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool smashingPillars = false;
 
     float countdownTime = 3.0f;
-    float countdownTimer = 0.0f;
+    [HideInInspector] public float countdownTimer = 0.0f;
     #endregion
 
     #region Gameplay Settings
@@ -134,9 +148,7 @@ public class GameManager : MonoBehaviour
         else Destroy(this);
 
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
-
-        if (defaultGameVariables) gameVariables = new GameVariables(defaultGameVariables);
-        else gameVariables = new GameVariables();
+        selectedGameVariables = ScriptableObject.CreateInstance<GameVariables>();
 
         OnGameStateChange += OnGameStateChanged;
 
@@ -146,11 +158,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        switch (gameState) {
+        switch (gameState)
+        {
             case GameState.GAMEPLAY:
-                if (!holdGameplay) {
+                if (!holdGameplay)
+                {
                     gameEndTimer -= Time.deltaTime;
-                    if (gameVariables.useTimer && gameEndTimer <= 0) {
+                    if (selectedGameVariables.useTimer && gameEndTimer <= 0) 
+                    {
                         // UpdateGameState(GameState.GAMEOVER);
                     }
 
@@ -170,6 +185,12 @@ public class GameManager : MonoBehaviour
     {
         if (index < playerEmissives.Count) return playerEmissives[index];
         else return playerEmissives[playerEmissives.Count - 1];
+    }
+
+    public ParticleSystem.MinMaxGradient GetPlayerParticleColor(int index)
+    {
+        if (index < particleColors.Count) return particleColors[index];
+        else return particleColors[particleColors.Count - 1];
     }
 
     public Vector2 GetCircleIntersection(Vector2 startPos, Vector2 direction, float radius)
@@ -219,7 +240,7 @@ public class GameManager : MonoBehaviour
     #region GAMESTATE
     public void UpdateGameState(GameState state)
     {
-        if (state == GameState.GAMEPLAY && players.Count < 2) return;
+        if (gameState == GameState.JOINMENU && state == GameState.PRESETSELECT && players.Count < 2) return;
         gameState = state;
         OnGameStateChange.Invoke();
     }
@@ -233,7 +254,10 @@ public class GameManager : MonoBehaviour
             case GameState.JOINMENU:
                 EventManager.instance?.menuEvent.Invoke();
                 break;
-            case GameState.SETTINGSMENU:
+            case GameState.PRESETSELECT:
+                EventManager.instance?.menuEvent.Invoke();
+                break;
+            case GameState.EDITPRESET:
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
@@ -258,8 +282,15 @@ public class GameManager : MonoBehaviour
 
                 EventManager.instance?.menuEvent?.Invoke();
 
-                for (int i = 0; i < elimPlayers.Count && i < endGamePlayerImages.Count; i++) {
-                    endGamePlayerImages[i].color = elimPlayers[elimPlayers.Count - (i + 1)].color;
+                for (int i = 0; i < elimPlayers.Count && i < endGamePlayerImages.Count; i++)
+                {
+                    Player player = elimPlayers[elimPlayers.Count - (i + 1)];
+                    endGamePlayerImages[i].color = player.color;
+                    endGameShapeGlowImages[i].sprite = playerShapeGlowSprites[player.ID];
+                    endGameShapeLineImages[i].sprite = playerShapeLineSprites[player.ID];
+                    endGameShapeGlowImages[i].color = player.color;
+                    endGameShapeLineImages[i].color = Color.white;
+
                 }
 
                 if (elimPlayers.Count == 2) {
@@ -310,6 +341,8 @@ public class GameManager : MonoBehaviour
 
         players.Add(player);
 
+        MenuManager.instance.CheckPlayerCount();
+
         return player;
     }
 
@@ -321,16 +354,19 @@ public class GameManager : MonoBehaviour
         players.Remove(playerToRemove);
         Destroy(playerToRemove);
 
+        MenuManager.instance.CheckPlayerCount();
+
         UpdatePlayerImages();
     }
 
     public void EliminatePlayer(Player player)
     {
-        for (int i = 0; i < player.healthBlips.Count; i++) {
+        for (int i = 0; i < player.healthBlips.Count; i++)
+        {
             Destroy(player.healthBlips[i]);
         }
         player.healthBlips.Clear();
-
+        player.dead = true;
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
     }
@@ -404,22 +440,33 @@ public class GameManager : MonoBehaviour
 
             player.gameObject.SetActive(true);
 
-            player.moveSpeed = gameVariables.playerSpeed;
+            player.moveSpeed = selectedGameVariables.playerSpeed;
 
-            player.rotationalForce = gameVariables.playerRotationalForce;
-            player.collider.normalBending = gameVariables.playerNormalBending;
+            player.rotationalForce = selectedGameVariables.playerRotationalForce;
+            player.collider.normalBending = selectedGameVariables.playerNormalBending;
 
-            player.dashCooldown = gameVariables.dashCooldown;
-            player.dashDuration = gameVariables.dashDuration;
+            player.dashDistance = selectedGameVariables.dashDistance;
+            player.dashDuration = selectedGameVariables.dashDuration;
+            player.dashCooldown = selectedGameVariables.dashCooldown;
 
-            player.hitCooldown = gameVariables.hitCooldown;
-            player.hitDuration = gameVariables.hitDuration;
-            player.hitStrength = gameVariables.hitStrength;
+            player.hitCooldown = selectedGameVariables.hitCooldown;
+            player.hitDuration = selectedGameVariables.hitDuration;
+            player.hitStrength = selectedGameVariables.hitStrength;
 
-            player.grabCooldown = gameVariables.grabCooldown;
-            player.grabDuration = gameVariables.grabDuration;
+            player.grabCooldown = selectedGameVariables.grabCooldown;
+            player.grabDuration = selectedGameVariables.grabDuration;
 
-            player.shieldHealth = gameVariables.shieldLives;
+            player.shieldHealth = selectedGameVariables.shieldLives;
+
+            player.meshRenderer.material = new(player.meshRenderer.material)
+            {
+                mainTexture = playerShapeTextures[i]
+            };
+            player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
+
+            player.dead = false;
+
+            player.startTime = Time.time;
 
             alivePlayers.Add(player);
         }
@@ -432,11 +479,11 @@ public class GameManager : MonoBehaviour
         {
             Player player = alivePlayers[i];
 
-            player.shieldHealth = gameVariables.shieldLives;
+            player.shieldHealth = selectedGameVariables.shieldLives;
 
             if (alivePlayers.Count > 1) {
                 // area limits are calculated with a resize
-                player.Resize(gameVariables.playerSizes[alivePlayers.Count - 2]);
+                player.Resize(selectedGameVariables.playerSizes[alivePlayers.Count - 2]);
             } else {
                 player.CalculateLimits();
             }
@@ -449,15 +496,15 @@ public class GameManager : MonoBehaviour
     {
         EventManager.instance.ballCountdownEvent.Invoke();
 
-        for (int i = 0; i < gameVariables.ballCount; i++) {
+        for (int i = 0; i < selectedGameVariables.ballCount; i++) {
             Ball b = Instantiate(ballPrefab);
 
             b.transform.position = Vector2.zero;
-            b.constantSpd = gameVariables.ballSpeed;
-            b.transform.localScale = new Vector3(gameVariables.ballSize, gameVariables.ballSize, gameVariables.ballSize);
-            b.collider.radius = gameVariables.ballSize / 2;
-            b.dampStrength = gameVariables.ballSpeedDamp;
-            b.shieldBounceTowardsCenterBias = gameVariables.shieldBounceTowardsCenterBias;
+            b.constantSpd = selectedGameVariables.ballSpeed;
+            b.transform.localScale = new Vector3(selectedGameVariables.ballSize, selectedGameVariables.ballSize, selectedGameVariables.ballSize);
+            b.collider.radius = selectedGameVariables.ballSize / 2;
+            b.dampStrength = selectedGameVariables.ballSpeedDamp;
+            b.shieldBounceTowardsCenterBias = selectedGameVariables.shieldBounceTowardsCenterBias;
             balls.Add(b);
         }
     }
@@ -467,7 +514,7 @@ public class GameManager : MonoBehaviour
         if (alivePlayers.Count > 1) EventManager.instance.ballCountdownEvent.Invoke();
         countdownTimer = countdownTime;
 
-        for (int i = balls.Count - 1; i > gameVariables.ballCount; i--) {
+        for (int i = balls.Count - 1; i > selectedGameVariables.ballCount; i--) {
             Destroy(balls[i]);
             balls.RemoveAt(i);
         }
@@ -519,7 +566,7 @@ public class GameManager : MonoBehaviour
     void SetupTransformers()
     {
         for (int i = 0; i < transformers.Count; i++) {
-            if ((transformers[i].GetTransformerType() & gameVariables.enabledTransformers) != 0) {
+            if ((transformers[i].GetTransformerType() & selectedGameVariables.enabledTransformers) != 0) {
                 allowedTransformers.Add(transformers[i]);
             }
         }
@@ -557,7 +604,7 @@ public class GameManager : MonoBehaviour
         transformerSpawnTimer += delta;
 
         if (transformerSpawnTimer > transformerSpawnTime) {
-            if (Random.Range(0, 1) < gameVariables.transformerFrequency) {
+            if (Random.Range(0, 1) < selectedGameVariables.transformerFrequency) {
                 SpawnTransformer();
             }
             transformerSpawnTimer = 0;
@@ -666,51 +713,77 @@ public class GameManager : MonoBehaviour
         {
             controllerImages[i].color = imageDefaultColor;
             controllerImages[i].gameObject.SetActive(true);
+            fullPlayerShapeGlow[i].sprite = null;
+            fullPlayerShapeLine[i].sprite = null;
+            fullPlayerShapeGlow[i].color = Color.clear;
+            fullPlayerShapeLine[i].color = Color.clear;
         }
 
         for (int i = 0; i < halfControllerImages.Count; i++)
         {
             halfControllerImages[i].color = imageDefaultColor;
             halfControllerImages[i].gameObject.SetActive(false);
+            halfPlayerShapeGlow[i].sprite = null;
+            halfPlayerShapeLine[i].sprite = null;
+            halfPlayerShapeGlow[i].color = Color.clear;
+            halfPlayerShapeLine[i].color = Color.clear;
         }
 
         for (int controllerImageIndex = 0; controllerImageIndex < controllers.Count; controllerImageIndex++)
         {
             ControllerInputHandler controller = controllers[controllerImageIndex];
+            int playerAIndex = controllerImageIndex * 2;
+            int playerBIndex = playerAIndex + 1;
             if (controller.splitControls)
             {
-                int playerAIndex = controllerImageIndex * 2;
-                int playerBIndex = playerAIndex + 1;
 
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
                 halfControllerImages[playerBIndex].gameObject.SetActive(true);
                 halfControllerImages[playerAIndex].color = controller.playerA.color;
                 halfControllerImages[playerBIndex].color = controller.playerB.color;
+
+                halfPlayerShapeGlow[playerAIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
+                halfPlayerShapeLine[playerAIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
+                halfPlayerShapeGlow[playerAIndex].color = controller.playerA.color;
+                halfPlayerShapeLine[playerAIndex].color = Color.white;
+
+                halfPlayerShapeGlow[playerBIndex].sprite = playerShapeGlowSprites[controller.playerB.ID];
+                halfPlayerShapeLine[playerBIndex].sprite = playerShapeLineSprites[controller.playerB.ID];
+                halfPlayerShapeGlow[playerBIndex].color = controller.playerB.color;
+                halfPlayerShapeLine[playerBIndex].color = Color.white;
             }
             else
             {
                 controllerImages[controllerImageIndex].color = controller.playerA.color;
+
+                fullPlayerShapeGlow[controllerImageIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
+                fullPlayerShapeLine[controllerImageIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
+                fullPlayerShapeGlow[controllerImageIndex].color = controller.playerA.color;
+                fullPlayerShapeLine[controllerImageIndex].color = Color.white;
             }
         }
-
-
-      
     }
 
     private void ResetShieldDisplay()
     {
-        for (int i = 0; i < alivePlayers.Count; i++) {
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
             float angleChange = alivePlayers[i].playerAngleDeviance * healthBlipSpread / (alivePlayers[i].shieldHealth + 1) * 2;
             float angle = alivePlayers[i].playerSectionMiddle - alivePlayers[i].playerAngleDeviance * healthBlipSpread + angleChange;
 
-            for (int j = 0; j < alivePlayers[i].shieldHealth; j++) {
-                if (alivePlayers[i].healthBlips.Count <= j) alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+            for (int j = 0; j < alivePlayers[i].shieldHealth; j++)
+            {
+                if (alivePlayers[i].healthBlips.Count <= j) {
+                    alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+                    alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].name = "Player " + i + " Blip " + j;
+                }
                 alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
                 angle += angleChange;
             }
 
-            for (int j = alivePlayers[i].healthBlips.Count - 1; j >= alivePlayers[i].shieldHealth; j--) {
+            for (int j = alivePlayers[i].healthBlips.Count - 1; j >= alivePlayers[i].shieldHealth; j--)
+            {
                 Destroy(alivePlayers[i].healthBlips[j]);
                 alivePlayers[i].healthBlips.RemoveAt(j);
             }
@@ -762,13 +835,14 @@ public class GameManager : MonoBehaviour
         if (alivePlayerID >= alivePlayers.Count) return false;
 
         Player player = alivePlayers[alivePlayerID];
-        if (player.shieldHealth <= 1) {
+        if (player.shieldHealth <= 1)
+        {
             ResetShieldDisplay();
             EliminatePlayer(player);
             return true;
-        } else {
+        } else 
+        {
             player.shieldHealth--;
-
             if (player.shieldHealth <= 0) EventManager.instance?.shieldBreakEvent?.Invoke();
             else EventManager.instance?.shieldHitEvent?.Invoke();
             if (!player.isAI) player.controllerHandler.SetHaptics(shieldTouchHaptics);
@@ -813,6 +887,14 @@ public class GameManager : MonoBehaviour
             if (i == index) {
                 // player being eliminated
                 playerTargetAngles[i] = 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
+
+                // ensure elim player has exactly 1 health blip
+                for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
+                    Destroy(alivePlayers[i].healthBlips[j]);
+                }
+                alivePlayers[i].healthBlips.Clear();
+
+                alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
             } else {
                 playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
             }
@@ -861,10 +943,14 @@ public class GameManager : MonoBehaviour
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
                 
                 float deviance = 180.0f / pseudoPlayerCount;
+
                 float targetMidsection;
-                if (i >= index) {
+                if (i > index) {
                     deviance *= -1;
                     targetMidsection = 360.0f - 360.0f / pseudoPlayerCount * (alivePlayers.Count - 1 - i) + deviance;
+                } else if (i == index) {
+                    deviance = 0;
+                    targetMidsection = 360.0f / pseudoPlayerCount * i + 360.0f / pseudoPlayerCount * ((1 - playerRemovalPercentage) / 2);
                 } else {
                     targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
                 }
@@ -894,6 +980,15 @@ public class GameManager : MonoBehaviour
 
             pillars[i].transform.position = GetTargetPointInCircle(targetAngle) * mapRadius;
             pillars[i].transform.rotation = Quaternion.Euler(0, 0, targetAngle);
+        }
+
+        for (int i = 0; i < players.Count; i++) {
+            for (int j = 0; j < players[i].healthBlips.Count; j++) {
+                // health blips are immortal somehow. this forcibly destroys them all and replaces them
+                Destroy(players[i].healthBlips[j]);
+            }
+
+            players[i].healthBlips.Clear();
         }
 
         elimPlayers.Add(alivePlayers[index]);

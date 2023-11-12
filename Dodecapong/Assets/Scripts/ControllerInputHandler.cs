@@ -24,15 +24,18 @@ public class ControllerInputHandler : MonoBehaviour
         GameManager.instance.controllers.Add(this);
 
         playerInput = GetComponent<PlayerInput>();
-        if (playerInput) {
-            for (int i = 0; i < playerInput.devices.Count; i++) {
-                if (playerInput.devices[i] is Gamepad) {
+        if (playerInput)
+        {
+            for (int i = 0; i < playerInput.devices.Count; i++)
+            {
+                if (playerInput.devices[i] is Gamepad)
+                {
                     gamepad = (Gamepad)playerInput.devices[i];
                     break;
                 }
             }
         }
-        
+
         JoinPlayer(out playerA);
     }
 
@@ -51,7 +54,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void Dash(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -65,7 +68,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void SplitDash(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls) playerA.Dash();
         }
@@ -101,14 +104,14 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void SplitHit(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls) playerA.Hit();
         }
     }
     public void Hit(InputAction.CallbackContext context)
     {
-        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -122,7 +125,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void Grab(InputAction.CallbackContext context)
     {
-        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -136,7 +139,7 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void SplitGrab(InputAction.CallbackContext context)
     {
-        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay )
         {
             if (splitControls) playerA.Grab(context);
         }
@@ -144,30 +147,44 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void PageRight(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
+        if (context.canceled)
         {
-            MenuManager.instance.SettingsScreenPageRight();
+            if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT ||
+            GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
+            {
+                EventManager.instance.scrollPageEvent.Invoke();
+                MenuManager.instance.PageRight();
+            }
         }
     }
     public void PageLeft(InputAction.CallbackContext context)
     {
-        if (context.performed && GameManager.instance.gameState == GameManager.GameState.SETTINGSMENU)
+        if (context.canceled)
         {
-            MenuManager.instance.SettingsScreenPageLeft();
+            if (GameManager.instance.gameState == GameManager.GameState.PRESETSELECT ||
+            GameManager.instance.gameState == GameManager.GameState.EDITPRESET)
+            {
+                EventManager.instance.scrollPageEvent.Invoke();
+                MenuManager.instance.PageLeft();
+            }
         }
     }
 
     public IEnumerator SetHaptics(float lowFrequency, float highFrequency, float duration)
     {
-        if (gamepad != null && !hapticsRunning && GameManager.instance.enableHaptics) {
+        if (gamepad != null && !hapticsRunning && GameManager.instance.enableHaptics)
+        {
             hapticsRunning = true;
             gamepad.SetMotorSpeeds(lowFrequency, highFrequency);
             gamepad.ResumeHaptics();
-        } else {
+        }
+        else
+        {
             yield return null;
         }
 
-        while (duration > 0.0f) {
+        while (duration > 0.0f)
+        {
             duration -= Time.deltaTime;
             yield return new WaitForEndOfFrame();
         }
@@ -180,7 +197,8 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void SetHaptics(ControllerHaptics haptics, bool resetHaptics = true)
     {
-        if (resetHaptics) {
+        if (resetHaptics)
+        {
             gamepad.ResetHaptics();
             hapticsRunning = false;
             StopAllCoroutines();

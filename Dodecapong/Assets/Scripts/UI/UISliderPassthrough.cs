@@ -1,14 +1,24 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(Slider))]
 public class UISliderPassthrough : MonoBehaviour
 {
-    public Slider slider;
+    Slider slider;
+    public SliderVariables variable;
     public float[] values;
-    public UnityEvent<float> UnityEvent;
+
+    public enum SliderVariables
+    {
+        BALLSPEED,
+        BALLSIZE,
+        BALLCOUNT,
+        PLAYERSPEED,
+        TIMER,
+        SHIELDHEALTH,
+        TFFREQUENCY,
+        TFPOWER,
+    }
 
     private void Awake()
     {
@@ -31,15 +41,44 @@ public class UISliderPassthrough : MonoBehaviour
             }
 
             if (!slider) slider = GetComponent<Slider>();
-            slider.value = i;
+            slider.value = i + 1;
             break;
         }
     }
 
     public void ApplyValue(int index)
     {
-        if (!MenuManager.instance.settingUIVars) {
-            UnityEvent.Invoke(values[index - 1]);
+        if (MenuManager.instance.settingUIVars) return;
+
+        EventManager.instance.hoverUIEvent.Invoke();
+
+        switch (variable)
+        {
+            case SliderVariables.BALLSPEED:
+                GameVariables.SetBallSpeed(values[index - 1]);
+                break;
+            case SliderVariables.BALLSIZE:
+                GameVariables.SetBallSize(values[index - 1]);
+                break;
+            case SliderVariables.BALLCOUNT:
+                GameVariables.SetBallCount(values[index - 1]);
+                break;
+            case SliderVariables.PLAYERSPEED:
+                GameVariables.SetPlayerSpeed(values[index - 1]);
+                break;
+            case SliderVariables.TIMER:
+                GameVariables.SetTimerSeconds(values[index - 1]);
+                break;
+            case SliderVariables.SHIELDHEALTH:
+                GameVariables.SetShieldLives(values[index - 1]);
+                break;
+            case SliderVariables.TFFREQUENCY:
+                GameVariables.SetTransformerFrequency(values[index - 1]);
+                break;
+            case SliderVariables.TFPOWER:
+                GameVariables.SetTransformerPower(values[index - 1]);
+                break;
+            
         }
     }
 
