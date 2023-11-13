@@ -1968,6 +1968,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1509821798}
+  - component: {fileID: 1509821799}
   - component: {fileID: 1509821797}
   m_Layer: 0
   m_Name: Sky and Fog Volume
@@ -1989,7 +1990,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_IsGlobal: 1
-  priority: 0
+  priority: 0.42
   blendDistance: 0
   weight: 1
   sharedProfile: {fileID: 11400000, guid: 20a5acd84b3de874fa555e2ac6719fa9, type: 2}
@@ -2008,6 +2009,106 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1509821799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1509821796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db4bd166627d2774f9f7309231eba68c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volume: {fileID: 1509821797}
+  mVignette: {fileID: -4748910199286624476, guid: 20a5acd84b3de874fa555e2ac6719fa9, type: 2}
+  mChromaticAberration: {fileID: 3526362621223320306, guid: 20a5acd84b3de874fa555e2ac6719fa9, type: 2}
+  mBloom: {fileID: 5525792691706693807, guid: 20a5acd84b3de874fa555e2ac6719fa9, type: 2}
+  vignetteIntensity:
+    Default: 0
+    Target: 1
+    duration: 3
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  chromaticAberrationIntensity:
+    Default: 0
+    Target: 1
+    duration: 3
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+  bloomIntensity:
+    Default: 0
+    Target: 1
+    duration: 3
+    curve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 1
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
 --- !u!114 &1523827743 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 151641087639618943, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
