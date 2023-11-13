@@ -75,6 +75,11 @@ public class PPController : MonoBehaviour
     public void StartChromaticAberration() => StartCoroutine(chromaticAberrationIntensity.Play());
     public void StartBloom() => StartCoroutine(bloomIntensity.Play());
 
+    private void Awake()
+    {
+        GetProfileComponents();
+    }
+
     public void GetProfileComponents()
     {
         VolumeProfile volumeProfile = volume.sharedProfile;

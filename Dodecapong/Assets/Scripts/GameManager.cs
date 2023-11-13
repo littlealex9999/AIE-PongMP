@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     #region Game Objects
     [Header("Game Objects")]
 
+    public PPController postEffectsController;
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
