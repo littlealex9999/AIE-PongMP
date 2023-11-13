@@ -35,10 +35,7 @@ public class PPController : MonoBehaviour
             while (timeElapsed < duration)
             {
                 timeElapsed += Time.deltaTime;
-                Debug.Log(timeElapsed);
                 Value = Mathf.Lerp(Default, Target, curve.Evaluate(timeElapsed / duration));
-               
-
                 yield return new WaitForEndOfFrame();
             }
             Value = Default;
