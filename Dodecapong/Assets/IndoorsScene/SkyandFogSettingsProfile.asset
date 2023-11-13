@@ -1,5 +1,30 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7451627739718868838
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a6b00fcf518bb94a90b408492e07b44, type: 3}
+  m_Name: FilmGrain
+  m_EditorClassIdentifier: 
+  active: 1
+  type:
+    m_OverrideState: 0
+    m_Value: 0
+  intensity:
+    m_OverrideState: 0
+    m_Value: 0
+  response:
+    m_OverrideState: 0
+    m_Value: 0.8
+  texture:
+    m_OverrideState: 0
+    m_Value: {fileID: 0}
 --- !u!114 &-7356988288681038447
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -392,13 +417,13 @@ MonoBehaviour:
     m_Value: 0
   smoothness:
     m_OverrideState: 0
-    m_Value: 0.2
+    m_Value: 0.01
   roundness:
     m_OverrideState: 0
     m_Value: 1
   rounded:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 1
   mask:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -480,9 +505,39 @@ MonoBehaviour:
   - {fileID: -7356988288681038447}
   - {fileID: 8758462068089527205}
   - {fileID: -7139882327417644763}
-  - {fileID: 3526362621223320306}
   - {fileID: 5525792691706693807}
   - {fileID: -4748910199286624476}
+  - {fileID: 3257653952869517390}
+  - {fileID: 3526362621223320306}
+  - {fileID: -7451627739718868838}
+--- !u!114 &3257653952869517390
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c1bfcd0f0fa7b8468f281d6bbbaf320, type: 3}
+  m_Name: LensDistortion
+  m_EditorClassIdentifier: 
+  active: 0
+  intensity:
+    m_OverrideState: 1
+    m_Value: 1
+  xMultiplier:
+    m_OverrideState: 1
+    m_Value: 1
+  yMultiplier:
+    m_OverrideState: 1
+    m_Value: 1
+  center:
+    m_OverrideState: 1
+    m_Value: {x: 0.5, y: 0.5}
+  scale:
+    m_OverrideState: 1
+    m_Value: 0.01
 --- !u!114 &3526362621223320306
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -768,7 +823,7 @@ MonoBehaviour:
     m_Value: 0.8
   intensity:
     m_OverrideState: 1
-    m_Value: 0.9153192
+    m_Value: 0.7
   scatter:
     m_OverrideState: 0
     m_Value: 0.7
