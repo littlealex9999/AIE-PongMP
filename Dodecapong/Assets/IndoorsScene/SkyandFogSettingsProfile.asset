@@ -392,13 +392,13 @@ MonoBehaviour:
     m_Value: 0
   smoothness:
     m_OverrideState: 0
-    m_Value: 0.2
+    m_Value: 0.01
   roundness:
     m_OverrideState: 0
     m_Value: 1
   rounded:
     m_OverrideState: 0
-    m_Value: 0
+    m_Value: 1
   mask:
     m_OverrideState: 0
     m_Value: {fileID: 0}
@@ -768,7 +768,7 @@ MonoBehaviour:
     m_Value: 0.8
   intensity:
     m_OverrideState: 1
-    m_Value: 0.9153192
+    m_Value: 1
   scatter:
     m_OverrideState: 0
     m_Value: 0.7
