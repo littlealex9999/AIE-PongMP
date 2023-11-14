@@ -598,12 +598,9 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public void Grab(CollisionData data)
-    {
-        StartCoroutine(GrabRoutine(data));
-    }
+    public void Grab(CollisionData data) => StartCoroutine(CR_Grab(data));
 
-    IEnumerator GrabRoutine(CollisionData data)
+    IEnumerator CR_Grab(CollisionData data)
     {
         if (!readyToGrab) yield break;
         readyToGrab = false;
@@ -633,8 +630,10 @@ public class Player : MonoBehaviour
         readyToGrab = true;
     }
 
+
     public bool unhittable;
-    public IEnumerator UnHittable()
+    public void UnHittable() => StartCoroutine(CR_UnHittable());
+    private IEnumerator CR_UnHittable()
     {
         if (unhittable) yield break;
 
