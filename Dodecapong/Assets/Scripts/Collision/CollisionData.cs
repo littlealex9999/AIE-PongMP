@@ -95,4 +95,9 @@ public class CollisionData
             colliderB.ApplyImpulse(j * forceResolutionNormal);
         }
     }
+
+    public void SetForceNormal(Vector2 norm)
+    {
+        forceResolutionNormal = norm;
+    }
 }

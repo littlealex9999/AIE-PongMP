@@ -105,6 +105,7 @@ public class Player : MonoBehaviour
         if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
 
         collider.OnCollisionEnter += OnCollisionEnterBall;
+        collider.PreResolution += PreResolutionEvents;
 
         ghostMat = inputGhost.gameObject.GetComponentInChildren<MeshRenderer>().sharedMaterial;
     }
@@ -392,6 +393,28 @@ public class Player : MonoBehaviour
     {
         if (other.tag == "Ball") {
             controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
+        }
+    }
+
+    void PreResolutionEvents(PongCollider other, CollisionData data)
+    {
+        if (other.tag == "Ball") {
+            float myAngle = Angle(collider.position);
+            float otherAngle = Angle(other.position);
+
+            if (myAngle > otherAngle) {
+                collider.forceNormalDirectionClamp = (myAngle - playerMidPoint + angleDeviance) / 2;
+            } else {
+                collider.forceNormalDirectionClamp = (angleDeviance - (myAngle - playerMidPoint)) / 2;
+            }
+
+            Quaternion rotationOffset = transform.rotation * Quaternion.Euler(collider.GetRotationOffset());
+            Vector2 up = rotationOffset * new Vector3(0, 1, 0);
+            float forceResolutionAngle = (Vector2.Dot(up, -data.forceResolutionNormal) + 1) * 90;
+            if (forceResolutionAngle > collider.forceNormalDirectionClamp) {
+                float t = collider.forceNormalDirectionClamp / forceResolutionAngle;
+                data.SetForceNormal(Vector2.Lerp(up, data.forceResolutionNormal, t));
+            }
         }
     }
     #endregion
