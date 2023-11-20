@@ -6,8 +6,13 @@ public class BlackHole : MonoBehaviour
 {
     public GameObject pointer;
 
+    public GameObject blackHole;
+    public GameObject buildUp;
+
     public float gravityStrength;
     public float duration = 10.0f;
+
+    public float buildupTime = 2.0f;
 
     public float destroyTime = 2.0f;
     public float ballLaunchMult = 4.0f;
@@ -21,6 +26,10 @@ public class BlackHole : MonoBehaviour
     {
         collider = GetComponent<PongCircleCollider>();
         collider.OnTrigger += CheckCollisionBall;
+
+        collider.enabled = false;
+        buildUp.SetActive(true);
+        StartCoroutine(BuildUp());
     }
 
     private void FixedUpdate()
