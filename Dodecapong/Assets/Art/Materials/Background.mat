@@ -1,21 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8451143096365861584
-MonoBehaviour:
-  m_ObjectHideFlags: 11
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  version: 12
-  hdPluginSubTargetMaterialVersions:
-    m_Keys: []
-    m_Values: 
 --- !u!21 &2100000
 Material:
   serializedVersion: 8
@@ -23,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MAT_PinArt
-  m_Shader: {fileID: -6465566751694194690, guid: 763cc841501666e4eaf4a8125aad0a95, type: 3}
+  m_Name: Background
+  m_Shader: {fileID: -6465566751694194690, guid: 19922faf8656c484ca9cedc2233d451c, type: 3}
   m_ValidKeywords:
   - _DISABLE_SSR_TRANSPARENT
   m_InvalidKeywords:
@@ -52,10 +36,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Base_Colour:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _BentNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -72,16 +52,12 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Emission:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _EmissiveColorMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Face:
-        m_Texture: {fileID: 2800000, guid: 10c286ecac06a43469f9ae5be70fffa7, type: 3}
+    - _Gradient2:
+        m_Texture: {fileID: 2800000, guid: 1b2cabda110ff8e48bd86db63e05bc14, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
@@ -112,26 +88,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _Render_Texture:
-        m_Texture: {fileID: 8400000, guid: f61407b4ea774364c817b4a19252f3d0, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_82cd4589cfb442b9b48ea25701d69d2b_Texture_1:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2DLOD_d4964b55e4c94e56b41b8be67430d052_Texture_1:
-        m_Texture: {fileID: 2800000, guid: 7ed0950216d27f54282bc7e1b6a6f4ea, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_0aef3123779145ea924848cea8bb0daf_Texture_1:
-        m_Texture: {fileID: 8600000, guid: 65bd61f24eaf25543a4025977e643a62, type: 2}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _SampleTexture2D_c8fcc3009b4348b3bc81a4421482f96e_Texture_1:
-        m_Texture: {fileID: 2800000, guid: 7ed0950216d27f54282bc7e1b6a6f4ea, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _SpecularColorMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -146,6 +102,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _TangentMapOS:
         m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _TextSheet:
+        m_Texture: {fileID: 2800000, guid: 4cc548a1a3973a848ad1987480c53cc5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Texture2DAsset_7e674d6bd59345d581c24b29ebec5337_Out_0:
+        m_Texture: {fileID: 2800000, guid: 06b60fd8d24f6b44b801308264651332, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ThicknessMap:
@@ -204,7 +168,6 @@ Material:
     - _DoubleSidedGIMode: 0
     - _DoubleSidedNormalMode: 1
     - _DstBlend: 0
-    - _Emission_Intensity: 3.38
     - _EmissiveColorMode: 1
     - _EmissiveExposureWeight: 1
     - _EmissiveIntensity: 1
@@ -213,10 +176,7 @@ Material:
     - _EnableFogOnTransparent: 1
     - _EnableGeometricSpecularAA: 0
     - _EnergyConservingSpecularColor: 1
-    - _Face_On_Off: 1
-    - _Face_On_Off_Lerp: 0
-    - _Float: 0.19
-    - _Height: 1
+    - _Height: 0.4
     - _HeightAmplitude: 0.02
     - _HeightCenter: 0.5
     - _HeightMapParametrization: 0
@@ -226,11 +186,11 @@ Material:
     - _HeightPoMAmplitude: 2
     - _HeightTessAmplitude: 2
     - _HeightTessCenter: 0.5
-    - _Highlight_Active: 0
     - _InvTilingScale: 1
     - _Ior: 1.5
     - _IridescenceMask: 1
     - _IridescenceThickness: 1
+    - _Line: 0
     - _LinkDetailsWithBase: 1
     - _MaterialID: 1
     - _Metallic: 0
@@ -250,7 +210,8 @@ Material:
     - _RefractionModel: 0
     - _RenderQueueType: 1
     - _RequireSplitLighting: 0
-    - _Smoothness: 0.5
+    - _Scroll_Speed: 0.3
+    - _Smoothness: 0.8
     - _SmoothnessRemapMax: 1
     - _SmoothnessRemapMin: 0
     - _SpecularAAScreenSpaceVariance: 0.1
@@ -293,7 +254,7 @@ Material:
     m_Colors:
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
-    - _Color: {r: 0.36142755, g: 0.5122079, b: 0.5849056, a: 1}
+    - _Color: {r: 0.07790376, g: 0.023451408, b: 0.2924528, a: 1}
     - _DiffusionProfileAsset: {r: 0, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
@@ -308,3 +269,19 @@ Material:
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
+--- !u!114 &6014647952007350838
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da692e001514ec24dbc4cca1949ff7e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 12
+  hdPluginSubTargetMaterialVersions:
+    m_Keys: []
+    m_Values: 

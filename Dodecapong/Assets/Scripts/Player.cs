@@ -87,7 +87,8 @@ public class Player : MonoBehaviour
     [HideInInspector] public float startTime;
     public float fadeDuration;
     public AnimationCurve fadeCurve;
-
+    
+    public bool pillairMarkers;
     public GameObject leftPilar;
     public GameObject rightPilar;
 
@@ -123,17 +124,19 @@ public class Player : MonoBehaviour
     {
         if (dead) return;
 
-        leftPilar.transform.position = GameManager.instance.pillars[LivingID].transform.position;
-
-        if (GameManager.instance.pillars.Count - 1 == LivingID)
-        {   
-            rightPilar.transform.position = GameManager.instance.pillars[0].transform.position;
-        }
-        else
+        if (pillairMarkers)
         {
-            rightPilar.transform.position = GameManager.instance.pillars[LivingID + 1].transform.position;
+            leftPilar.transform.position = GameManager.instance.pillars[LivingID].transform.position;
+
+            if (GameManager.instance.pillars.Count - 1 == LivingID)
+            {
+                rightPilar.transform.position = GameManager.instance.pillars[0].transform.position;
+            }
+            else
+            {
+                rightPilar.transform.position = GameManager.instance.pillars[LivingID + 1].transform.position;
+            }
         }
-       
 
         float timeElapsed = Time.time - startTime;
 
@@ -595,12 +598,9 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public void Grab(CollisionData data)
-    {
-        StartCoroutine(GrabRoutine(data));
-    }
+    public void Grab(CollisionData data) => StartCoroutine(CR_Grab(data));
 
-    IEnumerator GrabRoutine(CollisionData data)
+    IEnumerator CR_Grab(CollisionData data)
     {
         if (!readyToGrab) yield break;
         readyToGrab = false;
@@ -630,8 +630,10 @@ public class Player : MonoBehaviour
         readyToGrab = true;
     }
 
+
     public bool unhittable;
-    public IEnumerator UnHittable()
+    public void UnHittable() => StartCoroutine(CR_UnHittable());
+    private IEnumerator CR_UnHittable()
     {
         if (unhittable) yield break;
 

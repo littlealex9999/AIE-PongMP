@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     #region Game Objects
     [Header("Game Objects")]
 
+    public PPController postEffectsController;
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
@@ -49,6 +50,7 @@ public class GameManager : MonoBehaviour
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
     public float playerDistance = 4.0f;
+    public float playerBlinkOnHitDuration;
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
@@ -249,18 +251,23 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.JOINMENU:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.PRESETSELECT:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.EDITPRESET:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
+                postEffectsController.EnableBloom();
                 EventManager.instance?.gameplayEvent?.Invoke();
 
                 if (!inGame) {
@@ -274,6 +281,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEOVER:
+                postEffectsController.DisableBloom();
                 if (inGame) {
                     // EndGame calls a gamestate change to GAMEOVER so we must ensure it doesn't infinitely repeat and return
                     EndGame();
@@ -369,6 +377,37 @@ public class GameManager : MonoBehaviour
         player.dead = true;
         int index = alivePlayers.IndexOf(player);
         StartCoroutine(EliminatePlayerRoutine(index));
+    }
+
+
+    public void PlayChromaticAberration()
+    {
+        postEffectsController.chromaticAberrationIntensity.Play();
+    }
+    public void BlinkPlayerSegment(int aliveID)
+    {
+        StartCoroutine(CR_BlinkPlayerSegment(aliveID));
+    }
+    private IEnumerator CR_BlinkPlayerSegment(int aliveID)
+    {
+        Color[] colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            if (i == aliveID) colors[i] = Color.white;
+            else colors[i] = alivePlayers[i].color;
+
+        }
+
+        arcTanShaderHelper.colors = colors;
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
+        yield return new WaitForSeconds(playerBlinkOnHitDuration);
+
+        arcTanShaderHelper.colors = GenerateLivingColors();
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
     }
 
     public Color[] GenerateLivingColors()
