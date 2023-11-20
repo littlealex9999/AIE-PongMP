@@ -50,7 +50,6 @@ public class Ball : MonoBehaviour
 
         if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
         {
-            if (player.unhittable) return;
             if (player.grabbing && player.readyToGrab)
             {
                 transform.SetParent(player.transform);

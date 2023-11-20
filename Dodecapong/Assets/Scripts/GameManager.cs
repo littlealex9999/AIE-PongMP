@@ -382,7 +382,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayChromaticAberration()
     {
-        postEffectsController.chromaticAberrationIntensity.Play();
+        StartCoroutine(postEffectsController.chromaticAberrationIntensity.CR_Play());
     }
     public void BlinkPlayerSegment(int aliveID)
     {
