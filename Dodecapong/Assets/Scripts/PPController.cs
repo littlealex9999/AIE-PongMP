@@ -29,7 +29,7 @@ public class PPController : MonoBehaviour
             } 
         }
 
-        public IEnumerator Play()
+        public IEnumerator CR_Play()
         {
             float timeElapsed = 0;
 
@@ -72,9 +72,9 @@ public class PPController : MonoBehaviour
         clampedfloat.value = value;
     }
 
-    public void StartVignette() => StartCoroutine(vignetteIntensity.Play());
-    public void StartChromaticAberration() => StartCoroutine(chromaticAberrationIntensity.Play());
-    public void StartBloom() => StartCoroutine(bloomIntensity.Play());
+    public void StartVignette() => StartCoroutine(vignetteIntensity.CR_Play());
+    public void StartChromaticAberration() => StartCoroutine(chromaticAberrationIntensity.CR_Play());
+    public void StartBloom() => StartCoroutine(bloomIntensity.CR_Play());
 
     public void DisableBloom()
     {

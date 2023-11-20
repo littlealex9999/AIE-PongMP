@@ -333,6 +333,7 @@ MonoBehaviour:
   readyToGrab: 1
   collider: {fileID: 8348195646772282906}
   moveSpeed: 90
+  dashMoveSpeed: 360
   rotationalForce: 1
   pushDistance: 0.1
   deadzone: 0.05
@@ -437,8 +438,8 @@ MonoBehaviour:
   pillairMarkers: 0
   leftPilar: {fileID: 1309264290764162096}
   rightPilar: {fileID: 7114262528090140840}
+  ShieldHitImortalityDuration: 0.5
   controlType: 3
-  unhittable: 0
 --- !u!114 &8348195646772282906
 MonoBehaviour:
   m_ObjectHideFlags: 0
