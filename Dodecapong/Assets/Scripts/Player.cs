@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
 
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
+    [Tooltip("In degrees per second")] public float dashMoveSpeed = 360;
 
     public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
@@ -92,6 +93,7 @@ public class Player : MonoBehaviour
     public GameObject leftPilar;
     public GameObject rightPilar;
 
+    public float ShieldHitImortalityDuration;
     public enum ControlType
     {
         MIDSECTION,
@@ -261,9 +263,13 @@ public class Player : MonoBehaviour
 
         float moveTarget = CalculateMoveTarget();
 
-        moveTarget *= movementInput.magnitude * moveSpeed;
+        float speed;
+        if (dashing) speed = dashMoveSpeed;
+        else speed = moveSpeed;
 
-        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
+        moveTarget *= movementInput.magnitude * speed;
+
+        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -speed, speed);
 
         Vector3 startPos = transform.position;
 
@@ -346,7 +352,7 @@ public class Player : MonoBehaviour
         if (deltaTarget.y == 0 || deltaPos.y == 0) deltaPos.y = 0;
         else deltaPos.y = deltaTarget.y / deltaPos.y;
 
-        collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
+        collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / speed) * rotationalForce;
 
         if (hitting)
         {
@@ -509,6 +515,8 @@ public class Player : MonoBehaviour
         float dir = -CalculateMoveTarget();
         float targetAngle = startingAngle + dashAngle * dir;
 
+        Angle(movementInput);
+
         float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
         float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
 
@@ -516,9 +524,9 @@ public class Player : MonoBehaviour
         {
             float currentAngle = Mathf.Lerp(targetAngle, startingAngle, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
 
-            if (currentAngle > maxDev) SetPosition(maxDev);
-            else if (currentAngle < minDev) SetPosition(minDev);
-            else SetPosition(currentAngle);
+            //if (currentAngle > maxDev) SetPosition(maxDev);
+            //else if (currentAngle < minDev) SetPosition(minDev);
+            //else SetPosition(currentAngle);
 
             timeElapsed += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
@@ -630,18 +638,16 @@ public class Player : MonoBehaviour
         readyToGrab = true;
     }
 
-
-    public bool unhittable;
     public void UnHittable() => StartCoroutine(CR_UnHittable());
     private IEnumerator CR_UnHittable()
     {
-        if (unhittable) yield break;
+        if (collider.enabled == false) yield break;
 
-        unhittable = true;
+        collider.enabled = false;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(ShieldHitImortalityDuration);
 
-        unhittable = false;
+        collider.enabled = true;
     }
     #endregion
 }
