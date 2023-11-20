@@ -1874,6 +1874,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: better canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7521882063906400499, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7521882064166033467, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8849621520921401841, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -2060,7 +2068,7 @@ MonoBehaviour:
   chromaticAberrationIntensity:
     Default: 0
     Target: 1
-    duration: 1
+    duration: 0.5
     curve:
       serializedVersion: 2
       m_Curve:
@@ -2855,9 +2863,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: postEffectsController
+      value: 
+      objectReference: {fileID: 1509821799}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: endGameAlternatePosition
       value: 
       objectReference: {fileID: 2098458177}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerBlinkOnHitDuration
+      value: 0.21
+      objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.size
       value: 8

@@ -3,6 +3,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.HighDefinition;
 using System;
 using System.Collections;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PPController : MonoBehaviour
 {
@@ -35,10 +36,7 @@ public class PPController : MonoBehaviour
             while (timeElapsed < duration)
             {
                 timeElapsed += Time.deltaTime;
-                Debug.Log(timeElapsed);
                 Value = Mathf.Lerp(Default, Target, curve.Evaluate(timeElapsed / duration));
-               
-
                 yield return new WaitForEndOfFrame();
             }
             Value = Default;
@@ -77,6 +75,21 @@ public class PPController : MonoBehaviour
     public void StartVignette() => StartCoroutine(vignetteIntensity.Play());
     public void StartChromaticAberration() => StartCoroutine(chromaticAberrationIntensity.Play());
     public void StartBloom() => StartCoroutine(bloomIntensity.Play());
+
+    public void DisableBloom()
+    {
+        mBloom.active = false;
+    }
+
+    public void EnableBloom()
+    {
+        mBloom.active = true;
+    }
+
+    private void Awake()
+    {
+        GetProfileComponents();
+    }
 
     public void GetProfileComponents()
     {
