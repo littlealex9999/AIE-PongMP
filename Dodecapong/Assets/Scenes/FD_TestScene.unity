@@ -1450,7 +1450,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12e03fc683fec6a46b963dea8c6318d6, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.3
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 12e03fc683fec6a46b963dea8c6318d6, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2010,8 +2010,8 @@ MonoBehaviour:
       m_RotationOrder: 4
   chromaticAberrationIntensity:
     Default: 0
-    Target: 1
-    duration: 1
+    Target: 0.5
+    duration: 0.5
     curve:
       serializedVersion: 2
       m_Curve:
@@ -2911,6 +2911,10 @@ PrefabInstance:
       propertyPath: endGameAlternatePosition
       value: 
       objectReference: {fileID: 2098458177}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerBlinkOnHitDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: particleColors.Array.size
       value: 8
