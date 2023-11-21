@@ -45,6 +45,9 @@ public class PongConvexHullCollider : PongCollider
 
     public Vector2 scale = new Vector2(1, 1);
 
+    [Range(0, 180)]
+    public float forceNormalDirectionClamp = 180.0f;
+
     public void RecalculateNormals()
     {
         RecalculateScale();
