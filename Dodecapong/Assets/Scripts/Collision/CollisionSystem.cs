@@ -51,6 +51,7 @@ public class CollisionSystem : MonoBehaviour
                                     DoCollisionEvents(colliders[i], colliders[j], colliders[i].OnTriggerEnter, colliders[j].OnTriggerEnter, data);
                                 }
                             } else {
+                                DoCollisionEvents(colliders[i], colliders[j], colliders[i].PreResolution, colliders[j].PreResolution, data);
                                 data.ResolveCollision();
                                 DoCollisionEvents(colliders[i], colliders[j], colliders[i].OnCollision, colliders[j].OnCollision, data);
                                 if (!alreadyColliding) {
@@ -74,7 +75,7 @@ public class CollisionSystem : MonoBehaviour
                 #endregion
 
                 #region paddle
-                // checks everything against the paddles
+                // checks everything against the paddles, except paddles as they should never collide
                 for (int j = 0; j < paddleColliders.Count; j++) {
                     if (paddleColliders[j].isActiveAndEnabled) {
                         CollisionData data = CheckCollision(colliders[i], paddleColliders[j]);
@@ -93,6 +94,7 @@ public class CollisionSystem : MonoBehaviour
                                     DoCollisionEvents(colliders[i], paddleColliders[j], colliders[i].OnPaddleTriggerEnter, paddleColliders[j].OnPaddleTriggerEnter, data);
                                 }
                             } else {
+                                DoCollisionEvents(colliders[i], paddleColliders[j], colliders[i].PreResolution, paddleColliders[j].PreResolution, data);
                                 data.ResolveCollision();
                                 DoCollisionEvents(colliders[i], paddleColliders[j], colliders[i].OnPaddleCollision, paddleColliders[j].OnPaddleCollision, data);
                                 if (!alreadyColliding) {
