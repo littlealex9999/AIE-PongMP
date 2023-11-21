@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
     public float healthBlipSpread = 0.1f;
     public float healthBlipSquishTime = 0.5f;
     public float healthBlipDistance = 4.6f;
+    public Vector3 healthBlipOffset;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
@@ -231,11 +232,6 @@ public class GameManager : MonoBehaviour
             new Vector2(p1.x + mu1 * (p2.x - p1.x), p1.y + mu1 * (p2.y - p1.y)),
             new Vector2(p1.x + mu2 * (p2.x - p1.x), p1.y + mu2 * (p2.y - p1.y)),
         };
-    }
-
-    public static void QuitGame()
-    {
-        Application.Quit();
     }
     #endregion
 
@@ -817,7 +813,7 @@ public class GameManager : MonoBehaviour
                     alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
                     alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].name = "Player " + i + " Blip " + j;
                 }
-                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + healthBlipOffset;
                 angle += angleChange;
             }
 
@@ -846,7 +842,7 @@ public class GameManager : MonoBehaviour
             float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.healthBlips.Count - removalPercentage + 1) * 2;
             float angle = player.playerSectionMiddle - player.playerAngleDeviance * healthBlipSpread + angleChange;
             for (int i = 0; i < player.healthBlips.Count; i++) {
-                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + healthBlipOffset;
                 angle += angleChange;
 
                 if (i == targetDestroyBlip) {
@@ -996,7 +992,7 @@ public class GameManager : MonoBehaviour
                 float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + 1) * 2;
                 float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
                 for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
-                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + healthBlipOffset;
                     healthAngle += angleChange;
                 }
             }
