@@ -34,7 +34,7 @@ public class BlackHole : MonoBehaviour
             duration -= Time.fixedDeltaTime;
             if (duration <= 0)
             {
-                StartCoroutine(DestroyHole(null));
+                StartCoroutine(DestroyHole());
             }
 
             if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) 
@@ -64,11 +64,31 @@ public class BlackHole : MonoBehaviour
             GameManager.instance.CleanTransformers(false);
             EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
-            StartCoroutine(DestroyHole(other.gameObject));
+            animator.SetTrigger("BallHit");
+
+            StartCoroutine(BallHit());
         }
     }
 
-    IEnumerator DestroyHole(GameObject enableOnEnd)
+    IEnumerator DestroyHole()
+    {
+        animator.SetTrigger("Shrink");
+        yield return new WaitForSeconds(0.6f);
+        GameManager.instance.blackHole = null;
+        DestroyImmediate(gameObject);
+    }
+
+    IEnumerator BallHit()
+    {
+        yield return new WaitForSeconds(destroyTime);
+
+        if (ball) ball.gameObject.SetActive(true);
+        if (ball) ball.largeRing.Play();
+
+        StartCoroutine(DestroyHole());
+    }
+
+    IEnumerator wwwDestroyHole(GameObject enableOnEnd)
     {
         float destroyTimer = 0.0f;
         Vector3 startScale = transform.localScale;
@@ -87,11 +107,11 @@ public class BlackHole : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        if (enableOnEnd) yield return new WaitForSeconds(0.1f);
+
         if (enableOnEnd) enableOnEnd.SetActive(true);
         if (ball) ball.largeRing.Play();
-        animator.SetTrigger("Shrink");
-
-        yield return new WaitForSeconds(0.6f);
+        if (!enableOnEnd) animator.SetTrigger("Shrink");
 
         GameManager.instance.blackHole = null;
         DestroyImmediate(gameObject);

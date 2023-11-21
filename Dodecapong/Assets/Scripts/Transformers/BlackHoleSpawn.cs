@@ -7,7 +7,7 @@ public class BlackHoleSpawn : Transformer
     public float gravityStrength;
     public float spawnAreaMultiplier = 0.5f;
 
-    float destroyTime = 2.0f;
+    float destroyTime = 4.0f;
     public GameObject blackHolePrefab;
     BlackHole blackHole;
 

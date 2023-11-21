@@ -53,6 +53,7 @@ public class MenuManager : MonoBehaviour
     public GameObject gameScreen;
     public GameObject pauseScreen;
     public GameObject endScreen;
+    public GameObject creditScreen;
 
     public GameObject[] presetSubScreens;
     int presetCurrentActive = 0;
@@ -68,6 +69,7 @@ public class MenuManager : MonoBehaviour
     public GameObject editPresetDefault;
     public GameObject pauseDefault;
     public GameObject endDefault;
+    public GameObject creditDefault; 
 
     [Space]
     public List<MenuTextPair> menuTextPairs;
@@ -129,6 +131,7 @@ public class MenuManager : MonoBehaviour
         gameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         endScreen.SetActive(false);
+        creditScreen.SetActive(false);
     }
 
     public void UpdateState(StateToChangeTo stateToChangeTo)
@@ -165,6 +168,9 @@ public class MenuManager : MonoBehaviour
                 break;
             case GameManager.GameState.GAMEOVER:
                 EndGame();
+                break;
+            case GameManager.GameState.CREDITS:
+                CreditsMenu();
                 break;
         }
     }
@@ -308,6 +314,13 @@ public class MenuManager : MonoBehaviour
         mainMenu.SetActive(true);
         playerInputManager.DisableJoining();
         eventSystem.SetSelectedGameObject(mainMenuDefault);
+    }
+
+    public void CreditsMenu()
+    {
+        DisableAll();
+        creditScreen.SetActive(true);
+        eventSystem.SetSelectedGameObject(creditDefault);
     }
 
     public void PauseMenu()

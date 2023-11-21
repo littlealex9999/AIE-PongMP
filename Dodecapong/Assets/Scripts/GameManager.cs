@@ -108,6 +108,7 @@ public class GameManager : MonoBehaviour
         GAMEPLAY,
         GAMEPAUSED,
         GAMEOVER,
+        CREDITS,
     }
     #endregion
 
@@ -776,8 +777,7 @@ public class GameManager : MonoBehaviour
             ControllerInputHandler controller = controllers[controllerImageIndex];
             int playerAIndex = controllerImageIndex * 2;
             int playerBIndex = playerAIndex + 1;
-            if (controller.splitControls)
-            {
+            if (controller.splitControls){
 
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
