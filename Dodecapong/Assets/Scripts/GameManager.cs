@@ -502,8 +502,6 @@ public class GameManager : MonoBehaviour
 
             player.dead = false;
 
-            player.startTime = Time.time;
-
             alivePlayers.Add(player);
         }
         UpdateAlivePlayers();
