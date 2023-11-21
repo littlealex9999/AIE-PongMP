@@ -153,6 +153,10 @@ public class GameManager : MonoBehaviour
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
         selectedGameVariables = ScriptableObject.CreateInstance<GameVariables>();
 
+#if !UNITY_EDITOR
+        UnityEngine.Cursor.visible = false;
+#endif
+
         OnGameStateChange += OnGameStateChanged;
 
         SetupGameEndData();
