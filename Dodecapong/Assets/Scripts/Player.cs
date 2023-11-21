@@ -147,7 +147,7 @@ public class Player : MonoBehaviour
         ballMat.color = new Color(ballMat.color.r, ballMat.color.g, ballMat.color.b, alpha);
 
         if (isAI) {
-            //CalculateAIInput();
+           // CalculateAIInput();
         }
 
         Move();
