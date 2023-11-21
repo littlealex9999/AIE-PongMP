@@ -474,6 +474,7 @@ public class GameManager : MonoBehaviour
             Player player = players[i];
 
             player.gameObject.SetActive(true);
+            player.ResetStartValues();
 
             player.moveSpeed = selectedGameVariables.playerSpeed;
 
@@ -500,8 +501,6 @@ public class GameManager : MonoBehaviour
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
             player.dead = false;
-
-            player.startTime = Time.time;
 
             alivePlayers.Add(player);
         }
