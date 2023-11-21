@@ -6,9 +6,6 @@ public class BlackHole : MonoBehaviour
 {
     public GameObject pointer;
 
-    public GameObject blackHole;
-    public GameObject buildUp;
-
     public float gravityStrength;
     public float duration = 10.0f;
 
@@ -22,14 +19,12 @@ public class BlackHole : MonoBehaviour
     new PongCircleCollider collider;
     Ball ball;
 
+    public Animator animator;
+
     private void Start()
     {
         collider = GetComponent<PongCircleCollider>();
         collider.OnTrigger += CheckCollisionBall;
-
-        collider.enabled = false;
-        buildUp.SetActive(true);
-        StartCoroutine(BuildUp());
     }
 
     private void FixedUpdate()
@@ -77,6 +72,7 @@ public class BlackHole : MonoBehaviour
     {
         float destroyTimer = 0.0f;
         Vector3 startScale = transform.localScale;
+
         while (destroyTimer < destroyTime) {
             destroyTimer += Time.deltaTime;
             float endPercentage = destroyTime / destroyTimer;
@@ -92,10 +88,13 @@ public class BlackHole : MonoBehaviour
         }
 
         if (enableOnEnd) enableOnEnd.SetActive(true);
-
         if (ball) ball.largeRing.Play();
+        animator.SetTrigger("Shrink");
+
+        yield return new WaitForSeconds(0.6f);
+
         GameManager.instance.blackHole = null;
-        Destroy(gameObject);
+        DestroyImmediate(gameObject);
         yield break;
     }
 }

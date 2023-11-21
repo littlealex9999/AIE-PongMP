@@ -4958,7 +4958,6 @@ GameObject:
   - component: {fileID: 2455802007889360072}
   - component: {fileID: 3069472558615129888}
   - component: {fileID: 8027892951829198300}
-  - component: {fileID: 3352627847750137290}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -5032,19 +5031,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &3352627847750137290
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2880337631433098326}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &3796156659218304031
 GameObject:
   m_ObjectHideFlags: 0
@@ -5137,8 +5123,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4178493843460433867}
-  - component: {fileID: 5562812619531061596}
-  - component: {fileID: 2545408316406588544}
   - component: {fileID: 5922263977324351972}
   - component: {fileID: 6142079961688574177}
   m_Layer: 0
@@ -5155,7 +5139,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4178493843460433718}
-  m_LocalRotation: {x: 0, y: 0.7071068, z: -0.7071068, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 9.296552, y: 2.17, z: -1.51}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5164,49 +5148,7 @@ Transform:
   - {fileID: 8143169055966551162}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 90, y: 180, z: 0}
---- !u!114 &5562812619531061596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4178493843460433718}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee79f76029086d642ac387caf1a8f2e5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  inverseMass: 1
-  velocity: {x: 0, y: 0}
-  acceleration: {x: 0, y: 0}
-  normalBending: 1
-  trigger: 1
-  immovable: 1
-  addForceWhileImmovable: 1
-  collidingWith: []
-  radius: 0.25
---- !u!114 &2545408316406588544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4178493843460433718}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9ca32c5a59b6d54f86130bfb7bab6eb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  pointer: {fileID: 0}
-  blackHole: {fileID: 7651915287861015619}
-  buildUp: {fileID: 7687830310788684782}
-  gravityStrength: 0.1
-  duration: 10
-  buildupTime: 2
-  destroyTime: 3.5
-  ballLaunchMult: 4
-  pullEnabled: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!82 &5922263977324351972
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5571,6 +5513,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8143169055966551162}
+  - component: {fileID: 6843294854333584377}
+  - component: {fileID: 2726987525833748696}
   m_Layer: 0
   m_Name: BlackHole_v2
   m_TagString: Untagged
@@ -5585,7 +5529,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7651915287861015619}
-  m_LocalRotation: {x: -0, y: -0.7071068, z: 0.7071068, w: 0}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5593,7 +5537,48 @@ Transform:
   - {fileID: 2455802007889360072}
   m_Father: {fileID: 4178493843460433867}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &6843294854333584377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651915287861015619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9ca32c5a59b6d54f86130bfb7bab6eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pointer: {fileID: 0}
+  gravityStrength: 0.1
+  duration: 10
+  buildupTime: 2
+  destroyTime: 3.5
+  ballLaunchMult: 4
+  pullEnabled: 1
+  animator: {fileID: 6142079961688574177}
+--- !u!114 &2726987525833748696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7651915287861015619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee79f76029086d642ac387caf1a8f2e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inverseMass: 1
+  velocity: {x: 0, y: 0}
+  acceleration: {x: 0, y: 0}
+  normalBending: 1
+  trigger: 1
+  immovable: 1
+  addForceWhileImmovable: 1
+  collidingWith: []
+  radius: 0.25
 --- !u!1 &7897811492287834198
 GameObject:
   m_ObjectHideFlags: 0
@@ -15391,13 +15376,20 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6276064700714261570, guid: 741582cea7d9d6847a0ebe2758fcbaf6, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6276064700714261580, guid: 741582cea7d9d6847a0ebe2758fcbaf6, type: 3}
+      propertyPath: VelocityModule.radial.scalar
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6276064700714261581, guid: 741582cea7d9d6847a0ebe2758fcbaf6, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 741582cea7d9d6847a0ebe2758fcbaf6, type: 3}
---- !u!1 &7687830310788684782 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6276064699580166461, guid: 741582cea7d9d6847a0ebe2758fcbaf6, type: 3}
-  m_PrefabInstance: {fileID: 4443266641447512787}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7687830310788684783 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6276064699580166460, guid: 741582cea7d9d6847a0ebe2758fcbaf6, type: 3}
