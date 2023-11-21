@@ -336,9 +336,9 @@ public class MenuManager : MonoBehaviour
     {
 #if UNITY_EDITOR
         Debug.Log("Application Quit");
-#endif
-
+#else
         Application.Quit();
+#endif
     }
 
     void SettingsScreenUpdateVariableUI()

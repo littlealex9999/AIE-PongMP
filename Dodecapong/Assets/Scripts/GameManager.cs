@@ -18,12 +18,13 @@ public class GameManager : MonoBehaviour
     #region Game Objects
     [Header("Game Objects")]
 
+    public PPController postEffectsController;
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
     public GameObject pillarPrefab;
     public GameObject playerPrefab;
-    List<GameObject> pillars = new List<GameObject>();
+    [HideInInspector] public  List<GameObject> pillars = new List<GameObject>();
 
     public GameObject healthDotPrefab;
 
@@ -45,10 +46,12 @@ public class GameManager : MonoBehaviour
     public float healthBlipSpread = 0.1f;
     public float healthBlipSquishTime = 0.5f;
     public float healthBlipDistance = 4.6f;
+    public Vector3 healthBlipOffset;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
     public float playerDistance = 4.0f;
+    public float playerBlinkOnHitDuration;
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
@@ -230,11 +233,6 @@ public class GameManager : MonoBehaviour
             new Vector2(p1.x + mu2 * (p2.x - p1.x), p1.y + mu2 * (p2.y - p1.y)),
         };
     }
-
-    public static void QuitGame()
-    {
-        Application.Quit();
-    }
     #endregion
 
     #region GAMESTATE
@@ -249,18 +247,23 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.JOINMENU:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.PRESETSELECT:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.EDITPRESET:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
+                postEffectsController.EnableBloom();
                 EventManager.instance?.gameplayEvent?.Invoke();
 
                 if (!inGame) {
@@ -274,6 +277,7 @@ public class GameManager : MonoBehaviour
 
                 break;
             case GameState.GAMEOVER:
+                postEffectsController.DisableBloom();
                 if (inGame) {
                     // EndGame calls a gamestate change to GAMEOVER so we must ensure it doesn't infinitely repeat and return
                     EndGame();
@@ -371,6 +375,37 @@ public class GameManager : MonoBehaviour
         StartCoroutine(EliminatePlayerRoutine(index));
     }
 
+
+    public void PlayChromaticAberration()
+    {
+        StartCoroutine(postEffectsController.chromaticAberrationIntensity.CR_Play());
+    }
+    public void BlinkPlayerSegment(int aliveID)
+    {
+        StartCoroutine(CR_BlinkPlayerSegment(aliveID));
+    }
+    private IEnumerator CR_BlinkPlayerSegment(int aliveID)
+    {
+        Color[] colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            if (i == aliveID) colors[i] = Color.white;
+            else colors[i] = alivePlayers[i].color;
+
+        }
+
+        arcTanShaderHelper.colors = colors;
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
+        yield return new WaitForSeconds(playerBlinkOnHitDuration);
+
+        arcTanShaderHelper.colors = GenerateLivingColors();
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
+    }
+
     public Color[] GenerateLivingColors()
     {
         Color[] colors = new Color[alivePlayers.Count];
@@ -466,6 +501,8 @@ public class GameManager : MonoBehaviour
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
             player.dead = false;
+
+            player.startTime = Time.time;
 
             alivePlayers.Add(player);
         }
@@ -777,7 +814,7 @@ public class GameManager : MonoBehaviour
                     alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
                     alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].name = "Player " + i + " Blip " + j;
                 }
-                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + healthBlipOffset;
                 angle += angleChange;
             }
 
@@ -806,7 +843,7 @@ public class GameManager : MonoBehaviour
             float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.healthBlips.Count - removalPercentage + 1) * 2;
             float angle = player.playerSectionMiddle - player.playerAngleDeviance * healthBlipSpread + angleChange;
             for (int i = 0; i < player.healthBlips.Count; i++) {
-                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + healthBlipOffset;
                 angle += angleChange;
 
                 if (i == targetDestroyBlip) {
@@ -956,7 +993,7 @@ public class GameManager : MonoBehaviour
                 float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + 1) * 2;
                 float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
                 for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
-                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + healthBlipOffset;
                     healthAngle += angleChange;
                 }
             }

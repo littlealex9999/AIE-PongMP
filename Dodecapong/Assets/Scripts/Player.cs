@@ -51,6 +51,7 @@ public class Player : MonoBehaviour
 
 
     [Tooltip("In degrees per second")] public float moveSpeed = 90;
+    [Tooltip("In degrees per second")] public float dashMoveSpeed = 360;
 
     public float rotationalForce = 1.0f;
     public float pushDistance = 0.1f;
@@ -87,7 +88,12 @@ public class Player : MonoBehaviour
     float startTime;
     public float fadeDuration;
     public AnimationCurve fadeCurve;
+    
+    public bool pillairMarkers;
+    public GameObject leftPilar;
+    public GameObject rightPilar;
 
+    public float ShieldHitImortalityDuration;
     public enum ControlType
     {
         MIDSECTION,
@@ -118,6 +124,19 @@ public class Player : MonoBehaviour
     {
         if (dead) return;
 
+        if (pillairMarkers)
+        {
+            leftPilar.transform.position = GameManager.instance.pillars[LivingID].transform.position;
+
+            if (GameManager.instance.pillars.Count - 1 == LivingID)
+            {
+                rightPilar.transform.position = GameManager.instance.pillars[0].transform.position;
+            }
+            else
+            {
+                rightPilar.transform.position = GameManager.instance.pillars[LivingID + 1].transform.position;
+            }
+        }
 
         float timeElapsed = Time.time - startTime;
 
@@ -126,7 +145,7 @@ public class Player : MonoBehaviour
         ghostMat.color = new Color(ghostMat.color.r, ghostMat.color.g, ghostMat.color.b, alpha);
 
         if (isAI) {
-            //CalculateAIInput();
+           // CalculateAIInput();
         }
 
         Move();
@@ -237,9 +256,13 @@ public class Player : MonoBehaviour
 
         float moveTarget = CalculateMoveTarget();
 
-        moveTarget *= movementInput.magnitude * moveSpeed;
+        float speed;
+        if (dashing) speed = dashMoveSpeed;
+        else speed = moveSpeed;
 
-        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -moveSpeed, moveSpeed);
+        moveTarget *= movementInput.magnitude * speed;
+
+        if (clampSpeed) moveTarget = Mathf.Clamp(moveTarget, -speed, speed);
 
         Vector3 startPos = transform.position;
 
@@ -248,15 +271,15 @@ public class Player : MonoBehaviour
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
 
-        float angle = Angle(transform.position);
+        float targetAngle = Angle(transform.position);
         float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
         float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
 
         #region angle clamp
-        if (angle > maxDev || angle < minDev) {
+        if (targetAngle > maxDev || targetAngle < minDev) {
             if (playerMidPoint >= 180.0f) {
                 float oppositePoint = playerMidPoint - 180.0f;
-                if (angle < oppositePoint || angle > maxDev) {
+                if (targetAngle < oppositePoint || targetAngle > maxDev) {
                     // player is closer to max
                     SetPosition(maxDev);
                 } else {
@@ -265,7 +288,7 @@ public class Player : MonoBehaviour
                 }
             } else {
                 float oppositePoint = playerMidPoint + 180.0f;
-                if (angle < oppositePoint && angle > maxDev) {
+                if (targetAngle < oppositePoint && targetAngle > maxDev) {
                     // player is closer to max
                     SetPosition(maxDev);
                 } else {
@@ -315,10 +338,10 @@ public class Player : MonoBehaviour
         if (deltaTarget.y == 0 || deltaPos.y == 0) deltaPos.y = 0;
         else deltaPos.y = deltaTarget.y / deltaPos.y;
 
-        collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / moveSpeed) * rotationalForce;
+        collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / speed) * rotationalForce;
 
         if (hitting) {
-            Vector2 hitVel = (Vector2)(Quaternion.Euler(0, 0, -angle) * new Vector2(0, hitStrength));
+            Vector2 hitVel = (Vector2)(Quaternion.Euler(0, 0, -targetAngle) * new Vector2(0, hitStrength));
             hitVel.y *= -1;
             collider.velocity += hitVel;
         }
@@ -472,7 +495,18 @@ public class Player : MonoBehaviour
         dashTrailObj.transform.localPosition = Vector3.zero;
         dashTrail.enabled = true;
 
-        //float value;
+        yield return new WaitForSeconds(dashDuration);
+
+        dashing = false;
+
+        dashTrailObj.transform.parent = null;
+
+        yield return new WaitForSeconds(dashCooldown);
+
+        readyToDash = true;
+
+        /*
+        float value;
         float timeElapsed = 0;
 
         float dashAngle = 360f / GameManager.instance.alivePlayers.Count * dashDistance;
@@ -480,6 +514,8 @@ public class Player : MonoBehaviour
 
         float dir = -CalculateMoveTarget();
         float targetAngle = startingAngle + dashAngle * dir;
+
+        Angle(movementInput);
 
         float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
         float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
@@ -494,50 +530,50 @@ public class Player : MonoBehaviour
             timeElapsed += Time.fixedDeltaTime;
             yield return new WaitForFixedUpdate();
 
-            //if (currentAngle > maxDev || currentAngle < minDev)
-            //{
-            //    if (playerMidPoint >= 180.0f)
-            //    {
-            //        float oppositePoint = playerMidPoint - 180.0f;
-            //        if (currentAngle < oppositePoint || currentAngle > maxDev)
-            //        {
-            //            // player is closer to max
-            //            SetPosition(maxDev);
-            //        }
-            //        else
-            //        {
-            //            // player is closer to min
-            //            SetPosition(minDev);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        float oppositePoint = playerMidPoint + 180.0f;
-            //        if (currentAngle < oppositePoint && currentAngle > maxDev)
-            //        {
-            //            // player is closer to max
-            //            SetPosition(maxDev);
-            //        }
-            //        else
-            //        {
-            //            // player is closer to min
-            //            SetPosition(minDev);
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    SetPosition(currentAngle);
-            //}
-            //timeElapsed += Time.fixedDeltaTime;
-            //yield return new WaitForFixedUpdate();
+            if (currentAngle > maxDev || currentAngle < minDev)
+            {
+                if (playerMidPoint >= 180.0f)
+                {
+                    float oppositePoint = playerMidPoint - 180.0f;
+                    if (currentAngle < oppositePoint || currentAngle > maxDev)
+                    {
+                        // player is closer to max
+                        SetPosition(maxDev);
+                    }
+                    else
+                    {
+                        // player is closer to min
+                        SetPosition(minDev);
+                    }
+                }
+                else
+                {
+                    float oppositePoint = playerMidPoint + 180.0f;
+                    if (currentAngle < oppositePoint && currentAngle > maxDev)
+                    {
+                        // player is closer to max
+                        SetPosition(maxDev);
+                    }
+                    else
+                    {
+                        // player is closer to min
+                        SetPosition(minDev);
+                    }
+                }
+            }
+            else
+            {
+                SetPosition(currentAngle);
+            }
+            timeElapsed += Time.fixedDeltaTime;
+            yield return new WaitForFixedUpdate();
 
-            //value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
-            //timeElapsed += Time.fixedDeltaTime;
+            value = Mathf.Lerp(2, 1, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
+            timeElapsed += Time.fixedDeltaTime;
 
-            //Move(dashInput * value, false);
+            Move(dashInput * value, false);
 
-            //yield return new WaitForFixedUpdate();
+            yield return new WaitForFixedUpdate();
         }
 
         dashing = false;
@@ -547,6 +583,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown);
 
         readyToDash = true;
+        */
     }
 
     IEnumerator HitRoutine()
@@ -569,7 +606,9 @@ public class Player : MonoBehaviour
         readyToHit = true;
     }
 
-    public IEnumerator GrabRoutine(CollisionData data)
+    public void Grab(CollisionData data) => StartCoroutine(CR_Grab(data));
+
+    IEnumerator CR_Grab(CollisionData data)
     {
         if (!readyToGrab) yield break;
         readyToGrab = false;
@@ -587,7 +626,7 @@ public class Player : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 hitVel = hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
@@ -598,16 +637,16 @@ public class Player : MonoBehaviour
         readyToGrab = true;
     }
 
-    public bool unhittable;
-    public IEnumerator UnHittable()
+    public void UnHittable() => StartCoroutine(CR_UnHittable());
+    private IEnumerator CR_UnHittable()
     {
-        if (unhittable) yield break;
+        if (collider.enabled == false) yield break;
 
-        unhittable = true;
+        collider.enabled = false;
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(ShieldHitImortalityDuration);
 
-        unhittable = false;
+        collider.enabled = true;
     }
     #endregion
 }

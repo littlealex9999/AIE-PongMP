@@ -35,7 +35,7 @@ public class Ball : MonoBehaviour
 
     public ParticleSystem smallRing; 
     public ParticleSystem mediumRing; 
-    public ParticleSystem largeRing; 
+    public ParticleSystem largeRing;
 
     void Awake()
     {
@@ -50,12 +50,11 @@ public class Ball : MonoBehaviour
 
         if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
         {
-            if (player.unhittable) return;
             if (player.grabbing && player.readyToGrab)
             {
                 transform.SetParent(player.transform);
                 player.heldBall = this;
-                StartCoroutine(player.GrabRoutine(data));
+                player.Grab(data);
                 holdingPlayer = player;
             }
             //else if (player.hitting)
@@ -182,10 +181,12 @@ public class Ball : MonoBehaviour
             float angle = Angle(transform.position.normalized);
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
+            GameManager.instance.PlayChromaticAberration();
+            GameManager.instance.BlinkPlayerSegment(alivePlayerID);
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
-                StartCoroutine(GameManager.instance.alivePlayers[alivePlayerID].UnHittable());
+                GameManager.instance.alivePlayers[alivePlayerID].UnHittable();
 
                 PlayVFX(bounceShield, transform.position, Quaternion.Euler(Vector3.back), GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 mediumRing.Play();
