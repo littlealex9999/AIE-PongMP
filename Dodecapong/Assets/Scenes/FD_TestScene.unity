@@ -1655,9 +1655,17 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5204966252005327210, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5632028912272123866, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5734102354296850939, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6103454899544189576, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
       propertyPath: m_IsActive
@@ -4305,6 +4313,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: better canvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7521882064166033467, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8706286885287867537, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -21.418365
+      objectReference: {fileID: 0}
     - target: {fileID: 8849621520921401841, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -5930,7 +5946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: healthBlipDistance
-      value: 4.397
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: healthBlipOffset.x
