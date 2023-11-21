@@ -5,6 +5,7 @@ using UnityEngine;
 public class BlackHoleSpawn : Transformer
 {
     public float gravityStrength;
+    public float spawnAreaMultiplier = 0.5f;
 
     float destroyTime = 4.0f;
     public GameObject blackHolePrefab;
@@ -18,7 +19,7 @@ public class BlackHoleSpawn : Transformer
     public override void ApplyModifier()
     {
         if (!GameManager.instance.blackHole) {
-            blackHole = Instantiate(blackHolePrefab, GameManager.instance.GetTransformerSpawnPoint(), Quaternion.identity).GetComponentInChildren<BlackHole>(true);
+            blackHole = Instantiate(blackHolePrefab, GameManager.instance.GetTransformerSpawnPoint() * spawnAreaMultiplier, Quaternion.identity).GetComponentInChildren<BlackHole>(true);
             GameManager.instance.blackHole = blackHole;
             blackHole.duration = duration;
             blackHole.gravityStrength = gravityStrength;
