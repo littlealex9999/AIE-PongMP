@@ -94,14 +94,6 @@ public class Player : MonoBehaviour
     public GameObject rightPilar;
 
     public float ShieldHitImortalityDuration;
-    public enum ControlType
-    {
-        MIDSECTION,
-        PADDLE,
-        MIDSECTION_NORMALIZED,
-        PADDLE_NORMALIZED,
-    }
-    public ControlType controlType;
     #endregion
 
     #region Unity
@@ -202,36 +194,22 @@ public class Player : MonoBehaviour
     float CalculateMoveTarget()
     {
         float moveTarget;
-
-        switch (controlType) {
-            case ControlType.MIDSECTION:
-            case ControlType.MIDSECTION_NORMALIZED:
-            default:
-
-                moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 90) * facingDirection);
-                break;
-            case ControlType.PADDLE:
-            case ControlType.PADDLE_NORMALIZED:
-
-                moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
-                break;
+        float movementInputAngle = Angle(movementInput);
+        if (movementInputAngle < playerMidPoint - angleDeviance || movementInputAngle > playerMidPoint + angleDeviance) {
+            // based on player midsection. move perpendicular to area
+            moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 90) * facingDirection);
+        } else {
+            // based on player position. move player to where joystick is pointing
+            moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
         }
 
         if (moveTarget < deadzone && moveTarget > -deadzone) {
             collider.velocity = Vector2.zero;
             return 0;
-        }
-
-        switch (controlType) {
-            case ControlType.MIDSECTION_NORMALIZED:
-            case ControlType.PADDLE_NORMALIZED:
-
-                if (moveTarget > deadzone) {
-                    moveTarget = 1.0f;
-                } else {
-                    moveTarget = -1.0f;
-                }
-                break;
+        } else if (moveTarget > deadzone) {
+            moveTarget = 1.0f;
+        } else {
+            moveTarget = -1.0f;
         }
 
         return moveTarget;
