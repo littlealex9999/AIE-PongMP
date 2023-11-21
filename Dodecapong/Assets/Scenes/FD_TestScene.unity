@@ -1659,6 +1659,10 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5734102354296850939, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6103454899544189576, guid: c33e3c4f07dc12a4fb8d4e6165bbb83e, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -4089,6 +4093,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1440168988967017278, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: values.Array.data[3]
+      value: 0.8
+      objectReference: {fileID: 0}
     - target: {fileID: 1471215439177484046, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -4304,6 +4312,22 @@ PrefabInstance:
     - target: {fileID: 7521882063367354063, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_Name
       value: better canvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397031258610251146, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: values.Array.data[1]
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397031258610251146, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: values.Array.data[2]
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397031258610251146, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: values.Array.data[3]
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 8397031258610251146, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+      propertyPath: values.Array.data[4]
+      value: 170
       objectReference: {fileID: 0}
     - target: {fileID: 8849621520921401841, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
       propertyPath: m_AnchorMax.y

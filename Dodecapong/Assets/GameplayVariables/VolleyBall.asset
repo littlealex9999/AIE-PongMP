@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2da787fa14fda7144939c590924960bd, type: 3}
   m_Name: VolleyBall
   m_EditorClassIdentifier: 
-  playerSpeed: 90
+  playerSpeed: 120
   playerSizes:
   - {x: 4, y: 4, z: 4}
   - {x: 4, y: 4, z: 4}
@@ -38,7 +38,7 @@ MonoBehaviour:
   ballSpeed: 7
   ballSpeedDamp: 5
   ballSpeedPerHit: 0
-  ballSize: 1.2
+  ballSize: 0.8
   shieldBounceTowardsCenterBias: 0.3
   shieldLives: 5
   enableHitstun: 0
