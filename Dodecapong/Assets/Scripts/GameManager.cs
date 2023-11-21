@@ -685,6 +685,10 @@ public class GameManager : MonoBehaviour
 
         ret /= balls.Count;
 
+        if (float.IsNaN(ret.x) || float.IsNaN(ret.y)) {
+            return new Vector2(0, 0);
+        }
+
         return ret;
     }
 

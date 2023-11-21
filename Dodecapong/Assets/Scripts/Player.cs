@@ -392,7 +392,9 @@ public class Player : MonoBehaviour
     void OnCollisionEnterBall(PongCollider other, CollisionData data)
     {
         if (other.tag == "Ball") {
-            controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
+            if (controllerHandler != null) {
+                controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
+            }
 
             Vector2 nextBallCollision = GameManager.instance.GetCircleIntersection(other.position, other.velocity, GameManager.instance.mapRadius);
             float nextBallCollisionAngle = Angle(nextBallCollision);
