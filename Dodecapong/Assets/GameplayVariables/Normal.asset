@@ -43,8 +43,8 @@ MonoBehaviour:
   shieldLives: 5
   enableHitstun: 0
   transformerFrequency: 1
-  transformerPower: 1
-  enabledTransformers: 39
+  transformerSpawnTime: 10
+  enabledTransformers: -1
   winType: 0
   useTimer: 1
   timeInSeconds: 20
