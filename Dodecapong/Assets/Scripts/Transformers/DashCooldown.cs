@@ -8,7 +8,8 @@ public class DashCooldown : Transformer
 
     public override TransformerTypes GetTransformerType()
     {
-        return TransformerTypes.DASHCOOLDOWN;
+        //return TransformerTypes.DASHCOOLDOWN;
+        return 0;
     }
 
     public override void ApplyModifier()

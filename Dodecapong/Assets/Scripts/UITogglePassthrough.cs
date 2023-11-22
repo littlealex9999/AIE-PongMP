@@ -11,12 +11,10 @@ public class UITogglePassthrough : MonoBehaviour
     public enum ToggleVariables
     {
         PLAYERDASH,
-        TFBALLSIZE,
+        TFBALLSIZEUP,
+        TFBALLSIZEDOWN,
         TFBALLSPEED,
         TFBLACKHOLE,
-        TFDASHCD,
-        TFPLAYERSPEED,
-        TFSHEILDHEALTH,
     }
 
     private void Awake()
@@ -32,23 +30,17 @@ public class UITogglePassthrough : MonoBehaviour
             case ToggleVariables.PLAYERDASH:
                 GameVariables.SetPlayerDashEnabled(value);
                 break;
-            case ToggleVariables.TFBALLSIZE:
-                GameVariables.SetBallSizeTransformer(value);
+            case ToggleVariables.TFBALLSIZEUP:
+                GameVariables.SetBallSizeUpTransformer(value);
+                break;
+            case ToggleVariables.TFBALLSIZEDOWN:
+                GameVariables.SetBallSizeDownTransformer(value);
                 break;
             case ToggleVariables.TFBALLSPEED:
                 GameVariables.SetBallSpeedTransformer(value);
                 break;
             case ToggleVariables.TFBLACKHOLE:
                 GameVariables.SetBlackHoleTransformer(value);
-                break;
-            case ToggleVariables.TFDASHCD:
-                GameVariables.SetDashCooldownTransformer(value);
-                break;
-            case ToggleVariables.TFPLAYERSPEED:
-                GameVariables.SetPlayerSpeedTransformer(value);
-                break;
-            case ToggleVariables.TFSHEILDHEALTH:
-                GameVariables.SetShieldLivesTransformer(value);
                 break;
         }
     }

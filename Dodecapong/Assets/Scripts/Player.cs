@@ -22,12 +22,14 @@ public class Player : MonoBehaviour
 
     public bool dead;
 
-    [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
-    [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get { return GameManager.instance.GetPlayerParticleColor(ID); } private set { } }
+    [HideInInspector] public Color color { get; private set; }
+    [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get; private set; }
+    [HideInInspector] public int colorIndex;
 
     [HideInInspector] public float dashDistance;
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
+    public bool dashEnabled;
     bool readyToDash = true;
 
     [HideInInspector] public float hitDuration;
@@ -107,6 +109,12 @@ public class Player : MonoBehaviour
         ghostMat = inputGhost.gameObject.GetComponentInChildren<MeshRenderer>().sharedMaterial;
     }
 
+    public void SetupPlayer(Color playerColor, ParticleSystem.MinMaxGradient particleColor)
+    {
+        color = playerColor; ;
+        this.particleColor = particleColor;
+    }
+
     private void OnDestroy()
     {
         Destroy(gameObject);
@@ -168,7 +176,7 @@ public class Player : MonoBehaviour
 
     public void Dash()
     {
-        if (!isActiveAndEnabled || dead) return;
+        if (!isActiveAndEnabled || dead || !dashEnabled) return;
         StartCoroutine(DashRoutine());
     }
 
