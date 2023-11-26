@@ -239,9 +239,11 @@ MonoBehaviour:
   movementInput: {x: 0, y: 0}
   shieldHealth: 0
   dead: 0
+  colorIndex: 0
   dashDistance: 0
   dashDuration: 0
   dashCooldown: 0
+  dashEnabled: 0
   hitDuration: 0
   hitCooldown: 0
   grabAttraction: 0
