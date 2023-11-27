@@ -1034,6 +1034,7 @@ public class GameManager : MonoBehaviour
                 Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * Mathf.Lerp(0, pillarSmashTimer, playerRemovalPercentage)).normalized;
                 position *= Mathf.Lerp(ballsStartDistances[i], 0.0f, playerRemovalPercentage);
                 balls[i].transform.position = position;
+                balls[i].transform.rotation = Quaternion.Euler(0, 0, Player.Angle(balls[i].transform.position) + 90);
             }
 
             yield return new WaitForEndOfFrame();
