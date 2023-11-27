@@ -43,7 +43,7 @@ public class GameVariables : ScriptableObject
         enableHitstun = gv.enableHitstun;
 
         transformerFrequency = gv.transformerFrequency;
-        transformerPower = gv.transformerPower;
+        transformerSpawnTime = gv.transformerSpawnTime;
         enabledTransformers = gv.enabledTransformers;
 
         winType = gv.winType;
@@ -134,20 +134,16 @@ public class GameVariables : ScriptableObject
 
     #region Field
     [Range(0, 1)] public float transformerFrequency;
-    public float transformerPower = 1.0f;
+    public float transformerSpawnTime = 10.0f;
     public Transformer.TransformerTypes enabledTransformers;
 
     public static void SetTransformerFrequency(float value) { GameManager.instance.selectedGameVariables.transformerFrequency = value; }
-    public static void SetTransformerPower(float value) { GameManager.instance.selectedGameVariables.transformerPower = value; }
+    public static void SetTransformerPower(float value) { GameManager.instance.selectedGameVariables.transformerSpawnTime = value; }
     public void SetBits(Transformer.TransformerTypes mask, bool add) { enabledTransformers = add ? enabledTransformers | mask : enabledTransformers & ~mask; }
 
     public static void SetBallSpeedTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.BALLSPEED, enabled); }
-    public static void SetBallSizeTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.BALLSIZE, enabled); }
-    public static void SetPlayerSpeedTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.PLAYERSPEED, enabled); }
-    public static void SetPlayerSizeTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.PLAYERSIZE, enabled); }
-    public static void SetDashCooldownTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.DASHCOOLDOWN, enabled); }
-    public static void SetShieldLivesTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.SHIELDHEALTH, enabled); }
-    public static void SetBallCountTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.BALLCOUNT, enabled); }
+    public static void SetBallSizeUpTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.BALLSIZEUP, enabled); }
+    public static void SetBallSizeDownTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.BALLSIZEDOWN, enabled); }
     public static void SetBlackHoleTransformer(bool enabled) { GameManager.instance.selectedGameVariables.SetBits(Transformer.TransformerTypes.BLACKHOLE, enabled); }
     #endregion
 

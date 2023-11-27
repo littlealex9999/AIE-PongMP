@@ -35,6 +35,8 @@ public abstract class PongCollider : MonoBehaviour
     public CollisionEvents OnTriggerExit;
     public CollisionEvents OnPaddleTriggerExit;
 
+    public CollisionEvents PreResolution;
+
     public List<PongCollider> collidingWith = new List<PongCollider>();
 
     private void Start()

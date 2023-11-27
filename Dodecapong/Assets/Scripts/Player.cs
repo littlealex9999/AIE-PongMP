@@ -22,12 +22,14 @@ public class Player : MonoBehaviour
 
     public bool dead;
 
-    [HideInInspector] public Color color { get { return GameManager.instance.GetPlayerColor(ID); } private set { } }
-    [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get { return GameManager.instance.GetPlayerParticleColor(ID); } private set { } }
+    [HideInInspector] public Color color { get; private set; }
+    [HideInInspector] public ParticleSystem.MinMaxGradient particleColor { get; private set; }
+    [HideInInspector] public int colorIndex;
 
     [HideInInspector] public float dashDistance;
     [HideInInspector] public float dashDuration;
     [HideInInspector] public float dashCooldown;
+    public bool dashEnabled;
     bool readyToDash = true;
 
     [HideInInspector] public float hitDuration;
@@ -70,7 +72,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool hitting = false;
     public float hitStrength;
 
-    [SerializeField] private Transform paddleFace;
+    public Transform paddleFace;
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
     [HideInInspector] public bool hitstunned = false;
@@ -83,9 +85,9 @@ public class Player : MonoBehaviour
 
     public MeshRenderer meshRenderer;
 
-    public Transform rawInput;
-    Material ballMat;
-    [HideInInspector] public float startTime;
+    public Transform inputGhost;
+    Material ghostMat;
+    float startTime;
     public float fadeDuration;
     public AnimationCurve fadeCurve;
     
@@ -94,14 +96,6 @@ public class Player : MonoBehaviour
     public GameObject rightPilar;
 
     public float ShieldHitImortalityDuration;
-    public enum ControlType
-    {
-        MIDSECTION,
-        PADDLE,
-        MIDSECTION_NORMALIZED,
-        PADDLE_NORMALIZED,
-    }
-    public ControlType controlType;
     #endregion
 
     #region Unity
@@ -110,11 +104,15 @@ public class Player : MonoBehaviour
         dashTrail = dashTrailObj.GetComponentInChildren<TrailRenderer>();
         if (!dashTrail) Debug.LogError("dashTrailObj must have a TrailRenderer on a child object.");
 
-        collider.OnCollisionEnter += OnCollisionEnterBall;
+        collider.OnPaddleCollisionEnter += OnCollisionEnterBall;
 
-        ballMat = rawInput.gameObject.GetComponent<MeshRenderer>().material;
+        ghostMat = inputGhost.gameObject.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+    }
 
-        
+    public void SetupPlayer(Color playerColor, ParticleSystem.MinMaxGradient particleColor)
+    {
+        color = playerColor; ;
+        this.particleColor = particleColor;
     }
 
     private void OnDestroy()
@@ -142,9 +140,9 @@ public class Player : MonoBehaviour
 
         float timeElapsed = Time.time - startTime;
 
-        float alpha = Mathf.Lerp(0, 1, dashAnimationCurve.Evaluate(timeElapsed / fadeDuration));
+        float alpha = Mathf.Lerp(0, 1, fadeCurve.Evaluate(timeElapsed / fadeDuration));
 
-        ballMat.color = new Color(ballMat.color.r, ballMat.color.g, ballMat.color.b, alpha);
+        ghostMat.color = new Color(ghostMat.color.r, ghostMat.color.g, ghostMat.color.b, alpha);
 
         if (isAI) {
            // CalculateAIInput();
@@ -154,10 +152,8 @@ public class Player : MonoBehaviour
 
         if (!grabAttraction) return;
 
-        if (grabbing && heldBall == null && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
-        {
-            for (int i = 0; i < GameManager.instance.balls.Count; i++)
-            {
+        if (grabbing && heldBall == null && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) {
+            for (int i = 0; i < GameManager.instance.balls.Count; i++) {
                 Ball ball = GameManager.instance.balls[i];
 
                 float distance = Vector3.Distance(ball.transform.position, transform.position);
@@ -173,9 +169,14 @@ public class Player : MonoBehaviour
     #endregion
 
     #region Functions
+    public void ResetStartValues()
+    {
+        startTime = Time.time;
+    }
+
     public void Dash()
     {
-        if (!isActiveAndEnabled || dead) return;
+        if (!isActiveAndEnabled || dead || !dashEnabled) return;
         StartCoroutine(DashRoutine());
     }
 
@@ -187,15 +188,12 @@ public class Player : MonoBehaviour
     public void Grab(InputAction.CallbackContext context)
     {
         if (dead) return;
-        if (context.started)
-        {
+        if (context.started) {
             grabParticles.gameObject.GetComponent<VFXColorSetter>().SetStartColor(color);
-            grabParticles.Play();
+            grabParticles.gameObject.SetActive(true);
             grabbing = true;
-        }
-        else if (context.canceled)
-        {
-            grabParticles.Stop();
+        } else if (context.canceled) {
+            grabParticles.gameObject.SetActive(false);
             //Release();
             grabbing = false;
         }
@@ -204,42 +202,22 @@ public class Player : MonoBehaviour
     float CalculateMoveTarget()
     {
         float moveTarget;
-
-        switch (controlType)
-        {
-            case ControlType.MIDSECTION:
-            case ControlType.MIDSECTION_NORMALIZED:
-            default:
-
-                moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 90) * facingDirection);
-                break;
-            case ControlType.PADDLE:
-            case ControlType.PADDLE_NORMALIZED:
-
-                moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
-                break;
+        float movementInputAngle = Angle(movementInput);
+        if (movementInputAngle < playerMidPoint - angleDeviance || movementInputAngle > playerMidPoint + angleDeviance) {
+            // based on player midsection. move perpendicular to area
+            moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 90) * facingDirection);
+        } else {
+            // based on player position. move player to where joystick is pointing
+            moveTarget = Vector2.Dot(movementInput, Quaternion.Euler(0, 0, 270) * transform.position.normalized);
         }
 
-        if (moveTarget < deadzone && moveTarget > -deadzone)
-        {
+        if (moveTarget < deadzone && moveTarget > -deadzone) {
             collider.velocity = Vector2.zero;
             return 0;
-        }
-
-        switch (controlType)
-        {
-            case ControlType.MIDSECTION_NORMALIZED:
-            case ControlType.PADDLE_NORMALIZED:
-
-                if (moveTarget > deadzone)
-                {
-                    moveTarget = 1.0f;
-                }
-                else
-                {
-                    moveTarget = -1.0f;
-                }
-                break;
+        } else if (moveTarget > deadzone) {
+            moveTarget = 1.0f;
+        } else {
+            moveTarget = -1.0f;
         }
 
         return moveTarget;
@@ -252,13 +230,14 @@ public class Player : MonoBehaviour
     /// <param name="clampSpeed"></param>
     public void Move(bool clampSpeed = true)
     {
-        if (movementInput == Vector2.zero)
-        {
+        if (movementInput == Vector2.zero) {
+            inputGhost.gameObject.SetActive(false);
             collider.velocity = Vector2.zero;
             return;
-        } else if (GameManager.instance.holdGameplay && !(GameManager.instance.countdownTimer > 0) || hitstunned)
-        {
+        } else if (GameManager.instance.holdGameplay && !(GameManager.instance.countdownTimer > 0) || hitstunned) {
             return;
+        } else if (!inputGhost.gameObject.activeSelf) {
+            inputGhost.gameObject.SetActive(true);
         }
 
         float moveTarget = CalculateMoveTarget();
@@ -273,8 +252,7 @@ public class Player : MonoBehaviour
 
         Vector3 startPos = transform.position;
 
-        rawInput.position = movementInput.normalized * 4;
-        float joystickAngle = Angle(rawInput.position);
+        float ghostAngle = Angle(movementInput);
 
         transform.RotateAround(Vector3.zero, Vector3.back, moveTarget * Time.fixedDeltaTime);
         Vector3 targetPos = transform.position;
@@ -283,9 +261,7 @@ public class Player : MonoBehaviour
         float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
         float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
 
-      
-
-
+        #region angle clamp
         if (targetAngle > maxDev || targetAngle < minDev) {
             if (playerMidPoint >= 180.0f) {
                 float oppositePoint = playerMidPoint - 180.0f;
@@ -308,52 +284,31 @@ public class Player : MonoBehaviour
             }
         }
 
-        bool outsideMovement = false;
-        if (joystickAngle > maxDev || joystickAngle < minDev)
-        {
-            if (playerMidPoint >= 180.0f)
-            {
+        if (ghostAngle > maxDev || ghostAngle < minDev) {
+            if (playerMidPoint >= 180.0f) {
                 float oppositePoint = playerMidPoint - 180.0f;
-                if (joystickAngle < oppositePoint || joystickAngle > maxDev)
-                {
-                    // player is closer to max
-                    outsideMovement = true;
+                if (ghostAngle < oppositePoint || ghostAngle > maxDev) {
+                    // ghost is closer to max
+                    ghostAngle = maxDev;
+                } else {
+                    // ghost is closer to min
+                    ghostAngle = minDev;
                 }
-                else
-                {
-                    // player is closer to min
-                    outsideMovement = true;
-                }
-            }
-            else
-            {
+            } else {
                 float oppositePoint = playerMidPoint + 180.0f;
-                if (joystickAngle < oppositePoint && joystickAngle > maxDev)
-                {
-                    // player is closer to max
-                    outsideMovement = true;
-                }
-                else
-                {
-                    // player is closer to min
-                    outsideMovement = true;
+                if (ghostAngle < oppositePoint && ghostAngle > maxDev) {
+                    // ghost is closer to max
+                    ghostAngle = maxDev;
+                } else {
+                    // ghost is closer to min
+                    ghostAngle = minDev;
                 }
             }
         }
+        #endregion
 
-        rawInput.position = GetPositionFromAngle(joystickAngle);
-
-        if (!outsideMovement)
-        {
-            if (moveTarget > 0 && targetAngle < joystickAngle || 
-                moveTarget < 0 && targetAngle > joystickAngle)
-            {
-                SetPosition(joystickAngle);
-            }
-
-            //transform.position = GetPositionFromAngle(joystickAngle);
-        }
-
+        inputGhost.position = GetPositionFromAngle(ghostAngle);
+        inputGhost.rotation = Quaternion.Euler(0, 0, ghostAngle);
         Vector3 clampedPos = transform.position;
 
         // ensure we don't accidentally reverse the direction
@@ -371,8 +326,7 @@ public class Player : MonoBehaviour
 
         collider.velocity = deltaTarget * (deltaPos.magnitude / 1.4f) * (moveTarget / speed) * rotationalForce;
 
-        if (hitting)
-        {
+        if (hitting) {
             Vector2 hitVel = (Vector2)(Quaternion.Euler(0, 0, -targetAngle) * new Vector2(0, hitStrength));
             hitVel.y *= -1;
             collider.velocity += hitVel;
@@ -446,7 +400,19 @@ public class Player : MonoBehaviour
     void OnCollisionEnterBall(PongCollider other, CollisionData data)
     {
         if (other.tag == "Ball") {
-            controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
+            if (controllerHandler != null) {
+                controllerHandler.SetHaptics(GameManager.instance.paddleBounceHaptics);
+            }
+
+            Vector2 nextBallCollision = GameManager.instance.GetCircleIntersection(other.position, other.velocity, GameManager.instance.mapRadius);
+            float nextBallCollisionAngle = Angle(nextBallCollision);
+            if (nextBallCollisionAngle > playerMidPoint - angleDeviance && nextBallCollisionAngle < playerMidPoint + angleDeviance) {
+                if (nextBallCollisionAngle < Angle(collider.position)) {
+                    other.velocity = (GameManager.instance.GetTargetPointInCircle(playerMidPoint - angleDeviance) - other.position).normalized * other.velocity.magnitude;
+                } else {
+                    other.velocity = (GameManager.instance.GetTargetPointInCircle(playerMidPoint + angleDeviance) - other.position).normalized * other.velocity.magnitude;
+                }
+            }
         }
     }
     #endregion
@@ -467,12 +433,9 @@ public class Player : MonoBehaviour
     {
         float ret;
 
-        if (vector2.x < 0)
-        {
+        if (vector2.x < 0) {
             ret = 360 - (Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg * -1);
-        }
-        else
-        {
+        } else {
             ret = Mathf.Atan2(vector2.x, vector2.y) * Mathf.Rad2Deg;
         }
 
@@ -481,8 +444,7 @@ public class Player : MonoBehaviour
 
     public void Release(Vector2 releaseVel)
     {
-        if (heldBall)
-        {
+        if (heldBall) {
             if (heldBall.holdingPlayer != this) return;
             heldBall.HitVFX();
             heldBall.holdingPlayer = null;
@@ -495,9 +457,7 @@ public class Player : MonoBehaviour
             animator.SetTrigger("Play Hit");
 
             //Hit();
-        }
-        else
-        {
+        } else {
             grabbing = false;
         }
     }
@@ -548,8 +508,7 @@ public class Player : MonoBehaviour
         float maxDev = playerMidPoint + angleDeviance - angleDevianceCollider;
         float minDev = playerMidPoint - angleDeviance + angleDevianceCollider;
 
-        while (timeElapsed < dashDuration)
-        {
+        while (timeElapsed < dashDuration) {
             float currentAngle = Mathf.Lerp(targetAngle, startingAngle, dashAnimationCurve.Evaluate(timeElapsed / dashDuration));
 
             if (currentAngle > maxDev) SetPosition(maxDev);
@@ -644,23 +603,20 @@ public class Player : MonoBehaviour
 
         EventManager.instance.ballGrabEvent.Invoke();
 
-        heldBall.transform.localPosition = paddleFace.localPosition;
-
         float timeElapsed = 0;
 
-        while (timeElapsed < grabDuration)
-        {
+        while (timeElapsed < grabDuration) {
             timeElapsed += Time.deltaTime;
             if (!grabbing) break;
 
             yield return new WaitForEndOfFrame();
         }
 
-        Vector2 hitVel = hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
-        if (grabParticles.isPlaying) grabParticles.Stop();
+        if (grabParticles.isPlaying) grabParticles.gameObject.SetActive(false);
 
         yield return new WaitForSeconds(grabCooldown);
 

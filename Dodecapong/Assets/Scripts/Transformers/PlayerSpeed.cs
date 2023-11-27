@@ -9,7 +9,8 @@ public class PlayerSpeed : Transformer
 
     public override TransformerTypes GetTransformerType()
     {
-        return TransformerTypes.PLAYERSPEED;
+        //return TransformerTypes.PLAYERSPEED;
+        return 0;
     }
 
     public override void ApplyModifier()

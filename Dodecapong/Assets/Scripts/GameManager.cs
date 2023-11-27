@@ -67,7 +67,6 @@ public class GameManager : MonoBehaviour
     public List<Transformer> transformers = new List<Transformer>();
     List<Transformer> allowedTransformers = new List<Transformer>();
     public float transformerSpawnRadius = 2.0f;
-    public float transformerSpawnTime = 10.0f;
     float transformerSpawnTimer;
     [HideInInspector] public List<Transformer> spawnedTransformers = new List<Transformer>();
     [HideInInspector] public List<Transformer> activeTransformers = new List<Transformer>();
@@ -108,6 +107,7 @@ public class GameManager : MonoBehaviour
         GAMEPLAY,
         GAMEPAUSED,
         GAMEOVER,
+        CREDITS,
     }
     #endregion
 
@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<Player> players;
     [HideInInspector] public List<Player> alivePlayers;
     [HideInInspector] public List<Player> elimPlayers;
+    [HideInInspector] public Dictionary<int, bool> takenColors;
 
     [HideInInspector] public BlackHole blackHole;
     #endregion
@@ -152,6 +153,10 @@ public class GameManager : MonoBehaviour
 
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
         selectedGameVariables = ScriptableObject.CreateInstance<GameVariables>();
+
+#if !UNITY_EDITOR
+        UnityEngine.Cursor.visible = false;
+#endif
 
         OnGameStateChange += OnGameStateChanged;
 
@@ -184,10 +189,28 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region HELPER
-    public Color GetPlayerColor(int index)
+    public int GetUnusedColorIndex()
     {
-        if (index < playerEmissives.Count) return playerEmissives[index];
-        else return playerEmissives[playerEmissives.Count - 1];
+        for (int i = 0; i < playerEmissives.Count; i++) {
+            bool passed = true;
+
+            for (int j = 0; j < players.Count; j++) {
+                if (playerEmissives[i] == players[j].color) {
+                    passed = false;
+                    break;
+                }
+            }
+
+            if (passed) {
+                return i;
+            }
+        }
+
+#if UNITY_EDITOR
+        Debug.LogError("Failed to find an unused color");
+#endif
+
+        return -1;
     }
 
     public ParticleSystem.MinMaxGradient GetPlayerParticleColor(int index)
@@ -343,6 +366,9 @@ public class GameManager : MonoBehaviour
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
 
+        player.colorIndex = GetUnusedColorIndex();
+        player.SetupPlayer(playerEmissives[player.colorIndex], particleColors[player.colorIndex]);
+
         players.Add(player);
 
         MenuManager.instance.CheckPlayerCount();
@@ -474,6 +500,7 @@ public class GameManager : MonoBehaviour
             Player player = players[i];
 
             player.gameObject.SetActive(true);
+            player.ResetStartValues();
 
             player.moveSpeed = selectedGameVariables.playerSpeed;
 
@@ -483,6 +510,7 @@ public class GameManager : MonoBehaviour
             player.dashDistance = selectedGameVariables.dashDistance;
             player.dashDuration = selectedGameVariables.dashDuration;
             player.dashCooldown = selectedGameVariables.dashCooldown;
+            player.dashEnabled = selectedGameVariables.dashEnabled;
 
             player.hitCooldown = selectedGameVariables.hitCooldown;
             player.hitDuration = selectedGameVariables.hitDuration;
@@ -500,8 +528,6 @@ public class GameManager : MonoBehaviour
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
             player.dead = false;
-
-            player.startTime = Time.time;
 
             alivePlayers.Add(player);
         }
@@ -638,7 +664,7 @@ public class GameManager : MonoBehaviour
     {
         transformerSpawnTimer += delta;
 
-        if (transformerSpawnTimer > transformerSpawnTime) {
+        if (transformerSpawnTimer > selectedGameVariables.transformerSpawnTime) {
             if (Random.Range(0, 1) < selectedGameVariables.transformerFrequency) {
                 SpawnTransformer();
             }
@@ -681,6 +707,10 @@ public class GameManager : MonoBehaviour
         }
 
         ret /= balls.Count;
+
+        if (float.IsNaN(ret.x) || float.IsNaN(ret.y)) {
+            return new Vector2(0, 0);
+        }
 
         return ret;
     }
@@ -769,8 +799,7 @@ public class GameManager : MonoBehaviour
             ControllerInputHandler controller = controllers[controllerImageIndex];
             int playerAIndex = controllerImageIndex * 2;
             int playerBIndex = playerAIndex + 1;
-            if (controller.splitControls)
-            {
+            if (controller.splitControls){
 
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
@@ -1001,6 +1030,7 @@ public class GameManager : MonoBehaviour
                 Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * Mathf.Lerp(0, pillarSmashTimer, playerRemovalPercentage)).normalized;
                 position *= Mathf.Lerp(ballsStartDistances[i], 0.0f, playerRemovalPercentage);
                 balls[i].transform.position = position;
+                balls[i].transform.rotation = Quaternion.Euler(0, 0, Player.Angle(balls[i].transform.position) + 90);
             }
 
             yield return new WaitForEndOfFrame();

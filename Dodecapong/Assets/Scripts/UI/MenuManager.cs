@@ -53,6 +53,7 @@ public class MenuManager : MonoBehaviour
     public GameObject gameScreen;
     public GameObject pauseScreen;
     public GameObject endScreen;
+    public GameObject creditScreen;
 
     public GameObject[] presetSubScreens;
     int presetCurrentActive = 0;
@@ -68,6 +69,7 @@ public class MenuManager : MonoBehaviour
     public GameObject editPresetDefault;
     public GameObject pauseDefault;
     public GameObject endDefault;
+    public GameObject creditDefault; 
 
     [Space]
     public List<MenuTextPair> menuTextPairs;
@@ -90,12 +92,10 @@ public class MenuManager : MonoBehaviour
     [Space] // morph
     public UISliderPassthrough transformerFrequencySlider;
     public UISliderPassthrough transformerPowerSlider;
-    public Toggle transformerBallSizeToggle;
+    public Toggle transformerBallSizeUpToggle;
+    public Toggle transformerBallSizeDownToggle;
     public Toggle transformerBallSpeedToggle;
     public Toggle transformerBlackHoleToggle;
-    public Toggle transformerDashCooldownToggle;
-    public Toggle transformerPlayerSpeedToggle;
-    public Toggle transformerShieldHealthToggle;
     public bool settingUIVars { get; private set; } = true;
 
     public List<Selectable> applyButtonUps;
@@ -129,6 +129,7 @@ public class MenuManager : MonoBehaviour
         gameScreen.SetActive(false);
         pauseScreen.SetActive(false);
         endScreen.SetActive(false);
+        creditScreen.SetActive(false);
     }
 
     public void UpdateState(StateToChangeTo stateToChangeTo)
@@ -165,6 +166,9 @@ public class MenuManager : MonoBehaviour
                 break;
             case GameManager.GameState.GAMEOVER:
                 EndGame();
+                break;
+            case GameManager.GameState.CREDITS:
+                CreditsMenu();
                 break;
         }
     }
@@ -310,6 +314,13 @@ public class MenuManager : MonoBehaviour
         eventSystem.SetSelectedGameObject(mainMenuDefault);
     }
 
+    public void CreditsMenu()
+    {
+        DisableAll();
+        creditScreen.SetActive(true);
+        eventSystem.SetSelectedGameObject(creditDefault);
+    }
+
     public void PauseMenu()
     {
         DisableAll();
@@ -359,13 +370,11 @@ public class MenuManager : MonoBehaviour
         shieldHealthSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.shieldLives);
 
         transformerFrequencySlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerFrequency);
-        transformerPowerSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerPower);
-        transformerBallSizeToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSIZE) > 0;
+        transformerPowerSlider.SetSliderToApproximate(GameManager.instance.selectedGameVariables.transformerSpawnTime);
+        transformerBallSizeUpToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSIZEUP) > 0;
+        transformerBallSizeDownToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSIZEDOWN) > 0;
         transformerBallSpeedToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BALLSPEED) > 0;
         transformerBlackHoleToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.BLACKHOLE) > 0;
-        transformerDashCooldownToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.DASHCOOLDOWN) > 0;
-        transformerPlayerSpeedToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.PLAYERSPEED) > 0;
-        transformerShieldHealthToggle.isOn = (int)(GameManager.instance.selectedGameVariables.enabledTransformers & Transformer.TransformerTypes.SHIELDHEALTH) > 0;
 
         settingUIVars = false;
     }
