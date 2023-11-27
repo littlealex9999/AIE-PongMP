@@ -72,7 +72,7 @@ public class Player : MonoBehaviour
     [HideInInspector] public bool hitting = false;
     public float hitStrength;
 
-    [SerializeField] private Transform paddleFace;
+    public Transform paddleFace;
     [HideInInspector] public Ball heldBall;
     [HideInInspector] public bool grabbing = false;
     [HideInInspector] public bool hitstunned = false;
@@ -190,10 +190,10 @@ public class Player : MonoBehaviour
         if (dead) return;
         if (context.started) {
             grabParticles.gameObject.GetComponent<VFXColorSetter>().SetStartColor(color);
-            grabParticles.Play();
+            grabParticles.gameObject.SetActive(true);
             grabbing = true;
         } else if (context.canceled) {
-            grabParticles.Stop();
+            grabParticles.gameObject.SetActive(false);
             //Release();
             grabbing = false;
         }
@@ -603,8 +603,6 @@ public class Player : MonoBehaviour
 
         EventManager.instance.ballGrabEvent.Invoke();
 
-        heldBall.transform.localPosition = paddleFace.localPosition;
-
         float timeElapsed = 0;
 
         while (timeElapsed < grabDuration) {
@@ -614,11 +612,11 @@ public class Player : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        Vector2 hitVel = hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
+        Vector2 hitVel = heldBall.collider.velocity + -(Vector2)transform.position.normalized * hitStrength * heldBall.collider.velocity.magnitude;
         Vector2 lobVel = -(Vector2)transform.position.normalized * heldBall.constantSpd;
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
-        if (grabParticles.isPlaying) grabParticles.Stop();
+        if (grabParticles.isPlaying) grabParticles.gameObject.SetActive(false);
 
         yield return new WaitForSeconds(grabCooldown);
 

@@ -52,7 +52,6 @@ public class Ball : MonoBehaviour
         {
             if (player.grabbing && player.readyToGrab)
             {
-                transform.SetParent(player.transform);
                 player.heldBall = this;
                 player.Grab(data);
                 holdingPlayer = player;
@@ -115,9 +114,11 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || holdingPlayer != null || hitstunned) {
             collider.immovable = true;
-            return;
+            if (holdingPlayer != null) transform.SetPositionAndRotation(holdingPlayer.paddleFace.position, holdingPlayer.paddleFace.rotation);
+            return; 
         } else if (collider.immovable) {
             collider.immovable = false;
         }
