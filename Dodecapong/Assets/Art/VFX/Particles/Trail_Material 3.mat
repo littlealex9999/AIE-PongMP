@@ -118,12 +118,12 @@ Material:
     - _ZTestTransparent: 4
     - _ZWrite: 0
     m_Colors:
-    - _Colour1: {r: 8, g: 8, b: 8, a: 1}
-    - _Colour2: {r: 8, g: 8, b: 8, a: 1}
+    - _Colour1: {r: 2.3796902, g: 0.61623526, b: 0, a: 1}
+    - _Colour2: {r: 0, g: 14.259475, b: 0.4614751, a: 1}
     - _DissolveSpeed: {r: -0.5, g: 0, b: 0, a: 0}
     - _DoubleSidedConstants: {r: 1, g: 1, b: 1, a: 0}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _MainTextureSpeed: {r: 0.1, g: 0, b: 0, a: 0}
+    - _MainTextureSpeed: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &7557227315973359852
 MonoBehaviour:
