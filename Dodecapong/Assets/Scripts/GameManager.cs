@@ -627,6 +627,8 @@ public class GameManager : MonoBehaviour
 
     void SetupTransformers()
     {
+        allowedTransformers.Clear();
+
         for (int i = 0; i < transformers.Count; i++) {
             if ((transformers[i].GetTransformerType() & selectedGameVariables.enabledTransformers) != 0) {
                 allowedTransformers.Add(transformers[i]);
@@ -650,6 +652,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
