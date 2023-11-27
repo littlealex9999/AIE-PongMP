@@ -395,6 +395,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(player.healthBlips[i]);
         }
+
         player.healthBlips.Clear();
         player.dead = true;
         int index = alivePlayers.IndexOf(player);
