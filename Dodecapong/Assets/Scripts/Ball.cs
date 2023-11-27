@@ -37,6 +37,8 @@ public class Ball : MonoBehaviour
     public ParticleSystem mediumRing; 
     public ParticleSystem largeRing;
 
+
+
     void Awake()
     {
         collider = GetComponent<PongCircleCollider>();
