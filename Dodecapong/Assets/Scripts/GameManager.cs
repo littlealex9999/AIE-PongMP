@@ -1063,6 +1063,11 @@ public class GameManager : MonoBehaviour
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
 
+        foreach (Player player in alivePlayers)
+        {
+            player.grabParticles.gameObject.SetActive(false);
+        }
+
         UpdateAlivePlayers();
 
         ResetShieldDisplay();
