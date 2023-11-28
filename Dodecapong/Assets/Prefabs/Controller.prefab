@@ -90,7 +90,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3623185232625697688}
         m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
-        m_MethodName: Dash
+        m_MethodName: RightDash
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -138,7 +138,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3623185232625697688}
         m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
-        m_MethodName: SplitDash
+        m_MethodName: LeftDash
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -202,7 +202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3623185232625697688}
         m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
-        m_MethodName: Grab
+        m_MethodName: RightGrab
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -218,7 +218,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3623185232625697688}
         m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
-        m_MethodName: SplitGrab
+        m_MethodName: LeftGrab
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

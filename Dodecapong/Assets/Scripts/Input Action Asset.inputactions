@@ -24,7 +24,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Dash",
+                    "name": "RightDash",
                     "type": "Button",
                     "id": "e0d17dbb-fe54-4e0e-b903-ba9ed444e529",
                     "expectedControlType": "Button",
@@ -33,7 +33,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SplitDash",
+                    "name": "LeftDash",
                     "type": "Button",
                     "id": "8d7cd625-3b5b-4468-b4d9-e33215d98ebf",
                     "expectedControlType": "Button",
@@ -60,7 +60,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Grab",
+                    "name": "RightGrab",
                     "type": "Button",
                     "id": "1e015155-4827-43dd-9c59-4b01bb32f1c4",
                     "expectedControlType": "Button",
@@ -69,7 +69,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "SplitGrab",
+                    "name": "LeftGrab",
                     "type": "Button",
                     "id": "34264beb-6d97-436f-9d49-d2400866f876",
                     "expectedControlType": "Button",
@@ -144,7 +144,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Grab",
+                    "action": "RightGrab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -155,7 +155,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SplitGrab",
+                    "action": "LeftGrab",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -188,7 +188,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Dash",
+                    "action": "RightDash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -199,7 +199,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "SplitDash",
+                    "action": "LeftDash",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

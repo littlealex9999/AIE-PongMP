@@ -427,6 +427,7 @@ public class GameManager : MonoBehaviour
         {
             Destroy(player.healthBlips[i]);
         }
+
         player.healthBlips.Clear();
         player.dead = true;
         int index = alivePlayers.IndexOf(player);
@@ -663,6 +664,8 @@ public class GameManager : MonoBehaviour
 
     void SetupTransformers()
     {
+        allowedTransformers.Clear();
+
         for (int i = 0; i < transformers.Count; i++) {
             if ((transformers[i].GetTransformerType() & selectedGameVariables.enabledTransformers) != 0) {
                 allowedTransformers.Add(transformers[i]);
@@ -686,6 +689,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
@@ -1107,6 +1111,11 @@ public class GameManager : MonoBehaviour
         elimPlayers.Add(alivePlayers[index]);
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
+
+        foreach (Player player in alivePlayers)
+        {
+            player.grabParticles.gameObject.SetActive(false);
+        }
 
         UpdateAlivePlayers();
 

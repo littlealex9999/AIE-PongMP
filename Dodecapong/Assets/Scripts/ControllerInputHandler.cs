@@ -46,19 +46,23 @@ public class ControllerInputHandler : MonoBehaviour
 
     public void LeftStick(InputAction.CallbackContext context)
     {
-        if (playerA) playerA.movementInput = context.ReadValue<Vector2>();
+        if (playerA.dead && playerB != null) playerB.movementInput = context.ReadValue<Vector2>();
+        else playerA.movementInput = context.ReadValue<Vector2>();
     }
     public void RightStick(InputAction.CallbackContext context)
     {
-        if (playerB) playerB.movementInput = context.ReadValue<Vector2>();
+        if (playerB == null) playerA.movementInput = context.ReadValue<Vector2>();
+        else if (playerB.dead) playerA.movementInput = context.ReadValue<Vector2>();
+        else playerB.movementInput = context.ReadValue<Vector2>();
     }
-    public void Dash(InputAction.CallbackContext context)
+    public void RightDash(InputAction.CallbackContext context)
     {
         if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
-                playerB.Dash();
+                if (playerB.dead) playerA.Dash();
+                else playerB.Dash();
             }
             else
             {
@@ -66,11 +70,19 @@ public class ControllerInputHandler : MonoBehaviour
             }
         }
     }
-    public void SplitDash(InputAction.CallbackContext context)
+    public void LeftDash(InputAction.CallbackContext context)
     {
         if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
-            if (splitControls) playerA.Dash();
+            if (splitControls)
+            {
+                if (playerA.dead) playerB.Dash();
+                else playerA.Dash();
+            }
+            else
+            {
+                playerA.Dash();
+            }
         }
     }
     public void SwapControllerScheme(InputAction.CallbackContext context)
@@ -123,13 +135,14 @@ public class ControllerInputHandler : MonoBehaviour
             }
         }
     }
-    public void Grab(InputAction.CallbackContext context)
+    public void RightGrab(InputAction.CallbackContext context)
     {
         if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
-                playerB.Grab(context);
+                if (playerB.dead) playerA.Grab(context);
+                else playerB.Grab(context);
             }
             else
             {
@@ -137,11 +150,19 @@ public class ControllerInputHandler : MonoBehaviour
             }
         }
     }
-    public void SplitGrab(InputAction.CallbackContext context)
+    public void LeftGrab(InputAction.CallbackContext context)
     {
         if (GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay )
         {
-            if (splitControls) playerA.Grab(context);
+            if (splitControls)
+            {
+                if (playerA.dead) playerB.Grab(context);
+                else playerA.Grab(context);
+            }
+            else
+            {
+                playerA.Grab(context);
+            }
         }
     }
 
