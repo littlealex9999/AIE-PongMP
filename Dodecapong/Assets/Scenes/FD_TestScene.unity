@@ -3680,6 +3680,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+--- !u!1 &1231663701 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 249580948977394182, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
+  m_PrefabInstance: {fileID: 1231663700}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1309559593 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9142837812071709202, guid: 1faee4c0aaf7330488399e198f54d5ed, type: 3}
@@ -5338,6 +5343,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: loadingScreen
+      value: 
+      objectReference: {fileID: 1231663701}
     - target: {fileID: 2048084323697871025, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: healthBlipDistance
       value: 4.5

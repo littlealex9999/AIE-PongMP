@@ -369,7 +369,9 @@ public class GameManager : MonoBehaviour
         loading = true;
 
         while (timer > 0) {
-            timer += Time.deltaTime;
+            timer -= Time.deltaTime;
+
+            yield return new WaitForEndOfFrame();
         }
 
         loading = false;
