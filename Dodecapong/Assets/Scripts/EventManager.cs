@@ -148,7 +148,7 @@ public class EventManager : MonoBehaviour
 
     public void UpdateMusicPitch()
     {
-        if (GameManager.instance.alivePlayers.Count >= 1)
+        if (GameManager.instance.alivePlayers.Count <= 1 || GameManager.instance.players.Count == GameManager.instance.alivePlayers.Count)
         {
             gameplayMusicSource.pitch = 1.0f;
         }
