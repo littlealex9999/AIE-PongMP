@@ -148,7 +148,14 @@ public class EventManager : MonoBehaviour
 
     public void UpdateMusicPitch()
     {
-        menuMusicSource.pitch = playerCount[GameManager.instance.players.Count].pitches[GameManager.instance.alivePlayers.Count];
+        if (GameManager.instance.alivePlayers.Count >= 1)
+        {
+            gameplayMusicSource.pitch = 1.0f;
+        }
+        else
+        {
+            gameplayMusicSource.pitch = playerCount[GameManager.instance.players.Count].pitches[GameManager.instance.alivePlayers.Count];
+        }
     }
 
     void MainMenuCallback()

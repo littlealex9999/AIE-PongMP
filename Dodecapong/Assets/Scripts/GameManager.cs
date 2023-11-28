@@ -587,6 +587,8 @@ public class GameManager : MonoBehaviour
 
             player.SetPosition(player.playerSectionMiddle);
         }
+
+        EventManager.instance.UpdateMusicPitch();
     }
 
     void SetupBalls()
