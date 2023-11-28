@@ -124,7 +124,42 @@ MonoBehaviour:
   gameplayEvent:
     m_PersistentCalls:
       m_Calls: []
-  playerCount: []
+  playerCount:
+  - pitches:
+    - 1.07
+  - pitches:
+    - 1.06
+    - 1.1
+  - pitches:
+    - 1.05
+    - 1.08
+    - 1.1
+  - pitches:
+    - 1.05
+    - 1.07
+    - 1.09
+    - 1.1
+  - pitches:
+    - 1.04
+    - 1.06
+    - 1.08
+    - 1.09
+    - 1.1
+  - pitches:
+    - 1.04
+    - 1.05
+    - 1.07
+    - 1.08
+    - 1.09
+    - 1.1
+  - pitches:
+    - 1.04
+    - 1.05
+    - 1.06
+    - 1.07
+    - 1.08
+    - 1.09
+    - 1.1
 --- !u!82 &4273386352708368392
 AudioSource:
   m_ObjectHideFlags: 0
