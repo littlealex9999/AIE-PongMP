@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using Unity.VisualScripting;
-using JetBrains.Annotations;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 using Image = UnityEngine.UI.Image;
+using Color = UnityEngine.Color;
+using System.Drawing;
 
 public class GameManager : MonoBehaviour
 {
@@ -807,33 +804,62 @@ public class GameManager : MonoBehaviour
             ControllerInputHandler controller = controllers[controllerImageIndex];
             int playerAIndex = controllerImageIndex * 2;
             int playerBIndex = playerAIndex + 1;
-            if (controller.splitControls){
-
+            if (controller.splitControls)
+            {
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
                 halfControllerImages[playerBIndex].gameObject.SetActive(true);
-                halfControllerImages[playerAIndex].color = controller.playerA.color;
-                halfControllerImages[playerBIndex].color = controller.playerB.color;
 
                 halfPlayerShapeGlow[playerAIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
                 halfPlayerShapeLine[playerAIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
-                halfPlayerShapeGlow[playerAIndex].color = controller.playerA.color;
-                halfPlayerShapeLine[playerAIndex].color = Color.white;
 
                 halfPlayerShapeGlow[playerBIndex].sprite = playerShapeGlowSprites[controller.playerB.ID];
                 halfPlayerShapeLine[playerBIndex].sprite = playerShapeLineSprites[controller.playerB.ID];
-                halfPlayerShapeGlow[playerBIndex].color = controller.playerB.color;
+
+                halfControllerImages[playerAIndex].color = controller.leftBumperDown ? Color.white : controller.playerA.color;
+                halfPlayerShapeGlow[playerAIndex].color = controller.leftBumperDown ? Color.white : controller.playerA.color;
+
+                halfControllerImages[playerBIndex].color = controller.rightBumperDown ? Color.white : controller.playerB.color;
+                halfPlayerShapeGlow[playerBIndex].color = controller.rightBumperDown ?  Color.white : controller.playerB.color;
+
+                halfPlayerShapeLine[playerAIndex].color = Color.white;
                 halfPlayerShapeLine[playerBIndex].color = Color.white;
             }
             else
             {
-                controllerImages[controllerImageIndex].color = controller.playerA.color;
-
                 fullPlayerShapeGlow[controllerImageIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
                 fullPlayerShapeLine[controllerImageIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
-                fullPlayerShapeGlow[controllerImageIndex].color = controller.playerA.color;
+
+                controllerImages[controllerImageIndex].color = (controller.rightBumperDown || controller.leftBumperDown) ? Color.white : controller.playerA.color;
+                fullPlayerShapeGlow[controllerImageIndex].color = (controller.rightBumperDown || controller.leftBumperDown) ? Color.white : controller.playerA.color;
+
                 fullPlayerShapeLine[controllerImageIndex].color = Color.white;
             }
+        }
+    }
+
+    public void BlinkController(ControllerInputHandler controller)
+    {
+        int controllerID = controllers.IndexOf(controller);
+        int playerAIndex = controllerID * 2;
+        int playerBIndex = playerAIndex + 1;
+        if (controller.splitControls)
+        {
+            halfControllerImages[playerAIndex].color = Color.white;
+            halfControllerImages[playerBIndex].color = Color.white;
+
+            halfPlayerShapeGlow[playerAIndex].color = Color.white;
+            halfPlayerShapeLine[playerAIndex].color = Color.white;
+
+            halfPlayerShapeGlow[playerBIndex].color = Color.white;
+            halfPlayerShapeLine[playerBIndex].color = Color.white;
+        }
+        else
+        {
+            controllerImages[controllerID].color = Color.white;
+
+            fullPlayerShapeGlow[controllerID].color = Color.white;
+            fullPlayerShapeLine[controllerID].color = Color.white;
         }
     }
 
