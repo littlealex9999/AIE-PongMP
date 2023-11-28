@@ -268,6 +268,7 @@ public class MenuManager : MonoBehaviour
 
     public void PresetSelectScreen()
     {
+        playerInputManager.DisableJoining();
         //GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
         GameManager.instance.selectedGameVariables.Copy(GameManager.instance.gameVariables[presetCurrentActive]);
         DisableAll();
@@ -278,6 +279,7 @@ public class MenuManager : MonoBehaviour
 
     public void EditPresetScreen()
     {
+        playerInputManager.DisableJoining();
         if (GameManager.instance.selectedGameVariables == null)
         {
             //GameManager.instance.selectedGameVariables = new(GameManager.instance.gameVariables[presetCurrentActive]);
@@ -295,6 +297,7 @@ public class MenuManager : MonoBehaviour
     public void GameScreen()
     {
         DisableAll();
+        playerInputManager.DisableJoining();
         gameScreen.SetActive(true);
     }
 
@@ -303,6 +306,7 @@ public class MenuManager : MonoBehaviour
         DisableAll();
         endScreen.SetActive(true);
         eventSystem.SetSelectedGameObject(endDefault);
+        playerInputManager.DisableJoining();
     }
 
     public void MainMenu()
@@ -318,6 +322,7 @@ public class MenuManager : MonoBehaviour
         DisableAll();
         creditScreen.SetActive(true);
         eventSystem.SetSelectedGameObject(creditDefault);
+        playerInputManager.DisableJoining();
     }
 
     public void PauseMenu()
@@ -325,6 +330,7 @@ public class MenuManager : MonoBehaviour
         DisableAll();
         pauseScreen.SetActive(true);
         eventSystem.SetSelectedGameObject(pauseDefault);
+        playerInputManager.DisableJoining();
         //time scale 0 or whatever 
     }
 

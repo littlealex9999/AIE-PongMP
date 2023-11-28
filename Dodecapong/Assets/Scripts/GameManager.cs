@@ -150,6 +150,8 @@ public class GameManager : MonoBehaviour
     #region Extra Settings
     public bool enableHaptics = true;
     public bool enableScreenShake = true;
+    public bool skipControlScreen;
+    public Animator inGameUI;
     #endregion
     #endregion
 
@@ -358,24 +360,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+ 
     IEnumerator DoLoadScreen()
     {
         float timer = loadingScreenDuration;
 
-        loadingScreen.SetActive(true);
         loading = true;
 
-        while (timer > 0) {
+        while (timer > 0) 
+        {
             timer -= Time.deltaTime;
+
+            if (skipControlScreen) break;
 
             yield return new WaitForEndOfFrame();
         }
 
+        skipControlScreen = false;
         loading = false;
-        loadingScreen.SetActive(false);
+        inGameUI.SetTrigger("EndControlScreen");
 
         postEffectsController.EnableBloom();
         EventManager.instance?.gameplayEvent?.Invoke();
+
         if (!inGame) {
             StartGame();
         } else {
