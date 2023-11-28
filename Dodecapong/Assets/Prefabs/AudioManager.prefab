@@ -59,7 +59,7 @@ MonoBehaviour:
   ballBounce: {fileID: 8300000, guid: 98b333613f09d0640b47b65ec1ba90c8, type: 3}
   ballHit: {fileID: 8300000, guid: 98b333613f09d0640b47b65ec1ba90c8, type: 3}
   ballHitPillar: {fileID: 8300000, guid: fbef32af59d8cf64c995a8ca43730ac5, type: 3}
-  ballHitBlackHole: {fileID: 8300000, guid: 811663ad249a6564c8b2fc285f6ce89f, type: 3}
+  ballHitBlackHole: {fileID: 8300000, guid: c29464f7369b3614092f1c652836668f, type: 3}
   ballGrab: {fileID: 8300000, guid: 466ea7eb05d99954c84b889f8e4bb3b8, type: 3}
   dash: {fileID: 8300000, guid: 15ba97af11190774a9252635d6a165b0, type: 3}
   selectUI: {fileID: 8300000, guid: 7465d223b2ba96647b8050a8fcb20801, type: 3}
@@ -136,13 +136,13 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.549
+  m_Volume: 0.18
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 155
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -232,7 +232,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: df8e7bfa3ba35d64ea5744745d846c86, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.11
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -328,7 +328,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 1d40e170d8c2398468bcf391cc845221, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.18
   m_Pitch: 1
   Loop: 1
   Mute: 0
