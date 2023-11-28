@@ -152,9 +152,9 @@ public class EventManager : MonoBehaviour
         {
             gameplayMusicSource.pitch = 1.0f;
         }
-        else
+        else if (GameManager.instance.players.Count > 2)
         {
-            gameplayMusicSource.pitch = playerCount[GameManager.instance.players.Count].pitches[GameManager.instance.alivePlayers.Count];
+            gameplayMusicSource.pitch = playerCount[GameManager.instance.players.Count - 2].pitches[GameManager.instance.alivePlayers.Count - 2];
         }
     }
 

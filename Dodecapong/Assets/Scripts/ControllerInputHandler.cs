@@ -120,7 +120,11 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void DisconnectController(InputAction.CallbackContext context)
     {
-        if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
+        {
+            GameManager.instance.skipControlScreen = true;
+        }
+        else if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
         {
             if (GameManager.instance.controllers.IndexOf(this) == 0) return;
 
