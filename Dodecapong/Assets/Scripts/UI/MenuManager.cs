@@ -264,7 +264,6 @@ public class MenuManager : MonoBehaviour
 
         if (joinScreenNEP.activeSelf) eventSystem.SetSelectedGameObject(joinScreenNEP);
         else if (joinScreenStart.activeSelf) eventSystem.SetSelectedGameObject(joinScreenStart);
-
     }
 
     public void PresetSelectScreen()

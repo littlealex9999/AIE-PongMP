@@ -6908,6 +6908,166 @@ PrefabInstance:
       value: GameManager
       objectReference: {fileID: 0}
     - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: pitches.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: floatList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: floatList.Array.data[0].pitches.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[0].pitches.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[1].pitches.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[2].pitches.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[3].pitches.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[4].pitches.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.size
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[7].pitches.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[0].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[1].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[1].pitches.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[2].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[2].pitches.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[2].pitches.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[3].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[3].pitches.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[3].pitches.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[3].pitches.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[4].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[4].pitches.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[4].pitches.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[4].pitches.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[4].pitches.Array.data[4]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.data[4]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[5].pitches.Array.data[5]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[0]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[1]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[2]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[3]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[4]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[5]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: playerCount.Array.data[6].pitches.Array.data[6]
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8121348653768523101, guid: 07938da29331160449301a632a920411, type: 3}
       propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 2059096380}
@@ -6915,6 +7075,14 @@ PrefabInstance:
       propertyPath: playerEliminatedEvent.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 2059096380}
+    - target: {fileID: 8121348653768523102, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: m_Pitch
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8570020868048095543, guid: 07938da29331160449301a632a920411, type: 3}
+      propertyPath: m_Pitch
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07938da29331160449301a632a920411, type: 3}
 --- !u!1001 &5615439006910521813

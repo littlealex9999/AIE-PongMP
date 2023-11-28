@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -61,6 +63,16 @@ public class EventManager : MonoBehaviour
 
     [HideInInspector] public UnityEvent menuEvent; //
     [HideInInspector] public UnityEvent gameplayEvent; //
+
+
+    [Serializable]
+    class rangedFloatList
+    {
+        [Range(-3, 3)] public List<float> pitches;
+    }
+
+    [SerializeField] private List<rangedFloatList> playerCount;
+
 
     private void Start()
     {
@@ -133,6 +145,11 @@ public class EventManager : MonoBehaviour
     void ScrollPageUICallback() => SafePlayOneShot(audioSource, scrollPageUI);
     void PlayerJoinCallback() => SafePlayOneShot(audioSource, playerJoin);
     void PlayerLeaveCallback() => SafePlayOneShot(audioSource, playerLeave);
+
+    public void UpdateMusicPitch()
+    {
+        menuMusicSource.pitch = playerCount[GameManager.instance.players.Count].pitches[GameManager.instance.alivePlayers.Count];
+    }
 
     void MainMenuCallback()
     {
