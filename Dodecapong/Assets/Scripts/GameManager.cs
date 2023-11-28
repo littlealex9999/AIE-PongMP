@@ -86,12 +86,23 @@ public class GameManager : MonoBehaviour
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
+    [Space]
     public List<Image> endGamePlayerImages = new List<Image>();
     public List<Image> endGameShapeGlowImages = new();
     public List<Image> endGameShapeLineImages = new();
     public List<int> endGamePlayerEnableThresholds = new List<int>();
     public Transform endGameAlternatePosition;
     Vector3 endGameRestorePosition;
+
+    [Space]
+    public List<Image> playtimeControlsUI;
+    public float playtimeControlsUIDisappearTimer;
+    float playtimeControlsUItimer;
+    public AnimationCurve playtimeControlsUICurve;
+
+    [Space]
+    public GameObject loadingScreen;
+    public float loadingScreenDuration = 5.0f;
 
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
@@ -122,6 +133,7 @@ public class GameManager : MonoBehaviour
 
     #region Gameplay Settings
     float gameEndTimer;
+    bool loading;
     [HideInInspector] public List<Player> players;
     [HideInInspector] public List<Player> alivePlayers;
     [HideInInspector] public List<Player> elimPlayers;
@@ -169,6 +181,7 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.GAMEPLAY:
+                if (loading) break;
                 if (!holdGameplay)
                 {
                     gameEndTimer -= Time.deltaTime;
@@ -178,6 +191,7 @@ public class GameManager : MonoBehaviour
                     }
 
                     TransformerUpdate(Time.deltaTime);
+                    PlaytimeUIUpdate(Time.deltaTime);
                 } else if (countdownTimer > 0) {
                     countdownTimer -= Time.deltaTime;
                 }
@@ -286,14 +300,7 @@ public class GameManager : MonoBehaviour
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
-                postEffectsController.EnableBloom();
-                EventManager.instance?.gameplayEvent?.Invoke();
-
-                if (!inGame) {
-                    StartGame();
-                } else {
-                    ResetShieldDisplay();
-                }
+                StartCoroutine(DoLoadScreen());
                 break;
             case GameState.GAMEPAUSED:
                 EventManager.instance?.menuEvent.Invoke();
@@ -352,6 +359,31 @@ public class GameManager : MonoBehaviour
         if (endGamePlayerImages.Count > 1) {
             endGameRestorePosition = endGamePlayerImages[1].transform.parent.localPosition;
         }
+    }
+
+    IEnumerator DoLoadScreen()
+    {
+        float timer = loadingScreenDuration;
+
+        loadingScreen.SetActive(true);
+        loading = true;
+
+        while (timer > 0) {
+            timer += Time.deltaTime;
+        }
+
+        loading = false;
+        loadingScreen.SetActive(false);
+
+        postEffectsController.EnableBloom();
+        EventManager.instance?.gameplayEvent?.Invoke();
+        if (!inGame) {
+            StartGame();
+        } else {
+            ResetShieldDisplay();
+        }
+
+        yield break;
     }
     #endregion
 
@@ -622,6 +654,11 @@ public class GameManager : MonoBehaviour
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
         }
         arcTanShaderHelper.CreateTexture();
+
+        playtimeControlsUItimer = 0;
+        for (int i = 0; i < playtimeControlsUI.Count; i++) {
+            playtimeControlsUI[i].color = new Color(playtimeControlsUI[i].color.r, playtimeControlsUI[i].color.g, playtimeControlsUI[i].color.b, 1);
+        }
     }
 
     void SetupTransformers()
@@ -769,6 +806,17 @@ public class GameManager : MonoBehaviour
 
         if (hits > 0) {
             spawnedTransformers.Add(Instantiate(passedTransformers[Random.Range(0, hits)], GetTransformerSpawnPoint(), Quaternion.identity));
+        }
+    }
+
+    void PlaytimeUIUpdate(float delta)
+    {
+        if (playtimeControlsUItimer < playtimeControlsUIDisappearTimer) {
+            playtimeControlsUItimer += delta;
+            float disappearVal = playtimeControlsUICurve.Evaluate(playtimeControlsUItimer / playtimeControlsUIDisappearTimer);
+            for (int i = 0; i < playtimeControlsUI.Count; i++) {
+                playtimeControlsUI[i].color = new Color(playtimeControlsUI[i].color.r, playtimeControlsUI[i].color.g, playtimeControlsUI[i].color.b, disappearVal);
+            }
         }
     }
 
