@@ -994,6 +994,8 @@ public class GameManager : MonoBehaviour
         float[] ballsStartAngles = new float[balls.Count];
         float[] ballsStartDistances = new float[balls.Count];
 
+        int[] healthBlipsToAdd = new int[alivePlayers.Count];
+
         Vector3 elimPlayerStartScale = alivePlayers[index].transform.localScale;
 
         // calculate start and end angle for each player
@@ -1013,8 +1015,11 @@ public class GameManager : MonoBehaviour
                 alivePlayers[i].healthBlips.Clear();
 
                 alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+
+                healthBlipsToAdd[i] = 0;
             } else {
                 playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
+                healthBlipsToAdd[i] = selectedGameVariables.shieldLives - alivePlayers[i].healthBlips.Count;
             }
         }
 
@@ -1060,6 +1065,7 @@ public class GameManager : MonoBehaviour
 
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
                 
+                // health blips
                 float deviance = 180.0f / pseudoPlayerCount;
 
                 float targetMidsection;
@@ -1072,7 +1078,7 @@ public class GameManager : MonoBehaviour
                 } else {
                     targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
                 }
-                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + 1) * 2;
+                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + Mathf.Lerp(0, healthBlipsToAdd[i], playerRemovalPercentage) + 1) * 2;
                 float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
                 for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
                     alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + healthBlipOffset;
