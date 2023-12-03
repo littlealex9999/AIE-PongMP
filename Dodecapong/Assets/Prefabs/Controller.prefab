@@ -274,6 +274,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 4eba5de3-6ac2-485f-9441-a9e56e2c320f
     m_ActionName: Player/PageLeft[/DualShock4GamepadHID1/leftShoulder]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3623185232625697688}
+        m_TargetAssemblyTypeName: ControllerInputHandler, Assembly-CSharp
+        m_MethodName: BlinkController
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 4b126170-8a01-4f01-868c-3a38d7c48dbc
+    m_ActionName: Player/HighlightController[/XInputControllerWindows1/buttonNorth,/XInputControllerWindows1/dpad/up]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Gamepad
   m_DefaultActionMap: Player

@@ -617,6 +617,7 @@ public class Player : MonoBehaviour
         Release(Vector2.Lerp(hitVel, lobVel, timeElapsed / grabDuration));
 
         if (grabParticles.isPlaying) grabParticles.gameObject.SetActive(false);
+        EventManager.instance.ballHitEvent.Invoke();
 
         yield return new WaitForSeconds(grabCooldown);
 

@@ -55,9 +55,19 @@ public class ControllerInputHandler : MonoBehaviour
         else if (playerB.dead) playerA.movementInput = context.ReadValue<Vector2>();
         else playerB.movementInput = context.ReadValue<Vector2>();
     }
+
+    public bool rightBumperDown;
+    public bool leftBumperDown;
     public void RightDash(InputAction.CallbackContext context)
     {
-        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
+        if (GameManager.instance.gameState == GameManager.GameState.JOINMENU)
+        {
+            if (context.started) rightBumperDown = true;
+            else if (context.canceled) rightBumperDown = false;
+
+            GameManager.instance.UpdatePlayerImages();
+        }
+        else if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
             {
@@ -72,6 +82,13 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void LeftDash(InputAction.CallbackContext context)
     {
+        if (GameManager.instance.gameState == GameManager.GameState.JOINMENU)
+        {
+            if (context.started) leftBumperDown = true;
+            else if (context.canceled) leftBumperDown = false;
+
+            GameManager.instance.UpdatePlayerImages();
+        }
         if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay)
         {
             if (splitControls)
@@ -103,8 +120,14 @@ public class ControllerInputHandler : MonoBehaviour
     }
     public void DisconnectController(InputAction.CallbackContext context)
     {
-        if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
+        if (context.started && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY)
         {
+            GameManager.instance.skipControlScreen = true;
+        }
+        else if (context.canceled && GameManager.instance.gameState == GameManager.GameState.JOINMENU)
+        {
+            if (GameManager.instance.controllers.IndexOf(this) == 0) return;
+
             GameManager.instance.controllers.Remove(this);
             GameManager.instance.RemovePlayer(playerA);
             GameManager.instance.RemovePlayer(playerB);

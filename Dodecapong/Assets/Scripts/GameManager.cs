@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using Unity.VisualScripting;
-using JetBrains.Annotations;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 using Image = UnityEngine.UI.Image;
+using Color = UnityEngine.Color;
+using System.Drawing;
 
 public class GameManager : MonoBehaviour
 {
@@ -153,6 +150,8 @@ public class GameManager : MonoBehaviour
     #region Extra Settings
     public bool enableHaptics = true;
     public bool enableScreenShake = true;
+    public bool skipControlScreen;
+    public Animator inGameUI;
     #endregion
     #endregion
 
@@ -361,24 +360,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+ 
     IEnumerator DoLoadScreen()
     {
         float timer = loadingScreenDuration;
 
-        loadingScreen.SetActive(true);
         loading = true;
 
-        while (timer > 0) {
+        while (timer > 0) 
+        {
             timer -= Time.deltaTime;
+
+            if (skipControlScreen) break;
 
             yield return new WaitForEndOfFrame();
         }
 
+        skipControlScreen = false;
         loading = false;
-        loadingScreen.SetActive(false);
+        inGameUI.SetTrigger("EndControlScreen");
 
         postEffectsController.EnableBloom();
         EventManager.instance?.gameplayEvent?.Invoke();
+
         if (!inGame) {
             StartGame();
         } else {
@@ -433,6 +437,10 @@ public class GameManager : MonoBehaviour
         player.healthBlips.Clear();
         player.dead = true;
         int index = alivePlayers.IndexOf(player);
+        foreach (Player p in players)
+        {
+            p.grabParticles.gameObject.SetActive(false);
+        }
         StartCoroutine(EliminatePlayerRoutine(index));
     }
 
@@ -586,6 +594,8 @@ public class GameManager : MonoBehaviour
 
             player.SetPosition(player.playerSectionMiddle);
         }
+
+        EventManager.instance.UpdateMusicPitch();
     }
 
     void SetupBalls()
@@ -853,33 +863,62 @@ public class GameManager : MonoBehaviour
             ControllerInputHandler controller = controllers[controllerImageIndex];
             int playerAIndex = controllerImageIndex * 2;
             int playerBIndex = playerAIndex + 1;
-            if (controller.splitControls){
-
+            if (controller.splitControls)
+            {
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
                 halfControllerImages[playerBIndex].gameObject.SetActive(true);
-                halfControllerImages[playerAIndex].color = controller.playerA.color;
-                halfControllerImages[playerBIndex].color = controller.playerB.color;
 
                 halfPlayerShapeGlow[playerAIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
                 halfPlayerShapeLine[playerAIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
-                halfPlayerShapeGlow[playerAIndex].color = controller.playerA.color;
-                halfPlayerShapeLine[playerAIndex].color = Color.white;
 
                 halfPlayerShapeGlow[playerBIndex].sprite = playerShapeGlowSprites[controller.playerB.ID];
                 halfPlayerShapeLine[playerBIndex].sprite = playerShapeLineSprites[controller.playerB.ID];
-                halfPlayerShapeGlow[playerBIndex].color = controller.playerB.color;
+
+                halfControllerImages[playerAIndex].color = controller.leftBumperDown ? Color.white : controller.playerA.color;
+                halfPlayerShapeGlow[playerAIndex].color = controller.leftBumperDown ? Color.white : controller.playerA.color;
+
+                halfControllerImages[playerBIndex].color = controller.rightBumperDown ? Color.white : controller.playerB.color;
+                halfPlayerShapeGlow[playerBIndex].color = controller.rightBumperDown ?  Color.white : controller.playerB.color;
+
+                halfPlayerShapeLine[playerAIndex].color = Color.white;
                 halfPlayerShapeLine[playerBIndex].color = Color.white;
             }
             else
             {
-                controllerImages[controllerImageIndex].color = controller.playerA.color;
-
                 fullPlayerShapeGlow[controllerImageIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
                 fullPlayerShapeLine[controllerImageIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
-                fullPlayerShapeGlow[controllerImageIndex].color = controller.playerA.color;
+
+                controllerImages[controllerImageIndex].color = (controller.rightBumperDown || controller.leftBumperDown) ? Color.white : controller.playerA.color;
+                fullPlayerShapeGlow[controllerImageIndex].color = (controller.rightBumperDown || controller.leftBumperDown) ? Color.white : controller.playerA.color;
+
                 fullPlayerShapeLine[controllerImageIndex].color = Color.white;
             }
+        }
+    }
+
+    public void BlinkController(ControllerInputHandler controller)
+    {
+        int controllerID = controllers.IndexOf(controller);
+        int playerAIndex = controllerID * 2;
+        int playerBIndex = playerAIndex + 1;
+        if (controller.splitControls)
+        {
+            halfControllerImages[playerAIndex].color = Color.white;
+            halfControllerImages[playerBIndex].color = Color.white;
+
+            halfPlayerShapeGlow[playerAIndex].color = Color.white;
+            halfPlayerShapeLine[playerAIndex].color = Color.white;
+
+            halfPlayerShapeGlow[playerBIndex].color = Color.white;
+            halfPlayerShapeLine[playerBIndex].color = Color.white;
+        }
+        else
+        {
+            controllerImages[controllerID].color = Color.white;
+
+            fullPlayerShapeGlow[controllerID].color = Color.white;
+            fullPlayerShapeLine[controllerID].color = Color.white;
         }
     }
 
@@ -1135,11 +1174,6 @@ public class GameManager : MonoBehaviour
         elimPlayers.Add(alivePlayers[index]);
         alivePlayers[index].gameObject.SetActive(false);
         alivePlayers.RemoveAt(index);
-
-        foreach (Player player in alivePlayers)
-        {
-            player.grabParticles.gameObject.SetActive(false);
-        }
 
         UpdateAlivePlayers();
 

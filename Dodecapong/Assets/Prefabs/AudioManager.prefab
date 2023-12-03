@@ -124,6 +124,42 @@ MonoBehaviour:
   gameplayEvent:
     m_PersistentCalls:
       m_Calls: []
+  playerCount:
+  - pitches:
+    - 1.07
+  - pitches:
+    - 1.06
+    - 1.1
+  - pitches:
+    - 1.05
+    - 1.08
+    - 1.1
+  - pitches:
+    - 1.05
+    - 1.07
+    - 1.09
+    - 1.1
+  - pitches:
+    - 1.04
+    - 1.06
+    - 1.08
+    - 1.09
+    - 1.1
+  - pitches:
+    - 1.04
+    - 1.05
+    - 1.07
+    - 1.08
+    - 1.09
+    - 1.1
+  - pitches:
+    - 1.04
+    - 1.05
+    - 1.06
+    - 1.07
+    - 1.08
+    - 1.09
+    - 1.1
 --- !u!82 &4273386352708368392
 AudioSource:
   m_ObjectHideFlags: 0
@@ -326,7 +362,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 1d40e170d8c2398468bcf391cc845221, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 97417b50896a52a41a9f422f56db7fe8, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 0.18
   m_Pitch: 1
