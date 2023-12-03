@@ -1136,7 +1136,6 @@ public class GameManager : MonoBehaviour
                     if (healthBlipIntervalPremultiplied <= playerRemovalPercentage) {
                         alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab, alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].transform.position, Quaternion.identity));
                         healthBlipsAdded[i]++;
-                        Debug.LogWarning("Blip Spawned");
                     }
                 }
             }
