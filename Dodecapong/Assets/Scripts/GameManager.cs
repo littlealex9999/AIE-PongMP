@@ -995,6 +995,7 @@ public class GameManager : MonoBehaviour
         float[] ballsStartDistances = new float[balls.Count];
 
         int[] healthBlipsToAdd = new int[alivePlayers.Count];
+        int[] healthBlipsAdded = new int[alivePlayers.Count];
 
         Vector3 elimPlayerStartScale = alivePlayers[index].transform.localScale;
 
@@ -1067,6 +1068,8 @@ public class GameManager : MonoBehaviour
                 
                 // health blips
                 float deviance = 180.0f / pseudoPlayerCount;
+                float healthBlipInterval = 1.0f / (healthBlipsToAdd[i] + 1);
+                float healthBlipIntervalPremultiplied = healthBlipInterval * (healthBlipsAdded[i] + 1);
 
                 float targetMidsection;
                 if (i > index) {
@@ -1078,11 +1081,24 @@ public class GameManager : MonoBehaviour
                 } else {
                     targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
                 }
-                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + Mathf.Lerp(0, healthBlipsToAdd[i], playerRemovalPercentage) + 1) * 2;
+                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count - healthBlipsAdded[i] + Mathf.Lerp(0, healthBlipsToAdd[i], playerRemovalPercentage) + 1) * 2;
                 float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
                 for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
                     alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + healthBlipOffset;
-                    healthAngle += angleChange;
+
+                    if (healthBlipsAdded[i] > 0 && j == alivePlayers[i].healthBlips.Count - 2) {
+                        healthAngle += Mathf.Lerp(0, angleChange, playerRemovalPercentage % healthBlipInterval / healthBlipInterval);
+                    } else {
+                        healthAngle += angleChange;
+                    }
+                }
+
+                if (healthBlipsToAdd[i] > 0 && healthBlipsAdded[i] < healthBlipsToAdd[i]) {
+                    if (healthBlipIntervalPremultiplied <= playerRemovalPercentage) {
+                        alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab, alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].transform.position, Quaternion.identity));
+                        healthBlipsAdded[i]++;
+                        Debug.LogWarning("Blip Spawned");
+                    }
                 }
             }
 
