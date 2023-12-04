@@ -3,13 +3,10 @@ using System.Collections.Generic;
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
-using Unity.VisualScripting;
-using JetBrains.Annotations;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 using Image = UnityEngine.UI.Image;
+using Color = UnityEngine.Color;
+using System.Drawing;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,6 +15,7 @@ public class GameManager : MonoBehaviour
     #region Game Objects
     [Header("Game Objects")]
 
+    public PPController postEffectsController;
     public Ball ballPrefab;
     [HideInInspector] public List<Ball> balls = new List<Ball>();
 
@@ -45,10 +43,12 @@ public class GameManager : MonoBehaviour
     public float healthBlipSpread = 0.1f;
     public float healthBlipSquishTime = 0.5f;
     public float healthBlipDistance = 4.6f;
+    public Vector3 healthBlipOffset;
 
     [Range(0, 360)]
     public float mapRotationOffset = 0.0f;
     public float playerDistance = 4.0f;
+    public float playerBlinkOnHitDuration;
 
     [ColorUsage(true, true), SerializeField]
     List<Color> playerEmissives = new List<Color>();
@@ -64,7 +64,6 @@ public class GameManager : MonoBehaviour
     public List<Transformer> transformers = new List<Transformer>();
     List<Transformer> allowedTransformers = new List<Transformer>();
     public float transformerSpawnRadius = 2.0f;
-    public float transformerSpawnTime = 10.0f;
     float transformerSpawnTimer;
     [HideInInspector] public List<Transformer> spawnedTransformers = new List<Transformer>();
     [HideInInspector] public List<Transformer> activeTransformers = new List<Transformer>();
@@ -84,12 +83,23 @@ public class GameManager : MonoBehaviour
 
     // The expected structure is that the image will have a sibling image relevant to it
     // so it should be treated as if it always has a parent
+    [Space]
     public List<Image> endGamePlayerImages = new List<Image>();
     public List<Image> endGameShapeGlowImages = new();
     public List<Image> endGameShapeLineImages = new();
     public List<int> endGamePlayerEnableThresholds = new List<int>();
     public Transform endGameAlternatePosition;
     Vector3 endGameRestorePosition;
+
+    [Space]
+    public List<Image> playtimeControlsUI;
+    public float playtimeControlsUIDisappearTimer;
+    float playtimeControlsUItimer;
+    public AnimationCurve playtimeControlsUICurve;
+
+    [Space]
+    public GameObject loadingScreen;
+    public float loadingScreenDuration = 5.0f;
 
     public delegate void GameStateChange();
     public GameStateChange OnGameStateChange;
@@ -105,6 +115,7 @@ public class GameManager : MonoBehaviour
         GAMEPLAY,
         GAMEPAUSED,
         GAMEOVER,
+        CREDITS,
     }
     #endregion
 
@@ -119,9 +130,11 @@ public class GameManager : MonoBehaviour
 
     #region Gameplay Settings
     float gameEndTimer;
+    bool loading;
     [HideInInspector] public List<Player> players;
     [HideInInspector] public List<Player> alivePlayers;
     [HideInInspector] public List<Player> elimPlayers;
+    [HideInInspector] public Dictionary<int, bool> takenColors;
 
     [HideInInspector] public BlackHole blackHole;
     #endregion
@@ -137,6 +150,8 @@ public class GameManager : MonoBehaviour
     #region Extra Settings
     public bool enableHaptics = true;
     public bool enableScreenShake = true;
+    public bool skipControlScreen;
+    public Animator inGameUI;
     #endregion
     #endregion
 
@@ -150,6 +165,10 @@ public class GameManager : MonoBehaviour
         UnityEngine.Rendering.DebugManager.instance.enableRuntimeUI = false;
         selectedGameVariables = ScriptableObject.CreateInstance<GameVariables>();
 
+#if !UNITY_EDITOR
+        UnityEngine.Cursor.visible = false;
+#endif
+
         OnGameStateChange += OnGameStateChanged;
 
         SetupGameEndData();
@@ -161,6 +180,7 @@ public class GameManager : MonoBehaviour
         switch (gameState)
         {
             case GameState.GAMEPLAY:
+                if (loading) break;
                 if (!holdGameplay)
                 {
                     gameEndTimer -= Time.deltaTime;
@@ -170,6 +190,7 @@ public class GameManager : MonoBehaviour
                     }
 
                     TransformerUpdate(Time.deltaTime);
+                    PlaytimeUIUpdate(Time.deltaTime);
                 } else if (countdownTimer > 0) {
                     countdownTimer -= Time.deltaTime;
                 }
@@ -181,10 +202,28 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region HELPER
-    public Color GetPlayerColor(int index)
+    public int GetUnusedColorIndex()
     {
-        if (index < playerEmissives.Count) return playerEmissives[index];
-        else return playerEmissives[playerEmissives.Count - 1];
+        for (int i = 0; i < playerEmissives.Count; i++) {
+            bool passed = true;
+
+            for (int j = 0; j < players.Count; j++) {
+                if (playerEmissives[i] == players[j].color) {
+                    passed = false;
+                    break;
+                }
+            }
+
+            if (passed) {
+                return i;
+            }
+        }
+
+#if UNITY_EDITOR
+        Debug.LogError("Failed to find an unused color");
+#endif
+
+        return -1;
     }
 
     public ParticleSystem.MinMaxGradient GetPlayerParticleColor(int index)
@@ -230,11 +269,6 @@ public class GameManager : MonoBehaviour
             new Vector2(p1.x + mu2 * (p2.x - p1.x), p1.y + mu2 * (p2.y - p1.y)),
         };
     }
-
-    public static void QuitGame()
-    {
-        Application.Quit();
-    }
     #endregion
 
     #region GAMESTATE
@@ -249,31 +283,30 @@ public class GameManager : MonoBehaviour
     {
         switch (gameState) {
             case GameState.MAINMENU:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.JOINMENU:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.PRESETSELECT:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.EDITPRESET:
+                postEffectsController.DisableBloom();
                 EventManager.instance?.menuEvent.Invoke();
                 break;
             case GameState.GAMEPLAY:
-                EventManager.instance?.gameplayEvent?.Invoke();
-
-                if (!inGame) {
-                    StartGame();
-                } else {
-                    ResetShieldDisplay();
-                }
+                StartCoroutine(DoLoadScreen());
                 break;
             case GameState.GAMEPAUSED:
                 EventManager.instance?.menuEvent.Invoke();
 
                 break;
             case GameState.GAMEOVER:
+                postEffectsController.DisableBloom();
                 if (inGame) {
                     // EndGame calls a gamestate change to GAMEOVER so we must ensure it doesn't infinitely repeat and return
                     EndGame();
@@ -326,6 +359,38 @@ public class GameManager : MonoBehaviour
             endGameRestorePosition = endGamePlayerImages[1].transform.parent.localPosition;
         }
     }
+
+ 
+    IEnumerator DoLoadScreen()
+    {
+        float timer = loadingScreenDuration;
+
+        loading = true;
+
+        while (timer > 0) 
+        {
+            timer -= Time.deltaTime;
+
+            if (skipControlScreen) break;
+
+            yield return new WaitForEndOfFrame();
+        }
+
+        skipControlScreen = false;
+        loading = false;
+        inGameUI.SetTrigger("EndControlScreen");
+
+        postEffectsController.EnableBloom();
+        EventManager.instance?.gameplayEvent?.Invoke();
+
+        if (!inGame) {
+            StartGame();
+        } else {
+            ResetShieldDisplay();
+        }
+
+        yield break;
+    }
     #endregion
 
     #region PLAYERS
@@ -338,6 +403,9 @@ public class GameManager : MonoBehaviour
 
         Player player = Instantiate(playerPrefab).GetComponent<Player>();
         player.gameObject.SetActive(false);
+
+        player.colorIndex = GetUnusedColorIndex();
+        player.SetupPlayer(playerEmissives[player.colorIndex], particleColors[player.colorIndex]);
 
         players.Add(player);
 
@@ -365,10 +433,46 @@ public class GameManager : MonoBehaviour
         {
             Destroy(player.healthBlips[i]);
         }
+
         player.healthBlips.Clear();
         player.dead = true;
         int index = alivePlayers.IndexOf(player);
+        foreach (Player p in players)
+        {
+            p.grabParticles.gameObject.SetActive(false);
+        }
         StartCoroutine(EliminatePlayerRoutine(index));
+    }
+
+
+    public void PlayChromaticAberration()
+    {
+        StartCoroutine(postEffectsController.chromaticAberrationIntensity.CR_Play());
+    }
+    public void BlinkPlayerSegment(int aliveID)
+    {
+        StartCoroutine(CR_BlinkPlayerSegment(aliveID));
+    }
+    private IEnumerator CR_BlinkPlayerSegment(int aliveID)
+    {
+        Color[] colors = new Color[alivePlayers.Count];
+        for (int i = 0; i < alivePlayers.Count; i++)
+        {
+            if (i == aliveID) colors[i] = Color.white;
+            else colors[i] = alivePlayers[i].color;
+
+        }
+
+        arcTanShaderHelper.colors = colors;
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
+        yield return new WaitForSeconds(playerBlinkOnHitDuration);
+
+        arcTanShaderHelper.colors = GenerateLivingColors();
+        arcTanShaderHelper.CreateTexture();
+        arcTanShaderHelper.SetShrink(0.0f);
+
     }
 
     public Color[] GenerateLivingColors()
@@ -439,6 +543,7 @@ public class GameManager : MonoBehaviour
             Player player = players[i];
 
             player.gameObject.SetActive(true);
+            player.ResetStartValues();
 
             player.moveSpeed = selectedGameVariables.playerSpeed;
 
@@ -448,6 +553,7 @@ public class GameManager : MonoBehaviour
             player.dashDistance = selectedGameVariables.dashDistance;
             player.dashDuration = selectedGameVariables.dashDuration;
             player.dashCooldown = selectedGameVariables.dashCooldown;
+            player.dashEnabled = selectedGameVariables.dashEnabled;
 
             player.hitCooldown = selectedGameVariables.hitCooldown;
             player.hitDuration = selectedGameVariables.hitDuration;
@@ -465,8 +571,6 @@ public class GameManager : MonoBehaviour
             player.meshRenderer.material.SetColor("_EmissiveColor", player.color);
 
             player.dead = false;
-
-            player.startTime = Time.time;
 
             alivePlayers.Add(player);
         }
@@ -490,6 +594,8 @@ public class GameManager : MonoBehaviour
 
             player.SetPosition(player.playerSectionMiddle);
         }
+
+        EventManager.instance.UpdateMusicPitch();
     }
 
     void SetupBalls()
@@ -561,10 +667,17 @@ public class GameManager : MonoBehaviour
             arcTanShaderHelper.colors[i] = alivePlayers[i].color;
         }
         arcTanShaderHelper.CreateTexture();
+
+        playtimeControlsUItimer = 0;
+        for (int i = 0; i < playtimeControlsUI.Count; i++) {
+            playtimeControlsUI[i].color = new Color(playtimeControlsUI[i].color.r, playtimeControlsUI[i].color.g, playtimeControlsUI[i].color.b, 1);
+        }
     }
 
     void SetupTransformers()
     {
+        allowedTransformers.Clear();
+
         for (int i = 0; i < transformers.Count; i++) {
             if ((transformers[i].GetTransformerType() & selectedGameVariables.enabledTransformers) != 0) {
                 allowedTransformers.Add(transformers[i]);
@@ -588,6 +701,7 @@ public class GameManager : MonoBehaviour
             }
         }
 
+        
         spawnedTransformers.Clear();
         activeTransformers.Clear();
 
@@ -603,7 +717,7 @@ public class GameManager : MonoBehaviour
     {
         transformerSpawnTimer += delta;
 
-        if (transformerSpawnTimer > transformerSpawnTime) {
+        if (transformerSpawnTimer > selectedGameVariables.transformerSpawnTime) {
             if (Random.Range(0, 1) < selectedGameVariables.transformerFrequency) {
                 SpawnTransformer();
             }
@@ -646,6 +760,10 @@ public class GameManager : MonoBehaviour
         }
 
         ret /= balls.Count;
+
+        if (float.IsNaN(ret.x) || float.IsNaN(ret.y)) {
+            return new Vector2(0, 0);
+        }
 
         return ret;
     }
@@ -707,6 +825,17 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void PlaytimeUIUpdate(float delta)
+    {
+        if (playtimeControlsUItimer < playtimeControlsUIDisappearTimer) {
+            playtimeControlsUItimer += delta;
+            float disappearVal = playtimeControlsUICurve.Evaluate(playtimeControlsUItimer / playtimeControlsUIDisappearTimer);
+            for (int i = 0; i < playtimeControlsUI.Count; i++) {
+                playtimeControlsUI[i].color = new Color(playtimeControlsUI[i].color.r, playtimeControlsUI[i].color.g, playtimeControlsUI[i].color.b, disappearVal);
+            }
+        }
+    }
+
     public void UpdatePlayerImages()
     {
         for (int i = 0; i < controllerImages.Count; i++)
@@ -736,32 +865,60 @@ public class GameManager : MonoBehaviour
             int playerBIndex = playerAIndex + 1;
             if (controller.splitControls)
             {
-
                 controllerImages[controllerImageIndex].gameObject.SetActive(false);
                 halfControllerImages[playerAIndex].gameObject.SetActive(true);
                 halfControllerImages[playerBIndex].gameObject.SetActive(true);
-                halfControllerImages[playerAIndex].color = controller.playerA.color;
-                halfControllerImages[playerBIndex].color = controller.playerB.color;
 
                 halfPlayerShapeGlow[playerAIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
                 halfPlayerShapeLine[playerAIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
-                halfPlayerShapeGlow[playerAIndex].color = controller.playerA.color;
-                halfPlayerShapeLine[playerAIndex].color = Color.white;
 
                 halfPlayerShapeGlow[playerBIndex].sprite = playerShapeGlowSprites[controller.playerB.ID];
                 halfPlayerShapeLine[playerBIndex].sprite = playerShapeLineSprites[controller.playerB.ID];
-                halfPlayerShapeGlow[playerBIndex].color = controller.playerB.color;
+
+                halfControllerImages[playerAIndex].color = controller.leftBumperDown ? Color.white : controller.playerA.color;
+                halfPlayerShapeGlow[playerAIndex].color = controller.leftBumperDown ? Color.white : controller.playerA.color;
+
+                halfControllerImages[playerBIndex].color = controller.rightBumperDown ? Color.white : controller.playerB.color;
+                halfPlayerShapeGlow[playerBIndex].color = controller.rightBumperDown ?  Color.white : controller.playerB.color;
+
+                halfPlayerShapeLine[playerAIndex].color = Color.white;
                 halfPlayerShapeLine[playerBIndex].color = Color.white;
             }
             else
             {
-                controllerImages[controllerImageIndex].color = controller.playerA.color;
-
                 fullPlayerShapeGlow[controllerImageIndex].sprite = playerShapeGlowSprites[controller.playerA.ID];
                 fullPlayerShapeLine[controllerImageIndex].sprite = playerShapeLineSprites[controller.playerA.ID];
-                fullPlayerShapeGlow[controllerImageIndex].color = controller.playerA.color;
+
+                controllerImages[controllerImageIndex].color = (controller.rightBumperDown || controller.leftBumperDown) ? Color.white : controller.playerA.color;
+                fullPlayerShapeGlow[controllerImageIndex].color = (controller.rightBumperDown || controller.leftBumperDown) ? Color.white : controller.playerA.color;
+
                 fullPlayerShapeLine[controllerImageIndex].color = Color.white;
             }
+        }
+    }
+
+    public void BlinkController(ControllerInputHandler controller)
+    {
+        int controllerID = controllers.IndexOf(controller);
+        int playerAIndex = controllerID * 2;
+        int playerBIndex = playerAIndex + 1;
+        if (controller.splitControls)
+        {
+            halfControllerImages[playerAIndex].color = Color.white;
+            halfControllerImages[playerBIndex].color = Color.white;
+
+            halfPlayerShapeGlow[playerAIndex].color = Color.white;
+            halfPlayerShapeLine[playerAIndex].color = Color.white;
+
+            halfPlayerShapeGlow[playerBIndex].color = Color.white;
+            halfPlayerShapeLine[playerBIndex].color = Color.white;
+        }
+        else
+        {
+            controllerImages[controllerID].color = Color.white;
+
+            fullPlayerShapeGlow[controllerID].color = Color.white;
+            fullPlayerShapeLine[controllerID].color = Color.white;
         }
     }
 
@@ -778,7 +935,7 @@ public class GameManager : MonoBehaviour
                     alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
                     alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].name = "Player " + i + " Blip " + j;
                 }
-                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + healthBlipOffset;
                 angle += angleChange;
             }
 
@@ -807,7 +964,7 @@ public class GameManager : MonoBehaviour
             float angleChange = player.playerAngleDeviance * healthBlipSpread / (player.healthBlips.Count - removalPercentage + 1) * 2;
             float angle = player.playerSectionMiddle - player.playerAngleDeviance * healthBlipSpread + angleChange;
             for (int i = 0; i < player.healthBlips.Count; i++) {
-                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
+                player.healthBlips[i].transform.position = GetTargetPointInCircle(angle) * healthBlipDistance + healthBlipOffset;
                 angle += angleChange;
 
                 if (i == targetDestroyBlip) {
@@ -876,6 +1033,9 @@ public class GameManager : MonoBehaviour
         float[] ballsStartAngles = new float[balls.Count];
         float[] ballsStartDistances = new float[balls.Count];
 
+        int[] healthBlipsToAdd = new int[alivePlayers.Count];
+        int[] healthBlipsAdded = new int[alivePlayers.Count];
+
         Vector3 elimPlayerStartScale = alivePlayers[index].transform.localScale;
 
         // calculate start and end angle for each player
@@ -895,8 +1055,11 @@ public class GameManager : MonoBehaviour
                 alivePlayers[i].healthBlips.Clear();
 
                 alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab));
+
+                healthBlipsToAdd[i] = 0;
             } else {
                 playerTargetAngles[i] = 180.0f / (alivePlayers.Count - 1) + 360.0f / (alivePlayers.Count - 1) * targetPlayerIndex;
+                healthBlipsToAdd[i] = selectedGameVariables.shieldLives - alivePlayers[i].healthBlips.Count;
             }
         }
 
@@ -942,7 +1105,10 @@ public class GameManager : MonoBehaviour
 
                 alivePlayers[i].SetPosition(Mathf.Lerp(playerStartAngles[i], playerTargetAngles[i], playerRemovalPercentage));
                 
+                // health blips
                 float deviance = 180.0f / pseudoPlayerCount;
+                float healthBlipInterval = 1.0f / (healthBlipsToAdd[i] + 1);
+                float healthBlipIntervalPremultiplied = healthBlipInterval * (healthBlipsAdded[i] + 1);
 
                 float targetMidsection;
                 if (i > index) {
@@ -954,11 +1120,23 @@ public class GameManager : MonoBehaviour
                 } else {
                     targetMidsection = 360.0f / pseudoPlayerCount * i + deviance;
                 }
-                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count + 1) * 2;
+                float angleChange = deviance * healthBlipSpread / (alivePlayers[i].healthBlips.Count - healthBlipsAdded[i] + Mathf.Lerp(0, healthBlipsToAdd[i], playerRemovalPercentage) + 1) * 2;
                 float healthAngle = targetMidsection - deviance * healthBlipSpread + angleChange;
                 for (int j = 0; j < alivePlayers[i].healthBlips.Count; j++) {
-                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + new Vector3(0.0f, 0.0f, -0.5f);
-                    healthAngle += angleChange;
+                    alivePlayers[i].healthBlips[j].transform.position = GetTargetPointInCircle(healthAngle) * healthBlipDistance + healthBlipOffset;
+
+                    if (healthBlipsAdded[i] > 0 && j == alivePlayers[i].healthBlips.Count - 2) {
+                        healthAngle += Mathf.Lerp(0, angleChange, playerRemovalPercentage % healthBlipInterval / healthBlipInterval);
+                    } else {
+                        healthAngle += angleChange;
+                    }
+                }
+
+                if (healthBlipsToAdd[i] > 0 && healthBlipsAdded[i] < healthBlipsToAdd[i]) {
+                    if (healthBlipIntervalPremultiplied <= playerRemovalPercentage) {
+                        alivePlayers[i].healthBlips.Add(Instantiate(healthDotPrefab, alivePlayers[i].healthBlips[alivePlayers[i].healthBlips.Count - 1].transform.position, Quaternion.identity));
+                        healthBlipsAdded[i]++;
+                    }
                 }
             }
 
@@ -966,6 +1144,7 @@ public class GameManager : MonoBehaviour
                 Vector3 position = GetTargetPointInCircle(ballsStartAngles[i] + playerElimBallSpinSpeed * Mathf.Lerp(0, pillarSmashTimer, playerRemovalPercentage)).normalized;
                 position *= Mathf.Lerp(ballsStartDistances[i], 0.0f, playerRemovalPercentage);
                 balls[i].transform.position = position;
+                balls[i].transform.rotation = Quaternion.Euler(0, 0, Player.Angle(balls[i].transform.position) + 90);
             }
 
             yield return new WaitForEndOfFrame();

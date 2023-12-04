@@ -12,13 +12,9 @@ public abstract class Transformer : MonoBehaviour
     public enum TransformerTypes
     {
         BALLSPEED       = 1 << 0,
-        PLAYERSPEED     = 1 << 1,
-        BALLSIZE        = 1 << 2,
-        PLAYERSIZE      = 1 << 3,
-        SHIELDHEALTH    = 1 << 4,
-        BLACKHOLE       = 1 << 5,
-        DASHCOOLDOWN    = 1 << 6,
-        BALLCOUNT       = 1 << 7,
+        BALLSIZEUP      = 1 << 1,
+        BALLSIZEDOWN    = 1 << 2,
+        BLACKHOLE       = 1 << 3,
     }
 
     public abstract TransformerTypes GetTransformerType();

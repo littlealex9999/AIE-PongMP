@@ -9,6 +9,8 @@ public class BlackHole : MonoBehaviour
     public float gravityStrength;
     public float duration = 10.0f;
 
+    public float buildupTime = 2.0f;
+
     public float destroyTime = 2.0f;
     public float ballLaunchMult = 4.0f;
 
@@ -16,6 +18,8 @@ public class BlackHole : MonoBehaviour
 
     new PongCircleCollider collider;
     Ball ball;
+
+    public Animator animator;
 
     private void Start()
     {
@@ -30,7 +34,7 @@ public class BlackHole : MonoBehaviour
             duration -= Time.fixedDeltaTime;
             if (duration <= 0)
             {
-                StartCoroutine(DestroyHole(null));
+                StartCoroutine(DestroyHole());
             }
 
             if (pullEnabled && GameManager.instance.gameState == GameManager.GameState.GAMEPLAY && !GameManager.instance.holdGameplay) 
@@ -60,14 +64,35 @@ public class BlackHole : MonoBehaviour
             GameManager.instance.CleanTransformers(false);
             EventManager.instance.ballHitBlackHoleEvent.Invoke();
 
-            StartCoroutine(DestroyHole(other.gameObject));
+            animator.SetTrigger("BallHit");
+
+            StartCoroutine(BallHit());
         }
     }
 
-    IEnumerator DestroyHole(GameObject enableOnEnd)
+    IEnumerator DestroyHole()
+    {
+        animator.SetTrigger("Shrink");
+        yield return new WaitForSeconds(0.6f);
+        GameManager.instance.blackHole = null;
+        DestroyImmediate(gameObject);
+    }
+
+    IEnumerator BallHit()
+    {
+        yield return new WaitForSeconds(destroyTime);
+
+        if (ball) ball.gameObject.SetActive(true);
+        if (ball) ball.largeRing.Play();
+
+        StartCoroutine(DestroyHole());
+    }
+
+    IEnumerator wwwDestroyHole(GameObject enableOnEnd)
     {
         float destroyTimer = 0.0f;
         Vector3 startScale = transform.localScale;
+
         while (destroyTimer < destroyTime) {
             destroyTimer += Time.deltaTime;
             float endPercentage = destroyTime / destroyTimer;
@@ -82,11 +107,14 @@ public class BlackHole : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        if (enableOnEnd) enableOnEnd.SetActive(true);
+        if (enableOnEnd) yield return new WaitForSeconds(0.1f);
 
+        if (enableOnEnd) enableOnEnd.SetActive(true);
         if (ball) ball.largeRing.Play();
+        if (!enableOnEnd) animator.SetTrigger("Shrink");
+
         GameManager.instance.blackHole = null;
-        Destroy(gameObject);
+        DestroyImmediate(gameObject);
         yield break;
     }
 }

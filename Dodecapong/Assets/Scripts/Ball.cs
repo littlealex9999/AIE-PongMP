@@ -35,7 +35,9 @@ public class Ball : MonoBehaviour
 
     public ParticleSystem smallRing; 
     public ParticleSystem mediumRing; 
-    public ParticleSystem largeRing; 
+    public ParticleSystem largeRing;
+
+
 
     void Awake()
     {
@@ -50,10 +52,8 @@ public class Ball : MonoBehaviour
 
         if (other.CompareTag("Player") && other.gameObject.TryGetComponent(out Player player))
         {
-            if (player.unhittable) return;
             if (player.grabbing && player.readyToGrab)
             {
-                transform.SetParent(player.transform);
                 player.heldBall = this;
                 player.Grab(data);
                 holdingPlayer = player;
@@ -116,9 +116,11 @@ public class Ball : MonoBehaviour
 
     private void FixedUpdate()
     {
+
         if (GameManager.instance.gameState != GameManager.GameState.GAMEPLAY || GameManager.instance.holdGameplay || holdingPlayer != null || hitstunned) {
             collider.immovable = true;
-            return;
+            if (holdingPlayer != null) transform.SetPositionAndRotation(holdingPlayer.paddleFace.position, holdingPlayer.paddleFace.rotation);
+            return; 
         } else if (collider.immovable) {
             collider.immovable = false;
         }
@@ -182,10 +184,12 @@ public class Ball : MonoBehaviour
             float angle = Angle(transform.position.normalized);
 
             int alivePlayerID = (int)(angle / 360.0f * GameManager.instance.alivePlayers.Count);
+            GameManager.instance.PlayChromaticAberration();
+            GameManager.instance.BlinkPlayerSegment(alivePlayerID);
 
             if (!GameManager.instance.OnShieldHit(alivePlayerID))
             {
-                StartCoroutine(GameManager.instance.alivePlayers[alivePlayerID].UnHittable());
+                GameManager.instance.alivePlayers[alivePlayerID].UnHittable();
 
                 PlayVFX(bounceShield, transform.position, Quaternion.Euler(Vector3.back), GameManager.instance.alivePlayers[alivePlayerID].particleColor);
                 mediumRing.Play();

@@ -8,7 +8,8 @@ public class ShieldHealth : Transformer
 
     public override TransformerTypes GetTransformerType()
     {
-        return TransformerTypes.SHIELDHEALTH;
+        //return TransformerTypes.SHIELDHEALTH;
+        return 0;
     }
 
     public override void ApplyModifier()

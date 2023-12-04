@@ -207,6 +207,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 1, g: 0.06132078, b: 0.06132078, a: 0}
+  enableColorOverLifeTime: 0
   colorOverLifetime:
     m_Mode: 0
     m_GradientMin:
@@ -269,6 +270,7 @@ MonoBehaviour:
       m_NumAlphaKeys: 2
     m_ColorMin: {r: 0, g: 0, b: 0, a: 0}
     m_ColorMax: {r: 0.31817845, g: 0.1260235, b: 0.4528302, a: 0}
+  ignoredSystems: []
 --- !u!1 &7277491829859073082
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,7 +8,11 @@ public class BallSize : Transformer
 
     public override TransformerTypes GetTransformerType()
     {
-        return TransformerTypes.BALLSIZE;
+        if (sizeMod > 0) {
+            return TransformerTypes.BALLSIZEUP;
+        } else {
+            return TransformerTypes.BALLSIZEDOWN;
+        }
     }
 
     public override void ApplyModifier()
